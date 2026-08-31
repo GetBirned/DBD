@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import IconHero from '@/components/IconHero'
 import Marquee from '@/components/Marquee'
+import NowPlaying from '@/components/NowPlaying'
+import PlaylistHighlights from '@/components/PlaylistHighlights'
 import { clients } from '@/data/clients'
 import { projects } from '@/data/projects'
 
@@ -60,6 +62,14 @@ export default function Home() {
             <Link to="/fun" className="mt-5 inline-block font-mono text-xs text-grad-a hover:underline">
               See everything — FUN →
             </Link>
+          </div>
+
+          <div className="mt-16">
+            <h3 className="mb-6 text-[26px]">What I'm Listening To</h3>
+            <NowPlaying />
+            <div className="mt-4.5">
+              <PlaylistHighlights />
+            </div>
           </div>
         </div>
       </section>

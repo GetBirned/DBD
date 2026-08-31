@@ -4,10 +4,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "vite",
+    "dev": "concurrently -n vite,api -c blue,magenta \"npm:dev:client\" \"npm:dev:server\"",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "tsc -b --noEmit"
+    "lint": "tsc -b --noEmit",
+    "dev:client": "vite",
+    "dev:server": "cross-env PORT=3001 node server/index.js",
+    "start": "node server/index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +18,8 @@
   "description": "",
   "type": "module",
   "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "framer-motion": "^13.1.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -22,10 +27,13 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "@types/express": "^5.0.6",
     "@types/node": "^26.3.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^6.4.3"
