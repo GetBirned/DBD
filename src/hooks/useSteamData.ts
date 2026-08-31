@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
 /** Fetches a JSON endpoint; fails silently (no data) rather than surfacing an error UI —
- * Spotify widgets are a nice-to-have and shouldn't ever visibly break the page. */
-export function useSpotifyData<T>(endpoint: string) {
+ * the Steam widget is a nice-to-have and shouldn't ever visibly break the page. */
+export function useSteamData<T>(endpoint: string) {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -31,38 +31,18 @@ export function useSpotifyData<T>(endpoint: string) {
   return { data, loading }
 }
 
-export interface NowPlayingData {
+export interface SteamStatusData {
   isPlaying: boolean
   title: string | null
-  artist?: string
-  album?: string | null
-  albumArt?: string | null
+  subtitle?: string | null
+  image?: string | null
   url?: string | null
 }
 
-export interface PlaylistData {
-  id: string
+export interface TopGame {
+  appid: number
   name: string
-  description: string
   image: string | null
+  hoursTotal: string | null
   url: string | null
-}
-
-export interface TopTrack {
-  name: string
-  artist: string
-  albumArt: string | null
-  url: string | null
-}
-
-export interface TopAlbum {
-  name: string
-  artist: string
-  image: string | null
-  url: string | null
-}
-
-export interface TopItemsData {
-  tracks: TopTrack[]
-  albums: TopAlbum[]
 }

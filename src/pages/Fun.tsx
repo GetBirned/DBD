@@ -1,5 +1,6 @@
 import IconHero from '@/components/IconHero'
 import Showcase from '@/components/Showcase'
+import PageTransition from '@/components/PageTransition'
 import { GitHubIcon } from '@/components/icons'
 import { projects } from '@/data/projects'
 
@@ -7,7 +8,7 @@ const items = projects.map((p) => ({ ...p, meta: p.stack }))
 
 export default function Fun() {
   return (
-    <>
+    <PageTransition>
       <IconHero active="code" />
 
       <div className="px-6 pb-12 text-center sm:px-12">
@@ -29,6 +30,6 @@ export default function Fun() {
           </a>
         )}
       />
-    </>
+    </PageTransition>
   )
 }

@@ -1,19 +1,17 @@
-import { useSpotifyData, type PlaylistData } from '@/hooks/useSpotifyData'
+import { useSteamData, type TopGame } from '@/hooks/useSteamData'
 
-function PlaylistSkeleton() {
-  return (
-    <div className="aspect-square animate-pulse rounded-3xl border border-line bg-panel backdrop-blur-lg" />
-  )
+function GameSkeleton() {
+  return <div className="aspect-video animate-pulse rounded-3xl border border-line bg-panel backdrop-blur-lg" />
 }
 
-export default function PlaylistHighlights() {
-  const { data, loading } = useSpotifyData<PlaylistData[]>('/api/spotify/playlists')
+export default function TopGames() {
+  const { data, loading } = useSteamData<TopGame[]>('/api/steam/top')
 
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-4.5 sm:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
-          <PlaylistSkeleton key={i} />
+          <GameSkeleton key={i} />
         ))}
       </div>
     )
@@ -23,28 +21,25 @@ export default function PlaylistHighlights() {
 
   return (
     <div className="grid grid-cols-2 gap-4.5 sm:grid-cols-4">
-      {data.map((p) => (
+      {data.map((g) => (
         <a
-          key={p.id}
-          href={p.url ?? undefined}
+          key={g.appid}
+          href={g.url ?? undefined}
           target="_blank"
           rel="noreferrer"
           className="group overflow-hidden rounded-3xl border border-line bg-panel backdrop-blur-lg transition-transform duration-250 ease-out hover:-translate-y-1 hover:shadow-[0_16px_32px_-14px_oklch(0.5_0.18_290_/_0.45)]"
         >
-          <div className="aspect-square overflow-hidden bg-bg-soft">
-            {p.image && (
+          <div className="aspect-video overflow-hidden bg-bg-soft">
+            {g.image && (
               <img
-                src={p.image}
+                src={g.image}
                 alt=""
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             )}
           </div>
           <div className="p-4">
-            <div className="truncate text-sm font-semibold text-ink group-hover:text-grad-a">{p.name}</div>
-            {p.description && (
-              <div className="mt-0.5 truncate font-mono text-[10px] text-ink-faint">{p.description}</div>
-            )}
+            <div className="truncate text-sm font-semibold text-ink group-hover:text-grad-a">{g.name}</div>
           </div>
         </a>
       ))}

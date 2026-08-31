@@ -1,7 +1,9 @@
 export interface ProjectData {
   name: string
-  /** Short initials shown on the Home page's small interactive icon tiles. */
+  /** Short initials shown on the Home page's small interactive icon tiles when there's no logo. */
   glyph: string
+  /** Real logo image, when available — takes priority over the glyph. */
+  logo?: string
   tag: string
   /** Subtle per-card accent color. */
   tint: string
@@ -25,6 +27,7 @@ export const projects: ProjectData[] = [
   {
     name: 'FortLotto',
     glyph: 'FL',
+    logo: '/logos/project_logos/FortLottoBlack.png',
     tag: 'Web Game',
     tint: 'oklch(0.58 0.19 275)',
     stack: 'HTML5 · CSS3 · JavaScript · LocalStorage',
@@ -35,6 +38,7 @@ export const projects: ProjectData[] = [
   {
     name: 'DartERP',
     glyph: 'DE',
+    logo: '/logos/project_logos/dartERP_logo.png',
     tag: '[ Add category ]',
     tint: 'oklch(0.56 0.15 250)',
     stack: '[ Add tech stack ]',
@@ -45,11 +49,23 @@ export const projects: ProjectData[] = [
   {
     name: 'DeadLotto',
     glyph: 'DL',
+    logo: '/logos/project_logos/deadLotto_logo.png',
     tag: '[ Add category ]',
     tint: 'oklch(0.5 0.18 25)',
     stack: '[ Add tech stack ]',
     desc: '[ Add a 1–2 sentence description — what problem does DeadLotto solve, and for who? ]',
     vidLabel: 'Demo — DeadLotto',
+    repo: '#',
+  },
+  {
+    name: 'Die Or Die',
+    glyph: 'DD',
+    logo: '/logos/project_logos/dieordie.png',
+    tag: 'Deck-Builder',
+    tint: 'oklch(0.55 0.2 20)',
+    stack: 'Godot · GDScript · Shader · UI/UX',
+    desc: 'A rogue-like deck-builder featuring physics-based dice mechanics and poker-hand inspired multipliers and abilities. Build up a dice bag, roll wisely, and defeat the likes of King Chess.',
+    vidLabel: 'Demo — Die Or Die',
     repo: '#',
   },
 ]

@@ -1,13 +1,16 @@
 import IconHero from '@/components/IconHero'
 import Marquee from '@/components/Marquee'
 import Showcase from '@/components/Showcase'
+import Reveal from '@/components/Reveal'
+import PageTransition from '@/components/PageTransition'
 import { clients } from '@/data/clients'
+import { companies } from '@/data/companies'
 
 const items = clients.map((c) => ({ ...c, meta: c.loc }))
 
 export default function DesignsByDart() {
   return (
-    <>
+    <PageTransition>
       <IconHero active="dbd" />
 
       <div className="px-6 pb-10 text-center sm:px-12">
@@ -16,9 +19,9 @@ export default function DesignsByDart() {
         </div>
       </div>
 
-      <div className="mx-auto mb-12 max-w-[1120px] px-6 sm:px-12">
-        <Marquee items={clients.map((c) => c.name)} />
-      </div>
+      <Reveal className="mx-auto mb-12 max-w-[1120px] px-6 sm:px-12">
+        <Marquee items={companies} />
+      </Reveal>
 
       <Showcase
         items={items}
@@ -30,6 +33,6 @@ export default function DesignsByDart() {
           </>
         )}
       />
-    </>
+    </PageTransition>
   )
 }

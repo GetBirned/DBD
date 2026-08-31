@@ -8,6 +8,7 @@ export interface ClientData {
   quote: string
   attr: string
   vidLabel: string
+  logo?: string
 }
 
 export const clients: ClientData[] = [
@@ -21,6 +22,7 @@ export const clients: ClientData[] = [
       'From the very beginning, Dartagnan demonstrated exceptional professionalism and expertise. His attention to detail and creative approach transformed my vision into a stunning reality.',
     attr: 'Thresher Divers Surf Shop — ★★★★★',
     vidLabel: 'Site walkthrough — thresherdivers.com',
+    logo: '/logos/company_logos/thresherLogo.png',
   },
   {
     name: 'Account Tree',
@@ -51,5 +53,6 @@ export const clients: ClientData[] = [
     quote: '[ Add a message from Evolve PT about the experience working together ]',
     attr: 'Dr. Annika Michaels — Evolve PT',
     vidLabel: 'Site walkthrough — Evolve PT',
+    logo: '/logos/company_logos/evolvePT_logo.webp',
   },
 ]

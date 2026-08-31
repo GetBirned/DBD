@@ -128,23 +128,25 @@ export default function Logo3D({
 
   return (
     <div className="relative z-10 flex flex-col items-center">
-      <div
-        className="relative"
-        style={{
-          width: `min(80vw, ${width}px)`,
-          aspectRatio: `${width} / ${height}`,
-          perspective: 1100,
-        }}
-      >
-        <div ref={groupRef} className="relative h-full w-full" style={{ transformStyle: 'preserve-3d' }}>
-          {LAYER_Z.map((z, i) => (
-            <MaskedLayer
-              key={z}
-              src={LOGO_SRC[variant]}
-              z={z}
-              background={i === LAYER_Z.length - 1 ? BRAND_GRADIENT : LAYER_COLORS[i]}
-            />
-          ))}
+      <div className="animate-float">
+        <div
+          className="relative"
+          style={{
+            width: `min(80vw, ${width}px)`,
+            aspectRatio: `${width} / ${height}`,
+            perspective: 1100,
+          }}
+        >
+          <div ref={groupRef} className="relative h-full w-full" style={{ transformStyle: 'preserve-3d' }}>
+            {LAYER_Z.map((z, i) => (
+              <MaskedLayer
+                key={z}
+                src={LOGO_SRC[variant]}
+                z={z}
+                background={i === LAYER_Z.length - 1 ? BRAND_GRADIENT : LAYER_COLORS[i]}
+              />
+            ))}
+          </div>
         </div>
       </div>
       <div

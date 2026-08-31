@@ -133,7 +133,7 @@ router.get('/playlists', async (_req, res) => {
     const playlists = await Promise.all(
       playlistIds.map(async (id) => {
         const r = await fetch(
-          `${SPOTIFY_API_URL}/playlists/${id}?fields=id,name,description,images,external_urls,tracks.total`,
+          `${SPOTIFY_API_URL}/playlists/${id}?fields=id,name,description,images,external_urls`,
           { headers: { Authorization: `Bearer ${token}` } },
         )
         if (!r.ok) return null
@@ -144,7 +144,6 @@ router.get('/playlists', async (_req, res) => {
           description: data.description || '',
           image: data.images?.[0]?.url ?? null,
           url: data.external_urls?.spotify ?? null,
-          trackCount: data.tracks?.total ?? 0,
         }
       }),
     )
@@ -157,8 +156,65 @@ router.get('/playlists', async (_req, res) => {
   }
 })
 
+let topCache = { data: null, expiresAt: 0 }
+
+router.get('/top', async (_req, res) => {
+  try {
+    if (topCache.data && topCache.expiresAt > Date.now()) {
+      return res.json(topCache.data)
+    }
+
+    const token = await getUserAccessToken()
+    const r = await fetch(`${SPOTIFY_API_URL}/me/top/tracks?time_range=medium_term&limit=50`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!r.ok) throw new Error(`Spotify top tracks request failed: ${r.status}`)
+    const data = await r.json()
+    const items = data.items || []
+
+    const tracks = items.slice(0, 5).map((t) => ({
+      name: t.name,
+      artist: t.artists.map((a) => a.name).join(', '),
+      albumArt: t.album?.images?.[0]?.url ?? null,
+      url: t.external_urls?.spotify ?? null,
+    }))
+
+    // Spotify has no "top albums" endpoint, so derive it: count how often each
+    // album shows up across the top 50 tracks, break ties by best track rank.
+    const albumMap = new Map()
+    items.forEach((t, rank) => {
+      const album = t.album
+      if (!album?.id) return
+      const existing = albumMap.get(album.id)
+      if (existing) {
+        existing.count += 1
+      } else {
+        albumMap.set(album.id, {
+          count: 1,
+          bestRank: rank,
+          name: album.name,
+          artist: t.artists.map((a) => a.name).join(', '),
+          image: album.images?.[0]?.url ?? null,
+          url: album.external_urls?.spotify ?? null,
+        })
+      }
+    })
+    const albums = [...albumMap.values()]
+      .sort((a, b) => b.count - a.count || a.bestRank - b.bestRank)
+      .slice(0, 5)
+      .map(({ name, artist, image, url }) => ({ name, artist, image, url }))
+
+    const payload = { tracks, albums }
+    topCache = { data: payload, expiresAt: Date.now() + 60 * 60_000 }
+    res.json(payload)
+  } catch (err) {
+    console.error('[spotify] top error:', err.message)
+    res.status(503).json({ error: 'spotify_unavailable' })
+  }
+})
+
 // --- one-time setup flow: visit /api/spotify/login, approve, get a refresh token back ---
-const SCOPES = ['user-read-currently-playing', 'user-read-recently-played'].join(' ')
+const SCOPES = ['user-read-currently-playing', 'user-read-recently-played', 'user-top-read'].join(' ')
 
 router.get('/login', (req, res) => {
   const { clientId, redirectUri } = getEnv()

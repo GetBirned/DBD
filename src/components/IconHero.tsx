@@ -58,9 +58,23 @@ export default function IconHero({
       className="relative flex flex-col items-center justify-center overflow-hidden"
       style={{ minHeight }}
     >
+      {/*
+        `ellipse closest-side` (not `circle` with a % stop) so the gradient is
+        mathematically guaranteed to reach fully transparent right at the box's
+        nearest edge in every direction, regardless of aspect ratio. `circle`'s
+        percentage stops size off the farthest CORNER, so on a wide-but-short
+        section (common on real desktop windows) the "transparent" radius could
+        still exceed the section's height — leaving visible color exactly at the
+        bottom edge, which this section's overflow-hidden then hard-clipped into
+        a visible seam. The extra color stops ease the falloff so it fades
+        smoothly instead of showing a ring where the gradient math changes rate.
+      */}
       <div
-        className="absolute h-[600px] w-[600px] rounded-full blur-[20px]"
-        style={{ background: 'radial-gradient(circle, oklch(0.6 0.14 280 / .16) 0%, transparent 70%)' }}
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse closest-side at 38% 42%, oklch(0.62 0.16 255 / .26) 0%, oklch(0.62 0.16 255 / .12) 45%, oklch(0.62 0.16 255 / .04) 75%, transparent 100%), radial-gradient(ellipse closest-side at 62% 58%, oklch(0.55 0.19 305 / .22) 0%, oklch(0.55 0.19 305 / .1) 45%, oklch(0.55 0.19 305 / .04) 75%, transparent 100%)',
+        }}
       />
       <Logo3D variant={active} interactionRef={heroRef} width={size.width} height={size.height} />
 
