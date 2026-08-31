@@ -17,6 +17,13 @@ export default function Footer() {
           >
             Call Me
           </a>
+          <a
+            href="/resume.pdf"
+            download="Dartagnan_Birnie_Resume.pdf"
+            className="inline-flex items-center gap-2 rounded-full border border-line px-5.5 py-3 font-mono text-[11px] tracking-wide text-ink-dim uppercase transition-colors hover:border-grad-b hover:text-ink"
+          >
+            Download Résumé
+          </a>
         </div>
         <div className="mt-14 border-t border-line pt-7 font-mono text-xs tracking-wide text-ink-faint">
           © Dartagnan Birnie — Alton, NH

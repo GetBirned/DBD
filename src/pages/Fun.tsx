@@ -1,5 +1,8 @@
 import IconHero from '@/components/IconHero'
 import Showcase from '@/components/Showcase'
+import Skills from '@/components/Skills'
+import SectionTitle from '@/components/SectionTitle'
+import Reveal from '@/components/Reveal'
 import PageTransition from '@/components/PageTransition'
 import { GitHubIcon } from '@/components/icons'
 import { projects } from '@/data/projects'
@@ -16,6 +19,11 @@ export default function Fun() {
           <b className="font-semibold text-ink">Fun</b> · Personal Projects · Built for the Fun of It
         </div>
       </div>
+
+      <Reveal className="mx-auto mb-16 max-w-[1120px] px-6 sm:px-12">
+        <SectionTitle title="Skills & Tech" detail="What I Build With" />
+        <Skills />
+      </Reveal>
 
       <Showcase
         items={items}

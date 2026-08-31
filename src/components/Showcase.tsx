@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
-import { ChevronLeft, ChevronRight, PlayIcon } from './icons'
+import { ChevronLeft, ChevronRight, PlayIcon, ExpandIcon } from './icons'
 import Reveal from './Reveal'
+import Lightbox from './Lightbox'
 
 export interface ShowcaseBaseItem {
   name: string
@@ -11,6 +12,14 @@ export interface ShowcaseBaseItem {
   desc: string
   vidLabel: string
   logo?: string
+  /** Real screenshots, when available. Without `video`, [0] fills the main area and [1..3] fill
+   * the thumbnail row. With `video`, the main area shows the video instead and [0..2] fill the
+   * thumbnail row directly. Falls back to the placeholder play-button box / empty thumbnails for
+   * any missing slot. */
+  screenshots?: string[]
+  /** A real screen-recording (e.g. scrolling through the site) — takes over the main area from
+   * screenshots[0] when present. Autoplays muted/looped, so keep it short. */
+  video?: string
 }
 
 export default function Showcase<T extends ShowcaseBaseItem>({
@@ -23,6 +32,7 @@ export default function Showcase<T extends ShowcaseBaseItem>({
   renderFooter: (item: T) => ReactNode
 }) {
   const [idx, setIdx] = useState(0)
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
   const current = items[idx]
 
   const next = () => setIdx((i) => (i + 1) % items.length)
@@ -41,29 +51,94 @@ export default function Showcase<T extends ShowcaseBaseItem>({
           background: `linear-gradient(var(--color-panel), var(--color-panel)) padding-box, linear-gradient(135deg, var(--color-grad-a), ${current.tint}) border-box`,
         }}
       >
-        <div>
+        <div className="flex flex-col justify-center">
+          {current.logo && (
+            <img src={current.logo} alt="" className="mx-auto mb-4 h-16 w-auto max-w-[200px] object-contain md:hidden" />
+          )}
           <div className="relative flex aspect-16/10 items-center justify-center overflow-hidden rounded-[20px] border border-line bg-bg-soft lg:rounded-3xl">
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-full text-white transition-[background] duration-500 lg:h-20 lg:w-20"
-              style={{ background: `linear-gradient(135deg, var(--color-grad-a), ${current.tint})` }}
-            >
-              <PlayIcon />
-            </div>
-            <div className="absolute bottom-3.5 left-4 font-mono text-[10px] text-ink-faint lg:bottom-5 lg:left-6 lg:text-xs">
-              [ {current.vidLabel} ]
-            </div>
+            {current.video ? (
+              <video
+                key={current.video}
+                src={current.video}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-cover"
+              />
+            ) : current.screenshots?.[0] ? (
+              <button
+                type="button"
+                onClick={() => setLightboxSrc(current.screenshots![0])}
+                aria-label={`Enlarge ${current.vidLabel}`}
+                className="group/img relative h-full w-full cursor-zoom-in"
+              >
+                <img
+                  src={current.screenshots[0]}
+                  alt={current.vidLabel}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover/img:scale-105"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-250 group-hover/img:bg-black/25 group-hover/img:opacity-100">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-ink shadow-lg lg:h-12 lg:w-12">
+                    <ExpandIcon />
+                  </span>
+                </div>
+              </button>
+            ) : (
+              <>
+                <div
+                  className="flex h-14 w-14 items-center justify-center rounded-full text-white transition-[background] duration-500 lg:h-20 lg:w-20"
+                  style={{ background: `linear-gradient(135deg, var(--color-grad-a), ${current.tint})` }}
+                >
+                  <PlayIcon />
+                </div>
+                <div className="absolute bottom-3.5 left-4 font-mono text-[10px] text-ink-faint lg:bottom-5 lg:left-6 lg:text-xs">
+                  [ {current.vidLabel} ]
+                </div>
+              </>
+            )}
           </div>
           <div className="mt-2.5 grid grid-cols-3 gap-2.5 lg:mt-4 lg:gap-4">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="aspect-4/3 rounded-xl border border-line bg-bg-soft lg:rounded-2xl" />
-            ))}
+            {[0, 1, 2].map((i) => {
+              // Without a video, screenshots[0] is the main image, so thumbnails start at [1].
+              // With a video, the main area is taken, so thumbnails use [0..2] directly.
+              const thumbIdx = current.video ? i : i + 1
+              const src = current.screenshots?.[thumbIdx]
+              return src ? (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setLightboxSrc(src)}
+                  aria-label={`Enlarge screenshot ${thumbIdx + 1}`}
+                  className="group/thumb relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-xl border border-line bg-bg-soft lg:rounded-2xl"
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 text-white opacity-0 transition-all duration-250 group-hover/thumb:bg-black/25 group-hover/thumb:opacity-100">
+                    <ExpandIcon size={16} />
+                    <span className="sr-only">Enlarge</span>
+                  </div>
+                </button>
+              ) : (
+                <div key={i} className="aspect-4/3 rounded-xl border border-line bg-bg-soft lg:rounded-2xl" />
+              )
+            })}
           </div>
         </div>
 
         <div className="flex flex-col justify-center">
           {current.logo && (
-            <img src={current.logo} alt="" className="mb-4 h-11 w-auto max-w-[160px] object-contain lg:mb-5 lg:h-14 lg:max-w-[200px]" />
+            <img
+              src={current.logo}
+              alt=""
+              className="-ml-1.5 mb-4 hidden h-16 w-auto max-w-[200px] object-contain md:block lg:mb-5 lg:h-20 lg:max-w-[240px]"
+            />
           )}
+          <h2 className="text-[38px] leading-[1.05] font-bold font-display lg:text-[54px] xl:text-[60px]">{current.name}</h2>
+          <div className="my-2.5 font-mono text-xs text-ink-faint lg:my-3.5 lg:text-sm">{current.meta}</div>
           <span
             className="mb-3.5 inline-block self-start rounded-full border border-transparent px-3.5 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-[background,color] duration-500 lg:mb-4 lg:px-4 lg:py-2 lg:text-[11px]"
             style={{
@@ -73,8 +148,6 @@ export default function Showcase<T extends ShowcaseBaseItem>({
           >
             {current.tag}
           </span>
-          <h2 className="text-[38px] leading-[1.05] font-bold font-display lg:text-[54px] xl:text-[60px]">{current.name}</h2>
-          <div className="my-2.5 font-mono text-xs text-ink-faint lg:my-3.5 lg:text-sm">{current.meta}</div>
           <p className="text-[15px] leading-[1.7] text-ink-dim lg:text-[17px]">{current.desc}</p>
           <div className="mt-5 border-t border-line pt-5 lg:mt-7 lg:pt-7">{renderFooter(current)}</div>
         </div>
@@ -111,6 +184,8 @@ export default function Showcase<T extends ShowcaseBaseItem>({
           {idx + 1} / {items.length}
         </div>
       </div>
+
+      <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
     </div>
   )
 }

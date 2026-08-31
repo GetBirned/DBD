@@ -9,6 +9,7 @@ export interface CompanyLogo {
  * these are just best-guess labels next to the real logo image.
  */
 export const companies: CompanyLogo[] = [
+  { name: 'Account Tree', logo: '/logos/company_logos/accountTreeLogo.webp' },
   { name: 'Thresher Divers Surf Shop', logo: '/logos/company_logos/thresherLogo.png' },
   { name: 'Evolve PT', logo: '/logos/company_logos/evolvePT_logo.webp' },
   { name: 'Crib Ready', logo: '/logos/company_logos/CribReady.png' },
@@ -16,7 +17,7 @@ export const companies: CompanyLogo[] = [
   { name: 'Newfound Adventures', logo: '/logos/company_logos/NewfoundAdventures_logo.png' },
   { name: 'Boston Terrazzo', logo: '/logos/company_logos/bostonTerrazoSmall.png' },
   { name: 'Funny Farmacopia', logo: '/logos/company_logos/funnyFarmacopia.png' },
-  { name: 'Houseal Construction', logo: '/logos/company_logos/housealConstruction.webp' },
+  { name: 'Houseal Construction', logo: '/logos/company_logos/housealConstructionBlack.webp' },
   { name: 'Made On Earth Boutique', logo: '/logos/company_logos/madeOnEarth_Boutique.png' },
   { name: 'Nesta', logo: '/logos/company_logos/nestaLogo.png' },
   { name: 'Nunavut', logo: '/logos/company_logos/nunavutLogo_small.png' },
@@ -25,6 +26,5 @@ export const companies: CompanyLogo[] = [
   { name: 'The Nurse Boutique', logo: '/logos/company_logos/theNurseBoutiqueSmall.png' },
   { name: 'Wilbert Art Studio', logo: '/logos/company_logos/wilbertArtStudio.png' },
   { name: 'You Know!', logo: '/logos/company_logos/youknowFavicon.png' },
-  // momsIndoorCat.png intentionally left out — not confident guessing this business
-  // name from the filename alone. Send the real name and it'll get added.
+  { name: "Mom's Indoor Cat", logo: '/logos/company_logos/momsIndoorCat.png' },
 ]
