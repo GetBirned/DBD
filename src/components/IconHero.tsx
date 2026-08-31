@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Logo3D, { LogoIcon, LOGO_ASPECT, type LogoVariant } from './Logo3D'
 import { ChevronDown } from './icons'
+import { playClick } from '@/lib/sound'
 
 const ROUTES: Record<LogoVariant, string> = { db: '/', dbd: '/dbd', code: '/fun' }
 const LABELS: Record<LogoVariant, string> = { db: 'Home', dbd: 'Designs By Dart', code: 'Fun Projects' }
@@ -23,13 +24,13 @@ function GlowIcon({ children, href, to, label }: { children: React.ReactNode; hr
   )
   if (to) {
     return (
-      <Link to={to} aria-label={label} className={className}>
+      <Link to={to} aria-label={label} className={className} onClick={() => playClick()}>
         {inner}
       </Link>
     )
   }
   return (
-    <a href={href} target="_blank" rel="noreferrer" aria-label={label} className={className}>
+    <a href={href} target="_blank" rel="noreferrer" aria-label={label} className={className} onClick={() => playClick()}>
       {inner}
     </a>
   )

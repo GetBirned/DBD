@@ -3,6 +3,7 @@ import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import { ChevronLeft, ChevronRight, PlayIcon, ExpandIcon } from './icons'
 import Reveal from './Reveal'
 import Lightbox from './Lightbox'
+import { playClick } from '@/lib/sound'
 
 // Slide direction: 1 = advancing (old exits left, new enters from right), -1 = reverse.
 const slideVariants: Variants = {
@@ -74,6 +75,7 @@ export default function Showcase<T extends ShowcaseBaseItem>({
     const dx = t.clientX - start.x
     const dy = t.clientY - start.y
     if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return
+    playClick()
     if (dx < 0) next()
     else prev()
   }
