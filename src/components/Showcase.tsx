@@ -173,11 +173,22 @@ export default function Showcase<T extends ShowcaseBaseItem>({
                         aria-label={`Enlarge screenshot ${thumbIdx + 1}`}
                         className="group/thumb relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-xl border border-line bg-bg-soft lg:rounded-2xl"
                       >
-                        <img
-                          src={src}
-                          alt=""
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
-                        />
+                        {src.endsWith('.webm') ? (
+                          <video
+                            src={src}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                          />
+                        ) : (
+                          <img
+                            src={src}
+                            alt=""
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                          />
+                        )}
                         <div className="absolute inset-0 flex items-center justify-center bg-black/0 text-white opacity-0 transition-all duration-250 group-hover/thumb:bg-black/25 group-hover/thumb:opacity-100">
                           <ExpandIcon size={16} />
                           <span className="sr-only">Enlarge</span>

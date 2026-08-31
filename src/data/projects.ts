@@ -11,8 +11,11 @@ export interface ProjectData {
   desc: string
   vidLabel: string
   repo: string
-  /** Real screenshots pulled from the project's GitHub repo, when available. */
+  /** Real screenshots pulled from the project's GitHub repo, when available. A .webm entry
+   * plays as a looping muted video (thumbnail + lightbox) instead of a static image. */
   screenshots?: string[]
+  /** A real screen-recording — takes over the main showcase area from screenshots[0]. */
+  video?: string
 }
 
 export const projects: ProjectData[] = [
@@ -81,6 +84,8 @@ export const projects: ProjectData[] = [
     desc: 'A rogue-like deck-builder featuring physics-based dice mechanics and poker-hand inspired multipliers and abilities. Build up a dice bag, roll wisely, and defeat the likes of King Chess.',
     vidLabel: 'Demo — Die Or Die',
     repo: 'https://github.com/GetBirned/Die-Or-Die',
+    video: '/videos/dieordie/menu.webm',
+    screenshots: ['/videos/dieordie/map.webm', '/videos/dieordie/basicroll.webm', '/videos/dieordie/bigroll.webm'],
   },
   {
     name: 'PiRail',

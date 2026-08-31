@@ -24,16 +24,33 @@ export default function Lightbox({ src, onClose }: { src: string | null; onClose
           className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm"
           onClick={onClose}
         >
-          <motion.img
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            src={src}
-            alt=""
-            className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
-            onClick={(e) => e.stopPropagation()}
-          />
+          {src.endsWith('.webm') ? (
+            <motion.video
+              key={src}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              src={src}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <motion.img
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              src={src}
+              alt=""
+              className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
+              onClick={(e) => e.stopPropagation()}
+            />
+          )}
           <button
             type="button"
             onClick={onClose}
