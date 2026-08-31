@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode, type TouchEvent } from 'react'
 import { ChevronLeft, ChevronRight, PlayIcon, ExpandIcon } from './icons'
 import Reveal from './Reveal'
 import Lightbox from './Lightbox'
@@ -38,22 +38,45 @@ export default function Showcase<T extends ShowcaseBaseItem>({
   const next = () => setIdx((i) => (i + 1) % items.length)
   const prev = () => setIdx((i) => (i - 1 + items.length) % items.length)
 
+  // Swipe navigation (mobile). Track horizontal delta only, and bail if the gesture
+  // turns out to be more vertical (a normal page scroll) than horizontal.
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
+  const SWIPE_THRESHOLD = 45
+
+  const onTouchStart = (e: TouchEvent) => {
+    const t = e.touches[0]
+    touchStart.current = { x: t.clientX, y: t.clientY }
+  }
+  const onTouchEnd = (e: TouchEvent) => {
+    const start = touchStart.current
+    touchStart.current = null
+    if (!start) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - start.x
+    const dy = t.clientY - start.y
+    if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return
+    if (dx < 0) next()
+    else prev()
+  }
+
   return (
-    <div className="mx-auto max-w-[1120px] px-6 pb-20 sm:px-12 lg:max-w-[1440px] lg:px-16 xl:max-w-[1680px] xl:px-20">
-      <div className="mb-6 font-mono text-xs tracking-widest text-ink-faint uppercase">
+    <div className="mx-auto max-w-[1120px] px-6 pb-12 sm:px-12 sm:pb-20 lg:max-w-[1440px] lg:px-16 xl:max-w-[1680px] xl:px-20">
+      <div className="mb-4 font-mono text-xs tracking-widest text-ink-faint uppercase sm:mb-6">
         {eyebrow} — {idx + 1} / {items.length}
       </div>
 
       <Reveal
         key={current.name}
-        className="grid grid-cols-1 gap-12 rounded-[32px] border border-transparent p-8 shadow-[0_30px_60px_-35px_oklch(0.3_0.05_270_/_0.3)] backdrop-blur-xl transition-[background] duration-500 sm:p-11 md:grid-cols-2 lg:gap-16 lg:rounded-[40px] lg:p-16 xl:gap-20 xl:p-20"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        className="grid grid-cols-1 gap-5 rounded-[24px] border border-transparent p-5 shadow-[0_30px_60px_-35px_oklch(0.3_0.05_270_/_0.3)] backdrop-blur-xl transition-[background] duration-500 sm:gap-12 sm:rounded-[32px] sm:p-11 md:grid-cols-2 lg:gap-16 lg:rounded-[40px] lg:p-16 xl:gap-20 xl:p-20"
         style={{
           background: `linear-gradient(var(--color-panel), var(--color-panel)) padding-box, linear-gradient(135deg, var(--color-grad-a), ${current.tint}) border-box`,
         }}
       >
         <div className="flex flex-col justify-center">
           {current.logo && (
-            <img src={current.logo} alt="" className="mx-auto mb-4 h-16 w-auto max-w-[200px] object-contain md:hidden" />
+            <img src={current.logo} alt="" className="mx-auto mb-3 h-12 w-auto max-w-[160px] object-contain sm:mb-4 sm:h-16 sm:max-w-[200px] md:hidden" />
           )}
           <div className="relative flex aspect-16/10 items-center justify-center overflow-hidden rounded-[20px] border border-line bg-bg-soft lg:rounded-3xl">
             {current.video ? (
@@ -98,7 +121,7 @@ export default function Showcase<T extends ShowcaseBaseItem>({
               </>
             )}
           </div>
-          <div className="mt-2.5 grid grid-cols-3 gap-2.5 lg:mt-4 lg:gap-4">
+          <div className="mt-2 grid grid-cols-3 gap-2 sm:mt-2.5 sm:gap-2.5 lg:mt-4 lg:gap-4">
             {[0, 1, 2].map((i) => {
               // Without a video, screenshots[0] is the main image, so thumbnails start at [1].
               // With a video, the main area is taken, so thumbnails use [0..2] directly.
@@ -137,10 +160,10 @@ export default function Showcase<T extends ShowcaseBaseItem>({
               className="-ml-1.5 mb-4 hidden h-16 w-auto max-w-[200px] object-contain md:block lg:mb-5 lg:h-20 lg:max-w-[240px]"
             />
           )}
-          <h2 className="text-[38px] leading-[1.05] font-bold font-display lg:text-[54px] xl:text-[60px]">{current.name}</h2>
-          <div className="my-2.5 font-mono text-xs text-ink-faint lg:my-3.5 lg:text-sm">{current.meta}</div>
+          <h2 className="text-[28px] leading-[1.05] font-bold font-display sm:text-[38px] lg:text-[54px] xl:text-[60px]">{current.name}</h2>
+          <div className="my-1.5 font-mono text-xs text-ink-faint sm:my-2.5 lg:my-3.5 lg:text-sm">{current.meta}</div>
           <span
-            className="mb-3.5 inline-block self-start rounded-full border border-transparent px-3.5 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-[background,color] duration-500 lg:mb-4 lg:px-4 lg:py-2 lg:text-[11px]"
+            className="mb-2.5 inline-block self-start rounded-full border border-transparent px-3.5 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-[background,color] duration-500 sm:mb-3.5 lg:mb-4 lg:px-4 lg:py-2 lg:text-[11px]"
             style={{
               color: current.tint,
               background: `linear-gradient(var(--color-bg), var(--color-bg)) padding-box, linear-gradient(135deg, var(--color-grad-a), ${current.tint}) border-box`,
@@ -148,12 +171,12 @@ export default function Showcase<T extends ShowcaseBaseItem>({
           >
             {current.tag}
           </span>
-          <p className="text-[15px] leading-[1.7] text-ink-dim lg:text-[17px]">{current.desc}</p>
-          <div className="mt-5 border-t border-line pt-5 lg:mt-7 lg:pt-7">{renderFooter(current)}</div>
+          <p className="text-[14px] leading-[1.6] text-ink-dim sm:text-[15px] sm:leading-[1.7] lg:text-[17px]">{current.desc}</p>
+          <div className="mt-3.5 border-t border-line pt-3.5 sm:mt-5 sm:pt-5 lg:mt-7 lg:pt-7">{renderFooter(current)}</div>
         </div>
       </Reveal>
 
-      <div className="mt-7 flex items-center justify-center gap-5">
+      <div className="mt-5 flex items-center justify-center gap-5 sm:mt-7">
         <button
           onClick={prev}
           aria-label="Previous"

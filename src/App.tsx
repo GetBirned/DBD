@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import DesignsByDart from './pages/DesignsByDart'
 import Fun from './pages/Fun'
 import Footer from './components/Footer'
+import ClickSound from './components/ClickSound'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -22,6 +23,7 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <ClickSound />
       <div className="ambient-glow" />
       <div className="grain-overlay" />
       <AnimatePresence mode="wait" initial={false}>
