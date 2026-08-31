@@ -4,7 +4,7 @@ import Skills from '@/components/Skills'
 import SectionTitle from '@/components/SectionTitle'
 import Reveal from '@/components/Reveal'
 import PageTransition from '@/components/PageTransition'
-import { GitHubIcon } from '@/components/icons'
+import { GitHubIcon, ArrowUpRight } from '@/components/icons'
 import { projects } from '@/data/projects'
 
 const items = projects.map((p) => ({ ...p, meta: p.stack }))
@@ -29,13 +29,26 @@ export default function Fun() {
         items={items}
         eyebrow="Side Projects"
         renderFooter={(item) => (
-          <a
-            href={item.repo}
-            className="inline-flex items-center gap-2.5 font-mono text-xs tracking-wide text-ink uppercase transition-colors hover:text-grad-a"
-          >
-            <GitHubIcon size={15} />
-            View on GitHub
-          </a>
+          <div className="flex flex-col items-start gap-3">
+            {item.url && (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+                className={`inline-flex items-center gap-2 font-mono text-xs tracking-wide uppercase transition-colors hover:text-grad-a ${item.cardDark ? 'text-white' : 'text-ink'}`}
+              >
+                Visit Site
+                <ArrowUpRight />
+              </a>
+            )}
+            <a
+              href={item.repo}
+              className={`inline-flex items-center gap-2.5 font-mono text-xs tracking-wide uppercase transition-colors hover:text-grad-a ${item.cardDark ? 'text-white' : 'text-ink'}`}
+            >
+              <GitHubIcon size={15} />
+              View on GitHub
+            </a>
+          </div>
         )}
       />
     </PageTransition>

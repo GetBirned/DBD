@@ -29,6 +29,28 @@ export interface ShowcaseBaseItem {
   /** A real screen-recording (e.g. scrolling through the site) — takes over the main area from
    * screenshots[0] when present. Autoplays muted/looped, so keep it short. */
   video?: string
+  /** A wordmark image that replaces the plain-text name heading, when the brand has one. */
+  nameLogo?: string
+  /** Overrides the card's panel fill (default: the standard translucent panel). Use with
+   * `cardDark` when the override is dark enough to need light text. */
+  cardBg?: string
+  /** Extra background-image layer(s) (e.g. a subtle repeating-gradient grid) painted over
+   * `cardBg`, for cards that want texture instead of a flat fill. */
+  cardTexture?: string
+  /** Switches the card's text/border colors to their light-on-dark equivalents, for use with a
+   * dark `cardBg`. */
+  cardDark?: boolean
+  /** A looping muted video behind the entire card (under a dark scrim), instead of the demo
+   * media area. Pair with `cardDark` (and usually a dark `cardBg` fallback for before it loads). */
+  cardBgVideo?: string
+  /** A static image behind the entire card (under a dark scrim) — the still-image equivalent of
+   * `cardBgVideo`. Pair with `cardDark` and a dark `cardBg` fallback. */
+  cardBgImage?: string
+  /** Scrim darkness (0-100) over `cardBgVideo`/`cardBgImage`, default 60. Busier backgrounds need
+   * a higher value to keep text legible. */
+  cardScrim?: number
+  /** A light-colored variant of `logo`, used instead when `cardDark` is set. */
+  logoDark?: string
 }
 
 export default function Showcase<T extends ShowcaseBaseItem>({
@@ -107,26 +129,79 @@ export default function Showcase<T extends ShowcaseBaseItem>({
               animate="center"
               exit="exit"
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="col-start-1 row-start-1 grid grid-cols-1 gap-5 rounded-[24px] border border-transparent p-5 backdrop-blur-xl transition-[background] duration-500 sm:gap-12 sm:rounded-[32px] sm:p-11 md:grid-cols-2 lg:gap-16 lg:rounded-[40px] lg:p-16 xl:gap-20 xl:p-20"
+              className="relative col-start-1 row-start-1 grid grid-cols-1 gap-5 rounded-[24px] border border-transparent p-5 backdrop-blur-xl transition-[background] duration-500 sm:gap-12 sm:rounded-[32px] sm:p-11 md:grid-cols-2 lg:gap-16 lg:rounded-[40px] lg:p-16 xl:gap-20 xl:p-20"
               style={{
-                background: `linear-gradient(var(--color-panel), var(--color-panel)) padding-box, linear-gradient(135deg, var(--color-grad-a), ${current.tint}) border-box`,
+                background: [
+                  current.cardTexture,
+                  `linear-gradient(${current.cardBg ?? 'var(--color-panel)'}, ${current.cardBg ?? 'var(--color-panel)'}) padding-box`,
+                  `linear-gradient(135deg, var(--color-grad-a), ${current.tint}) border-box`,
+                ]
+                  .filter(Boolean)
+                  .join(', '),
               }}
             >
+              {current.cardBgVideo && (
+                <>
+                  <video
+                    src={current.cardBgVideo}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 -z-10 h-full w-full rounded-[inherit] object-cover"
+                  />
+                  <div
+                    className="absolute inset-0 -z-10 rounded-[inherit]"
+                    style={{ background: `rgba(0,0,0,${(current.cardScrim ?? 60) / 100})` }}
+                  />
+                </>
+              )}
+              {current.cardBgImage && (
+                <>
+                  <img
+                    src={current.cardBgImage}
+                    alt=""
+                    className="absolute inset-0 -z-10 h-full w-full rounded-[inherit] object-cover"
+                  />
+                  <div
+                    className="absolute inset-0 -z-10 rounded-[inherit]"
+                    style={{ background: `rgba(0,0,0,${(current.cardScrim ?? 60) / 100})` }}
+                  />
+                </>
+              )}
               <div className="flex flex-col justify-center">
                 {current.logo && (
-                  <img src={current.logo} alt="" className="mx-auto mb-3 h-12 w-auto max-w-[160px] object-contain sm:mb-4 sm:h-16 sm:max-w-[200px] md:hidden" />
+                  <img
+                    src={current.cardDark && current.logoDark ? current.logoDark : current.logo}
+                    alt=""
+                    className="mx-auto mb-3 h-12 w-auto max-w-[160px] object-contain sm:mb-4 sm:h-16 sm:max-w-[200px] md:hidden"
+                  />
                 )}
-                <div className="relative flex aspect-16/10 items-center justify-center overflow-hidden rounded-[20px] border border-line bg-bg-soft lg:rounded-3xl">
+                <div
+                  className={`relative flex aspect-16/10 items-center justify-center overflow-hidden rounded-[20px] border lg:rounded-3xl ${current.cardDark ? 'border-white/10 bg-white/5' : 'border-line bg-bg-soft'}`}
+                >
                   {current.video ? (
-                    <video
-                      key={current.video}
-                      src={current.video}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="h-full w-full object-cover"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setLightboxSrc(current.video!)}
+                      aria-label={`Enlarge ${current.vidLabel}`}
+                      className="group/img relative h-full w-full cursor-zoom-in"
+                    >
+                      <video
+                        key={current.video}
+                        src={current.video}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-250 group-hover/img:bg-black/25 group-hover/img:opacity-100">
+                        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-ink shadow-lg lg:h-12 lg:w-12">
+                          <ExpandIcon />
+                        </span>
+                      </div>
+                    </button>
                   ) : current.screenshots?.[0] ? (
                     <button
                       type="button"
@@ -153,7 +228,9 @@ export default function Showcase<T extends ShowcaseBaseItem>({
                       >
                         <PlayIcon />
                       </div>
-                      <div className="absolute bottom-3.5 left-4 font-mono text-[10px] text-ink-faint lg:bottom-5 lg:left-6 lg:text-xs">
+                      <div
+                        className={`absolute bottom-3.5 left-4 font-mono text-[10px] lg:bottom-5 lg:left-6 lg:text-xs ${current.cardDark ? 'text-white/60' : 'text-ink-faint'}`}
+                      >
                         [ {current.vidLabel} ]
                       </div>
                     </>
@@ -171,7 +248,7 @@ export default function Showcase<T extends ShowcaseBaseItem>({
                         type="button"
                         onClick={() => setLightboxSrc(src)}
                         aria-label={`Enlarge screenshot ${thumbIdx + 1}`}
-                        className="group/thumb relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-xl border border-line bg-bg-soft lg:rounded-2xl"
+                        className={`group/thumb relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-xl border lg:rounded-2xl ${current.cardDark ? 'border-white/10 bg-white/5' : 'border-line bg-bg-soft'}`}
                       >
                         {src.endsWith('.webm') ? (
                           <video
@@ -195,7 +272,10 @@ export default function Showcase<T extends ShowcaseBaseItem>({
                         </div>
                       </button>
                     ) : (
-                      <div key={i} className="aspect-4/3 rounded-xl border border-line bg-bg-soft lg:rounded-2xl" />
+                      <div
+                        key={i}
+                        className={`aspect-4/3 rounded-xl border lg:rounded-2xl ${current.cardDark ? 'border-white/10 bg-white/5' : 'border-line bg-bg-soft'}`}
+                      />
                     )
                   })}
                 </div>
@@ -204,13 +284,29 @@ export default function Showcase<T extends ShowcaseBaseItem>({
               <div className="flex flex-col justify-center">
                 {current.logo && (
                   <img
-                    src={current.logo}
+                    src={current.cardDark && current.logoDark ? current.logoDark : current.logo}
                     alt=""
                     className="-ml-1.5 mb-4 hidden h-16 w-auto max-w-[200px] object-contain md:block lg:mb-5 lg:h-20 lg:max-w-[240px]"
                   />
                 )}
-                <h2 className="text-[28px] leading-[1.05] font-bold font-display sm:text-[38px] lg:text-[54px] xl:text-[60px]">{current.name}</h2>
-                <div className="my-1.5 font-mono text-xs text-ink-faint sm:my-2.5 lg:my-3.5 lg:text-sm">{current.meta}</div>
+                {current.nameLogo ? (
+                  <h2>
+                    <img
+                      src={current.nameLogo}
+                      alt={current.name}
+                      className="h-8 w-auto max-w-[260px] object-contain sm:h-11 sm:max-w-[320px] lg:h-14 lg:max-w-[380px] xl:h-16 xl:max-w-[420px]"
+                    />
+                  </h2>
+                ) : (
+                  <h2
+                    className={`text-[28px] leading-[1.05] font-bold font-display sm:text-[38px] lg:text-[54px] xl:text-[60px] ${current.cardDark ? 'text-white' : ''}`}
+                  >
+                    {current.name}
+                  </h2>
+                )}
+                <div className={`my-1.5 font-mono text-xs sm:my-2.5 lg:my-3.5 lg:text-sm ${current.cardDark ? 'text-white/60' : 'text-ink-faint'}`}>
+                  {current.meta}
+                </div>
                 <span
                   className="mb-2.5 inline-block self-start rounded-full border border-transparent px-3.5 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-[background,color] duration-500 sm:mb-3.5 lg:mb-4 lg:px-4 lg:py-2 lg:text-[11px]"
                   style={{
@@ -220,8 +316,16 @@ export default function Showcase<T extends ShowcaseBaseItem>({
                 >
                   {current.tag}
                 </span>
-                <p className="text-[14px] leading-[1.6] text-ink-dim sm:text-[15px] sm:leading-[1.7] lg:text-[17px]">{current.desc}</p>
-                <div className="mt-3.5 border-t border-line pt-3.5 sm:mt-5 sm:pt-5 lg:mt-7 lg:pt-7">{renderFooter(current)}</div>
+                <p
+                  className={`text-[14px] leading-[1.6] sm:text-[15px] sm:leading-[1.7] lg:text-[17px] ${current.cardDark ? 'text-white/85' : 'text-ink-dim'}`}
+                >
+                  {current.desc}
+                </p>
+                <div
+                  className={`mt-3.5 border-t pt-3.5 sm:mt-5 sm:pt-5 lg:mt-7 lg:pt-7 ${current.cardDark ? 'border-white/15' : 'border-line'}`}
+                >
+                  {renderFooter(current)}
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>

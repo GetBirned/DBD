@@ -11,11 +11,33 @@ export interface ProjectData {
   desc: string
   vidLabel: string
   repo: string
+  /** Live site, when the project is actually deployed somewhere — shown as a "Visit Site" link. */
+  url?: string
   /** Real screenshots pulled from the project's GitHub repo, when available. A .webm entry
    * plays as a looping muted video (thumbnail + lightbox) instead of a static image. */
   screenshots?: string[]
   /** A real screen-recording — takes over the main showcase area from screenshots[0]. */
   video?: string
+  /** A wordmark image that replaces the plain-text name heading, when the brand has one. */
+  nameLogo?: string
+  /** Overrides the card's panel fill — pair with `cardDark` when it's dark enough to need light text. */
+  cardBg?: string
+  /** Extra background-image layer(s) (e.g. a subtle repeating-gradient grid) painted over
+   * `cardBg`, for cards that want texture instead of a flat fill. */
+  cardTexture?: string
+  /** Switches the card's text/border colors to their light-on-dark equivalents. */
+  cardDark?: boolean
+  /** A looping muted video behind the entire card (under a dark scrim), instead of the demo
+   * media area. Pair with `cardDark` (and usually a dark `cardBg` fallback for before it loads). */
+  cardBgVideo?: string
+  /** A static image behind the entire card (under a dark scrim) — the still-image equivalent of
+   * `cardBgVideo`. Pair with `cardDark` and a dark `cardBg` fallback. */
+  cardBgImage?: string
+  /** Scrim darkness (0-100) over `cardBgVideo`/`cardBgImage`, default 60. Busier backgrounds need
+   * a higher value to keep text legible. */
+  cardScrim?: number
+  /** A light-colored variant of `logo`, used instead when `cardDark` is set. */
+  logoDark?: string
 }
 
 export const projects: ProjectData[] = [
@@ -33,12 +55,24 @@ export const projects: ProjectData[] = [
     name: 'FortLotto',
     glyph: 'FL',
     logo: '/logos/project_logos/FortLottoBlack.png',
+    logoDark: '/logos/project_logos/FortLottoWhite.png',
+    nameLogo: '/logos/project_logos/fortLottoWordmark.png',
     tag: 'Web Game',
     tint: 'oklch(0.58 0.19 275)',
     stack: 'HTML5 · CSS3 · JavaScript · LocalStorage',
     desc: 'A strat-roulette companion for Fortnite squads — randomized drop locations, unique challenges, and session-long win/loss tracking.',
     vidLabel: 'Demo — FortLotto',
     repo: 'https://github.com/GetBirned/FortLotto',
+    url: 'https://getbirned.github.io/FortLotto/index.html',
+    cardBgVideo: '/videos/fortlotto.webm',
+    cardBg: 'oklch(0.15 0.03 250 / 0.96)',
+    cardDark: true,
+    video: '/videos/fortlotto-demo.webm',
+    screenshots: [
+      '/screenshots/fortlotto/01-setup.webp',
+      '/screenshots/fortlotto/02-results.webp',
+      '/screenshots/fortlotto/03-about.webp',
+    ],
   },
   {
     name: 'DartERP',
@@ -46,13 +80,18 @@ export const projects: ProjectData[] = [
     logo: '/logos/project_logos/dartERP_logo.png',
     tag: 'Desktop ERP',
     tint: 'hsl(42, 65%, 45%)',
+    // The app's own tan/gold accent color (sampled from its logo), as the card's dominant tone.
+    cardBg: 'oklch(0.83 0.046 87)',
+    // A faint blueprint/graph-paper grid — fits an engineering tool better than a flat fill.
+    cardTexture:
+      'repeating-linear-gradient(0deg, oklch(0.3 0.02 87 / 0.08) 0px, oklch(0.3 0.02 87 / 0.08) 1px, transparent 1px, transparent 28px), repeating-linear-gradient(90deg, oklch(0.3 0.02 87 / 0.08) 0px, oklch(0.3 0.02 87 / 0.08) 1px, transparent 1px, transparent 28px)',
     stack: 'C# · .NET 8 · WinForms · SQL Server',
     desc: 'A desktop manufacturing ERP built for a fictional firearms manufacturer — inventory, purchase orders, work orders, and serialized finished-goods tracking with full audit trails, built to show professional .NET application architecture end to end.',
     vidLabel: 'Demo — DartERP',
     repo: 'https://github.com/GetBirned/DartERP',
+    video: '/videos/darterp.webm',
     screenshots: [
       '/screenshots/darterp/01-dashboard.webp',
-      '/screenshots/darterp/02-login.webp',
       '/screenshots/darterp/03-customers.webp',
       '/screenshots/darterp/04-inventory.webp',
     ],
@@ -61,18 +100,22 @@ export const projects: ProjectData[] = [
     name: 'DeadLotto',
     glyph: 'DL',
     logo: '/logos/project_logos/deadLotto_logo.png',
+    nameLogo: '/logos/project_logos/deadLottoWordmark.png',
     tag: 'Companion App',
     tint: 'hsl(38, 65%, 45%)',
     stack: 'React · Express · Socket.IO · PostgreSQL',
     desc: "A strat-roulette companion for Valve's Deadlock — spin or draft a random hero, take on a random challenge, and see if your team can pull off the run, with real-time multiplayer lobbies, achievements, and leaderboards.",
     vidLabel: 'Demo — DeadLotto',
     repo: 'https://github.com/GetBirned/DeadLotto',
+    url: 'https://www.deadlotto.com',
+    video: '/videos/deadlotto.webm',
     screenshots: [
-      '/screenshots/deadlotto/01-landing.webp',
-      '/screenshots/deadlotto/02-lobby.webp',
-      '/screenshots/deadlotto/03-game.webp',
-      '/screenshots/deadlotto/04-leaderboard.webp',
+      '/screenshots/deadlotto/01-lobby.webp',
+      '/screenshots/deadlotto/02-spin.webp',
+      '/screenshots/deadlotto/03-ingame.webp',
     ],
+    cardBg: 'oklch(0.16 0.02 60 / 0.95)',
+    cardDark: true,
   },
   {
     name: 'Die Or Die',
@@ -86,16 +129,24 @@ export const projects: ProjectData[] = [
     repo: 'https://github.com/GetBirned/Die-Or-Die',
     video: '/videos/dieordie/menu.webm',
     screenshots: ['/videos/dieordie/map.webm', '/videos/dieordie/basicroll.webm', '/videos/dieordie/bigroll.webm'],
+    // Sampled from the game's own dark red/black swirl background (see the menu footage).
+    cardBg: 'oklch(0.19 0.05 24 / 0.96)',
+    cardDark: true,
   },
   {
     name: 'PiRail',
     glyph: 'PR',
     logo: '/logos/project_logos/pirailBlack.png',
+    logoDark: '/logos/project_logos/pirailLight.png',
     tag: '[ Add category ]',
     tint: 'hsl(0, 65%, 45%)',
     stack: '[ Add tech stack ]',
     desc: '[ Add a 1–2 sentence description — what problem does PiRail solve, and for who? ]',
     vidLabel: 'Demo — PiRail',
     repo: '#',
+    cardBgImage: '/screenshots/pirail/map-bg.webp',
+    cardBg: 'oklch(0.16 0.015 250 / 0.96)',
+    cardDark: true,
+    cardScrim: 78,
   },
 ]
