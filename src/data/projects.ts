@@ -68,4 +68,15 @@ export const projects: ProjectData[] = [
     vidLabel: 'Demo — Die Or Die',
     repo: '#',
   },
+  {
+    name: 'PiRail',
+    glyph: 'PR',
+    logo: '/logos/project_logos/pirailBlack.png',
+    tag: '[ Add category ]',
+    tint: 'oklch(0.6 0.16 165)',
+    stack: '[ Add tech stack ]',
+    desc: '[ Add a 1–2 sentence description — what problem does PiRail solve, and for who? ]',
+    vidLabel: 'Demo — PiRail',
+    repo: '#',
+  },
 ]
