@@ -20,6 +20,8 @@ export interface ProjectData {
   video?: string
   /** A wordmark image that replaces the plain-text name heading, when the brand has one. */
   nameLogo?: string
+  /** Overrides the default height classes for `nameLogo`. */
+  nameLogoHeight?: string
   /** Overrides the card's panel fill — pair with `cardDark` when it's dark enough to need light text. */
   cardBg?: string
   /** Extra background-image layer(s) (e.g. a subtle repeating-gradient grid) painted over
@@ -121,6 +123,8 @@ export const projects: ProjectData[] = [
     name: 'Die Or Die',
     glyph: 'DD',
     logo: '/logos/project_logos/dieordie.png',
+    nameLogo: '/logos/project_logos/dieOrDieWordmark.png',
+    nameLogoHeight: 'h-10 sm:h-14 lg:h-[72px] xl:h-20',
     tag: 'Deck-Builder',
     tint: 'hsl(0, 65%, 45%)',
     stack: 'Godot · GDScript · Shader · UI/UX',

@@ -31,6 +31,9 @@ export interface ShowcaseBaseItem {
   video?: string
   /** A wordmark image that replaces the plain-text name heading, when the brand has one. */
   nameLogo?: string
+  /** Overrides the default height classes for `nameLogo` (e.g. for a squarer wordmark that
+   * reads small at the default height-first sizing). */
+  nameLogoHeight?: string
   /** Overrides the card's panel fill (default: the standard translucent panel). Use with
    * `cardDark` when the override is dark enough to need light text. */
   cardBg?: string
@@ -294,7 +297,7 @@ export default function Showcase<T extends ShowcaseBaseItem>({
                     <img
                       src={current.nameLogo}
                       alt={current.name}
-                      className="h-8 w-auto max-w-[260px] object-contain sm:h-11 sm:max-w-[320px] lg:h-14 lg:max-w-[380px] xl:h-16 xl:max-w-[420px]"
+                      className={`w-auto max-w-[260px] object-contain sm:max-w-[320px] lg:max-w-[380px] xl:max-w-[420px] ${current.nameLogoHeight ?? 'h-8 sm:h-11 lg:h-14 xl:h-16'}`}
                     />
                   </h2>
                 ) : (
