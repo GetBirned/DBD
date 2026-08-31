@@ -10,9 +10,11 @@ import PsnStatus from '@/components/PsnStatus'
 import PsnTopGames from '@/components/PsnTopGames'
 import SectionTitle from '@/components/SectionTitle'
 import Reveal from '@/components/Reveal'
+import Experience from '@/components/Experience'
 import PageTransition from '@/components/PageTransition'
 import { companies } from '@/data/companies'
 import { projects } from '@/data/projects'
+import { experience } from '@/data/experience'
 
 export default function Home() {
   return (
@@ -30,27 +32,7 @@ export default function Home() {
         <div className="mx-auto max-w-[1120px]">
           <div className="mb-8 font-mono text-xs tracking-widest text-ink-faint uppercase">More</div>
 
-          <Reveal className="rounded-[28px] border border-line bg-panel p-9 shadow-[0_20px_50px_-30px_oklch(0.3_0.05_270_/_0.25)] backdrop-blur-lg">
-            <div className="flex flex-wrap items-start justify-between gap-6">
-              <div>
-                <div className="mb-2 font-mono text-xs text-grad-a">Software Implementation Consultant</div>
-                <h2 className="text-[38px] leading-none">Trimble Inc.</h2>
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                <span className="rounded-full border border-line px-3.5 py-1.5 font-mono text-[11px] whitespace-nowrap text-ink-dim">
-                  Portsmouth, NH · Hybrid
-                </span>
-                <span className="rounded-full border border-line px-3.5 py-1.5 font-mono text-[11px] whitespace-nowrap text-ink-dim">
-                  May 2026 – Present
-                </span>
-              </div>
-            </div>
-            <p className="mt-5 max-w-[640px] text-[15px] leading-[1.7] text-ink-dim">
-              Leading end-to-end implementations of Trimble's B2W Estimate solutions — discovery through
-              deployment, integrations with telematics providers on the AEMP2 standard, and the licensing &amp;
-              activation desk I now run.
-            </p>
-          </Reveal>
+          <Experience items={experience} />
 
           <Reveal className="mt-16">
             <SectionTitle title="People I've Put Online" detail={`${companies.length} Local Businesses`} />

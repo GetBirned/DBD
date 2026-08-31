@@ -17,3 +17,6 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Raw source media (originals for what's been optimized into public/) — not needed in git.
+raw-media/
