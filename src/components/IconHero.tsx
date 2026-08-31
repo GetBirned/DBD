@@ -49,8 +49,16 @@ export default function IconHero({
   const size = STAGE_SIZE[active]
   const heroRef = useRef<HTMLElement>(null)
 
+  // A plain scrollIntoView({block: 'start'}) lands the next section flush against the
+  // viewport's top edge with zero breathing room — offset it up a bit so there's some
+  // whitespace above the eyebrow line on every page this hero is used on.
+  const SCROLL_OFFSET = 40
+
   const scrollToNext = () => {
-    heroRef.current?.nextElementSibling?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const next = heroRef.current?.nextElementSibling
+    if (!next) return
+    const top = next.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET
+    window.scrollTo({ top, behavior: 'smooth' })
   }
 
   return (

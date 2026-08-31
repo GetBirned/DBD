@@ -133,7 +133,9 @@ export const projects: ProjectData[] = [
     repo: 'https://github.com/GetBirned/Die-Or-Die',
     video: '/videos/dieordie/menu.webm',
     screenshots: ['/videos/dieordie/map.webm', '/videos/dieordie/basicroll.webm', '/videos/dieordie/bigroll.webm'],
-    // Sampled from the game's own dark red/black swirl background (see the menu footage).
+    // A zoomed-in, UI-free strip of the menu screen's own red/black swirl, looping slowly
+    // behind the card — real motion instead of the flat sampled color it replaced.
+    cardBgVideo: '/videos/dieordie-bg.webm',
     cardBg: 'oklch(0.19 0.05 24 / 0.96)',
     cardDark: true,
   },
