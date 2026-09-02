@@ -3,7 +3,6 @@ import Marquee from '@/components/Marquee'
 import Showcase from '@/components/Showcase'
 import SectionTitle from '@/components/SectionTitle'
 import Platforms from '@/components/Platforms'
-import SbdcBadge from '@/components/SbdcBadge'
 import Reveal from '@/components/Reveal'
 import PageTransition from '@/components/PageTransition'
 import { ArrowUpRight } from '@/components/icons'
@@ -55,10 +54,7 @@ export default function DesignsByDart() {
 
       <Reveal className="mx-auto mt-4 mb-24 max-w-[1120px] px-6 sm:px-12">
         <SectionTitle title="Platforms I Build On" detail="Whatever Fits the Project" />
-        <div className="flex flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-12">
-          <Platforms />
-          <SbdcBadge />
-        </div>
+        <Platforms />
       </Reveal>
     </PageTransition>
   )

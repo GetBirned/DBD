@@ -1,3 +1,10 @@
+/** Approved-contractor designations. The marks name their own issuing bodies, so the
+ *  label above them only has to carry what the designation actually is. */
+const CREDENTIALS = [
+  { src: '/logos/sbdc.svg', alt: "America's SBDC New Hampshire", className: 'h-12' },
+  { src: '/logos/grdc.webp', alt: 'Grafton Regional Development Corporation', className: 'h-9' },
+]
+
 export default function Footer() {
   // Base pill shared by all three actions — these are the primary conversion point of the
   // whole site, so they're sized as the focal element rather than as trailing links.
@@ -28,8 +35,29 @@ export default function Footer() {
             Download Résumé
           </a>
         </div>
-        <div className="mt-14 border-t border-line pt-7 font-mono text-xs tracking-wide text-ink-faint">
-          © Dartagnan Birnie — Alton, NH
+
+        <div className="mt-14 flex flex-col gap-9 border-t border-line pt-7 sm:flex-row sm:items-end sm:justify-between sm:gap-12">
+          <div>
+            <div className="font-mono text-[10px] tracking-[0.14em] text-ink-faint uppercase">
+              Approved Web Design Contractor
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-x-8 gap-y-5">
+              {CREDENTIALS.map((c) => (
+                <img
+                  key={c.src}
+                  src={c.src}
+                  alt={c.alt}
+                  title={c.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className={`${c.className} w-auto opacity-85 transition-opacity duration-250 hover:opacity-100`}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="font-mono text-xs tracking-wide text-ink-faint">
+            © Dartagnan Birnie — Alton, NH
+          </div>
         </div>
       </div>
     </footer>
