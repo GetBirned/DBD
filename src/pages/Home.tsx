@@ -29,8 +29,8 @@ export default function Home() {
         stretch removes the hard line while the rest of the section stays flat bg-soft
         (a CSS gradient holds at its last stop's color past that point).
       */}
-      <section id="more" className="py-24" style={{ background: 'linear-gradient(to bottom, var(--color-bg), var(--color-bg-soft) 260px)' }}>
-        <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
+      <section id="more" className="px-6 py-24 sm:px-12" style={{ background: 'linear-gradient(to bottom, var(--color-bg), var(--color-bg-soft) 260px)' }}>
+        <div className="mx-auto max-w-[1120px]">
           <div className="mb-8 font-mono text-xs tracking-widest text-ink-faint uppercase">More</div>
 
           <Experience items={experience} />
@@ -42,22 +42,15 @@ export default function Home() {
               See the full showcase — DBD →
             </Link>
           </Reveal>
-        </div>
 
-        {/* Breaks the 1120px column so the tiles run edge to edge. */}
-        <Reveal className="mt-16">
-          <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
+          <Reveal className="mt-16">
             <SectionTitle title="Things I've Built" detail={`${projects.length} Side Projects`} />
-          </div>
-          <ProjectStrip />
-          <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
+            <ProjectStrip />
             <Link to="/fun" className="mt-5 inline-block font-mono text-xs text-grad-a hover:underline">
               See everything — FUN →
             </Link>
-          </div>
-        </Reveal>
+          </Reveal>
 
-        <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
           <Reveal className="mt-16">
             <SectionTitle title="What I'm Listening To" detail="Live from Spotify API" />
             <NowPlaying />
