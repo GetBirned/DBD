@@ -5,8 +5,9 @@ export interface ClientData {
   /** Subtle per-card accent, loosely matched to the business — not a verified brand color. */
   tint: string
   desc: string
-  quote: string
-  attr: string
+  /** A real testimonial, when the client has given one — omit rather than show a placeholder. */
+  quote?: string
+  attr?: string
   vidLabel: string
   logo?: string
   screenshots?: string[]
@@ -19,12 +20,10 @@ export interface ClientData {
 export const clients: ClientData[] = [
   {
     name: 'You Know!',
-    loc: '[ Add location ]',
+    loc: 'Alton, NH',
     tag: 'Apparel / Retail',
     tint: 'oklch(0.6 0.16 300)',
     desc: 'Streetwear apparel brand built around a simple idea — if you know, you know. Logo tees, hoodies, and gear for people who get it.',
-    quote: '[ Add a message from You Know! about the experience working together ]',
-    attr: '[ Name ] — You Know!',
     vidLabel: 'Site walkthrough — youknowtees.com',
     url: 'https://youknowtees.com/',
     logo: '/logos/company_logos/youknowFavicon.png',
@@ -52,7 +51,8 @@ export const clients: ClientData[] = [
     tag: 'Healthcare',
     tint: 'hsl(202, 65%, 45%)',
     desc: 'Whole-person physical therapy practice founded by Dr. Annika Michaels, focused on evidence-based, long-term wellness care.',
-    quote: '[ Add a message from Evolve PT about the experience working together ]',
+    quote:
+      "I want you to know that your work to update my website has truly been amazing. I've had many more of the \"right\" kinds of clients finding me in the last few months and it is very much thanks to you!!",
     attr: 'Dr. Annika Michaels — Evolve PT',
     vidLabel: 'Site walkthrough — evolveptnh.com',
     url: 'https://www.evolveptnh.com/',
@@ -66,8 +66,6 @@ export const clients: ClientData[] = [
     tag: 'Fire & Safety Training',
     tint: 'hsl(226, 65%, 45%)',
     desc: 'Hands-on fire service and pump-operations training for departments across New Hampshire and New England, run on the same real equipment crews train on in the field.',
-    quote: '[ Add a message from Nesta about the experience working together ]',
-    attr: '[ Name ] — Nesta',
     vidLabel: 'Site walkthrough — nestanh.com',
     url: 'https://www.nestanh.com/',
     logo: '/logos/company_logos/nestaLogo.png',
@@ -80,8 +78,8 @@ export const clients: ClientData[] = [
     tag: 'Legal',
     tint: 'hsl(219, 65%, 45%)',
     desc: 'A litigation practice built on four decades of trial experience, representing individuals and families in personal injury, accident, and medical malpractice cases.',
-    quote: '[ Add a message from Paul Monzione about the experience working together ]',
-    attr: '[ Name ] — Law Offices of Paul M. Monzione',
+    quote: 'Thank you for all your work. I’m very happy with it.',
+    attr: 'Paul Monzione — Law Offices of Paul M. Monzione',
     vidLabel: 'Site walkthrough — monzionelawoffices.com',
     url: 'https://monzionelawoffices.com/',
     logo: '/logos/company_logos/paulMonzioneLawOfficesLogo.png',
@@ -94,8 +92,6 @@ export const clients: ClientData[] = [
     tag: 'E-Commerce / Pet Products',
     tint: 'hsl(77, 65%, 45%)',
     desc: "Organic cat grass kits, planters, and subscriptions designed to give indoor cats a safe, healthy way to graze.",
-    quote: "[ Add a message from Mom's Indoor Cat about the experience working together ]",
-    attr: "[ Name ] — Mom's Indoor Cat",
     vidLabel: 'Site walkthrough — momsindoorcat.com',
     url: 'https://momsindoorcat.com/',
     logo: '/logos/company_logos/momsIndoorCat.png',
@@ -112,8 +108,6 @@ export const clients: ClientData[] = [
     tag: 'E-Commerce / Outdoor Goods',
     tint: 'hsl(47, 65%, 45%)',
     desc: 'Maker of the Adventure Scroll — a portable, reusable chalkboard scroll for capturing outdoor adventures and everyday moments on the go.',
-    quote: '[ Add a message from Newfound Adventures about the experience working together ]',
-    attr: '[ Name ] — Newfound Adventures',
     vidLabel: 'Site walkthrough — newfoundadventures.com',
     url: 'https://newfoundadventures.com/',
     logo: '/logos/company_logos/NewfoundAdventures_logo.png',
@@ -126,8 +120,6 @@ export const clients: ClientData[] = [
     tag: 'Construction',
     tint: 'hsl(43, 65%, 45%)',
     desc: 'Design-build renovation contractor serving the Upper Valley and White Mountains of New Hampshire, specializing in kitchen and bathroom remodels.',
-    quote: '[ Add a message from Houseal Construction about the experience working together ]',
-    attr: '[ Name ] — Houseal Construction',
     vidLabel: 'Site walkthrough — housealconstruction.com',
     url: 'https://www.housealconstruction.com/',
     logo: '/logos/company_logos/housealConstructionBlack.webp',
@@ -140,8 +132,6 @@ export const clients: ClientData[] = [
     tag: 'EdTech / FinTech',
     tint: 'hsl(40, 65%, 45%)',
     desc: 'K–12 student activity fund management platform built to keep schools compliant, transparent, and audit-ready.',
-    quote: '[ Add a message from Account Tree about the experience working together ]',
-    attr: '[ Name ] — Account Tree',
     vidLabel: 'Product walkthrough — accounttree.com',
     logo: '/logos/company_logos/accountTreeLogo.webp',
     url: 'https://www.accounttree.com/',
@@ -158,8 +148,6 @@ export const clients: ClientData[] = [
     tag: 'Home Services',
     tint: 'oklch(0.68 0.11 75)',
     desc: 'Stone restoration company specializing in polishing, repair, and maintenance of marble, granite, and other natural stone.',
-    quote: '[ Add a message from Marble Perfect about the experience working together ]',
-    attr: '[ Name ] — Marble Perfect',
     vidLabel: 'Site walkthrough — marbleperfect.com',
     url: 'https://marbleperfect.com/',
     video: '/videos/marbleperfect.webm',
@@ -175,8 +163,6 @@ export const clients: ClientData[] = [
     tag: 'Furniture Rental',
     tint: 'oklch(0.65 0.15 25)',
     desc: 'Furniture rental for short-term living — full setups delivered and installed on your timeline, backed by a 14-day money-back guarantee.',
-    quote: '[ Add a message from Crib Ready about the experience working together ]',
-    attr: '[ Name ] — Crib Ready',
     vidLabel: 'Site walkthrough — cribready.com',
     url: 'https://cribready.com/',
     logo: '/logos/company_logos/CribReady.png',
@@ -189,8 +175,6 @@ export const clients: ClientData[] = [
     tag: 'Retail / Skincare',
     tint: 'hsl(356, 65%, 45%)',
     desc: 'Handcrafted, all-natural soaps and herbal skincare made in Gilmanton, NH with no chemicals or preservatives, continuing a nearly 30-year tradition.',
-    quote: '[ Add a message from Moore Farm about the experience working together ]',
-    attr: '[ Name ] — Moore Farm',
     vidLabel: 'Site walkthrough — moorefarmherbs.online',
     url: 'https://www.moorefarmherbs.online/',
     logo: '/logos/company_logos/MooreFarmCircle.png',
@@ -203,8 +187,6 @@ export const clients: ClientData[] = [
     tag: 'Health & Wellness',
     tint: 'hsl(308, 65%, 45%)',
     desc: 'Massage therapy and private yoga instruction focused on full-body wellness, from deep tissue and prenatal massage to Reiki and reflexology.',
-    quote: '[ Add a message from Shakti Bodywork & Yoga about the experience working together ]',
-    attr: '[ Name ] — Shakti Bodywork & Yoga',
     vidLabel: 'Site walkthrough — shaktibodyworkandyoga.com',
     url: 'https://www.shaktibodyworkandyoga.com/',
     logo: '/logos/company_logos/shaktiLogoWTextTIEDYE.png',
@@ -217,8 +199,6 @@ export const clients: ClientData[] = [
     tag: 'Art / Creative Studio',
     tint: 'hsl(7, 65%, 45%)',
     desc: "Wearable art, digital prints, and mixed-media work by artist Brenda Wilbert — expressive, colorful pieces that celebrate individuality.",
-    quote: '[ Add a message from Wilbert Art Studio about the experience working together ]',
-    attr: '[ Name ] — Wilbert Art Studio',
     vidLabel: 'Site walkthrough — wilbertartstudio.com',
     url: 'https://wilbertartstudio.com/',
     logo: '/logos/company_logos/wilbertArtStudio.png',

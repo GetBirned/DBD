@@ -6,13 +6,13 @@ export default function Footer() {
         <h2 className="mt-3.5 max-w-[520px] text-[44px] leading-[1.1]">Let's build something.</h2>
         <div className="mt-7 flex gap-3.5">
           <a
-            href="mailto:hello@dartbirnie.dev"
+            href="mailto:dartbirnie@gmail.com"
             className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-grad-a to-grad-b px-5.5 py-3 font-mono text-[11px] tracking-wide text-white uppercase shadow-[0_8px_26px_-8px_oklch(0.5_0.17_290_/_0.5)] transition-transform hover:-translate-y-0.5"
           >
             Send Email
           </a>
           <a
-            href="tel:"
+            href="tel:+16038331781"
             className="inline-flex items-center gap-2 rounded-full border border-line px-5.5 py-3 font-mono text-[11px] tracking-wide text-ink-dim uppercase transition-colors hover:border-grad-b hover:text-ink"
           >
             Call Me

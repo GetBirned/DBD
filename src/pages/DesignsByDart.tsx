@@ -42,8 +42,12 @@ export default function DesignsByDart() {
                 <ArrowUpRight />
               </a>
             )}
-            <p className="font-body text-[15px] leading-[1.65] text-ink italic">"{item.quote}"</p>
-            <div className="mt-3 font-mono text-xs text-ink-faint">{item.attr}</div>
+            {item.quote && (
+              <>
+                <p className="font-body text-[15px] leading-[1.65] text-ink italic">"{item.quote}"</p>
+                <div className="mt-3 font-mono text-xs text-ink-faint">{item.attr}</div>
+              </>
+            )}
           </>
         )}
       />

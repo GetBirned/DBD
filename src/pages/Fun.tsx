@@ -1,6 +1,7 @@
 import IconHero from '@/components/IconHero'
 import Showcase from '@/components/Showcase'
 import Skills from '@/components/Skills'
+import GitHubActivity from '@/components/GitHubActivity'
 import SectionTitle from '@/components/SectionTitle'
 import Reveal from '@/components/Reveal'
 import PageTransition from '@/components/PageTransition'
@@ -51,6 +52,11 @@ export default function Fun() {
           </div>
         )}
       />
+
+      <Reveal className="mx-auto mt-4 mb-24 max-w-[1120px] px-6 sm:px-12">
+        <SectionTitle title="GitHub Activity" detail="Live from GitHub" />
+        <GitHubActivity />
+      </Reveal>
     </PageTransition>
   )
 }

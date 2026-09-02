@@ -5,6 +5,7 @@ import 'dotenv/config'
 import spotifyRouter from './spotify.js'
 import steamRouter from './steam.js'
 import psnRouter from './psn.js'
+import githubRouter from './github.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const distDir = path.join(__dirname, '..', 'dist')
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 3000
 app.use('/api/spotify', spotifyRouter)
 app.use('/api/steam', steamRouter)
 app.use('/api/psn', psnRouter)
+app.use('/api/github', githubRouter)
 
 app.use(express.static(distDir))
 

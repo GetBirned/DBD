@@ -44,16 +44,6 @@ export interface ProjectData {
 
 export const projects: ProjectData[] = [
   {
-    name: 'DartBot',
-    glyph: 'DB',
-    tag: 'Chatbot',
-    tint: 'oklch(0.6 0.18 320)',
-    stack: 'React · Node.js · Dialogflow · TypeScript',
-    desc: 'A humorous, personality-rich chatbot built to mimic my tone — a quick way for visitors to get a feel for me and my hobbies before they ever get on a call.',
-    vidLabel: 'Demo video — DartBot in conversation',
-    repo: 'https://github.com/GetBirned/DartBot',
-  },
-  {
     name: 'FortLotto',
     glyph: 'FL',
     logo: '/logos/project_logos/FortLottoBlack.png',
@@ -133,23 +123,31 @@ export const projects: ProjectData[] = [
     repo: 'https://github.com/GetBirned/Die-Or-Die',
     video: '/videos/dieordie/menu.webm',
     screenshots: ['/videos/dieordie/map.webm', '/videos/dieordie/basicroll.webm', '/videos/dieordie/bigroll.webm'],
-    // A zoomed-in, UI-free strip of the menu screen's own red/black swirl, looping slowly
-    // behind the card — real motion instead of the flat sampled color it replaced.
-    cardBgVideo: '/videos/dieordie-bg.webm',
+    cardBgImage: '/screenshots/dieordie/board-games-bg.webp',
     cardBg: 'oklch(0.19 0.05 24 / 0.96)',
     cardDark: true,
+    // The asset is pre-desaturated/darkened (see raw-media/dieordie) so the collage reads as
+    // texture; a plain black scrim alone left the source's red "DIE OR DIE" banner legible
+    // behind the footer, where it looked like a duplicate title.
+    cardScrim: 72,
   },
   {
     name: 'PiRail',
     glyph: 'PR',
     logo: '/logos/project_logos/pirailBlack.png',
     logoDark: '/logos/project_logos/pirailLight.png',
-    tag: '[ Add category ]',
+    tag: 'Senior Capstone',
     tint: 'hsl(0, 65%, 45%)',
-    stack: '[ Add tech stack ]',
-    desc: '[ Add a 1–2 sentence description — what problem does PiRail solve, and for who? ]',
+    stack: 'React · JavaScript · Python · OpenStreetMap · GPS / GIS',
+    desc: "UNH senior capstone for PiRail — a low-cost railroad track-inspection platform running on a Raspberry Pi with GPS, IMU, and LIDAR sensors. Our five-person team replaced a legacy jQuery interface with a mobile-first React app: a live map plotting the train's position, reportable points of interest (“Waze, but for railroads”), and a simulator that replays recorded runs so the UI can be tested without riding a train.",
     vidLabel: 'Demo — PiRail',
-    repo: '#',
+    repo: 'https://github.com/cpn18/track-chart',
+    screenshots: [
+      '/screenshots/pirail/01-app.webp',
+      '/screenshots/pirail/02-team.webp',
+      '/screenshots/pirail/03-architecture.webp',
+      '/screenshots/pirail/04-testbed.webp',
+    ],
     cardBgImage: '/screenshots/pirail/map-bg.webp',
     cardBg: 'oklch(0.16 0.015 250 / 0.96)',
     cardDark: true,
