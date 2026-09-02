@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode, type TouchEvent } from 'react'
+import { useEffect, useRef, useState, type ReactNode, type TouchEvent } from 'react'
 import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import { ChevronLeft, ChevronRight, PlayIcon, ExpandIcon } from './icons'
 import Reveal from './Reveal'
@@ -60,12 +60,15 @@ export default function Showcase<T extends ShowcaseBaseItem>({
   items,
   eyebrow,
   renderFooter,
+  initialIndex = 0,
 }: {
   items: T[]
   eyebrow: string
   renderFooter: (item: T) => ReactNode
+  /** Card to open on, for deep links into a specific project. */
+  initialIndex?: number
 }) {
-  const [idx, setIdx] = useState(0)
+  const [idx, setIdx] = useState(initialIndex)
   const [direction, setDirection] = useState(1)
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
   const current = items[idx]
@@ -82,6 +85,12 @@ export default function Showcase<T extends ShowcaseBaseItem>({
     setDirection(i > idx ? 1 : i < idx ? -1 : direction)
     setIdx(i)
   }
+
+  // Follow a changed deep link. Keyed on initialIndex alone, so manually paging away from
+  // the linked card doesn't get yanked back.
+  useEffect(() => {
+    setIdx(initialIndex)
+  }, [initialIndex])
 
   // Swipe navigation (mobile). Track horizontal delta only, and bail if the gesture
   // turns out to be more vertical (a normal page scroll) than horizontal.

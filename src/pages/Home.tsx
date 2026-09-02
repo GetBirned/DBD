@@ -11,6 +11,7 @@ import PsnTopGames from '@/components/PsnTopGames'
 import SectionTitle from '@/components/SectionTitle'
 import Reveal from '@/components/Reveal'
 import Experience from '@/components/Experience'
+import ProjectStrip from '@/components/ProjectStrip'
 import PageTransition from '@/components/PageTransition'
 import { companies } from '@/data/companies'
 import { projects } from '@/data/projects'
@@ -28,8 +29,8 @@ export default function Home() {
         stretch removes the hard line while the rest of the section stays flat bg-soft
         (a CSS gradient holds at its last stop's color past that point).
       */}
-      <section id="more" className="px-6 py-24 sm:px-12" style={{ background: 'linear-gradient(to bottom, var(--color-bg), var(--color-bg-soft) 260px)' }}>
-        <div className="mx-auto max-w-[1120px]">
+      <section id="more" className="py-24" style={{ background: 'linear-gradient(to bottom, var(--color-bg), var(--color-bg-soft) 260px)' }}>
+        <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
           <div className="mb-8 font-mono text-xs tracking-widest text-ink-faint uppercase">More</div>
 
           <Experience items={experience} />
@@ -41,32 +42,22 @@ export default function Home() {
               See the full showcase — DBD →
             </Link>
           </Reveal>
+        </div>
 
-          <Reveal className="mt-16">
+        {/* Breaks the 1120px column so the tiles run edge to edge. */}
+        <Reveal className="mt-16">
+          <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
             <SectionTitle title="Things I've Built" detail={`${projects.length} Side Projects`} />
-            <div className="flex flex-wrap gap-4.5">
-              {projects.map((p) => (
-                <Link
-                  key={p.name}
-                  to="/fun"
-                  className="flex h-26 w-26 flex-col items-center justify-center gap-2 rounded-3xl border border-line bg-panel backdrop-blur-lg transition-transform duration-250 ease-out hover:-translate-y-1 hover:shadow-[0_16px_32px_-14px_oklch(0.5_0.18_290_/_0.45)]"
-                >
-                  {p.logo ? (
-                    <img src={p.logo} alt="" loading="lazy"
-                      decoding="async"
-                      className="h-9 w-9 object-contain" />
-                  ) : (
-                    <span className="grad-text font-display text-xl font-extrabold">{p.glyph}</span>
-                  )}
-                  <span className="text-center font-mono text-[9px] text-ink-faint">{p.name}</span>
-                </Link>
-              ))}
-            </div>
+          </div>
+          <ProjectStrip />
+          <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
             <Link to="/fun" className="mt-5 inline-block font-mono text-xs text-grad-a hover:underline">
               See everything — FUN →
             </Link>
-          </Reveal>
+          </div>
+        </Reveal>
 
+        <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
           <Reveal className="mt-16">
             <SectionTitle title="What I'm Listening To" detail="Live from Spotify API" />
             <NowPlaying />
