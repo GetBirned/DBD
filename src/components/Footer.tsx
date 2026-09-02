@@ -1,8 +1,18 @@
 /** Approved-contractor designations. The marks name their own issuing bodies, so the
  *  label above them only has to carry what the designation actually is. */
 const CREDENTIALS = [
-  { src: '/logos/sbdc.svg', alt: "America's SBDC New Hampshire", className: 'h-12' },
-  { src: '/logos/grdc.webp', alt: 'Grafton Regional Development Corporation', className: 'h-9' },
+  {
+    src: '/logos/sbdc.svg',
+    alt: "America's SBDC New Hampshire",
+    href: 'https://www.nhsbdc.org/',
+    className: 'h-12',
+  },
+  {
+    src: '/logos/grdc.webp',
+    alt: 'Grafton Regional Development Corporation',
+    href: 'https://graftonrdc.org/',
+    className: 'h-9',
+  },
 ]
 
 export default function Footer() {
@@ -45,15 +55,22 @@ export default function Footer() {
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-x-8 gap-y-5 lg:justify-end">
               {CREDENTIALS.map((c) => (
-                <img
+                <a
                   key={c.src}
-                  src={c.src}
-                  alt={c.alt}
+                  href={c.href}
+                  target="_blank"
+                  rel="noreferrer"
                   title={c.alt}
-                  loading="lazy"
-                  decoding="async"
-                  className={`${c.className} w-auto opacity-85 transition-opacity duration-250 hover:opacity-100`}
-                />
+                  className="opacity-85 transition-opacity duration-250 hover:opacity-100"
+                >
+                  <img
+                    src={c.src}
+                    alt={c.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className={`${c.className} w-auto`}
+                  />
+                </a>
               ))}
             </div>
           </div>
