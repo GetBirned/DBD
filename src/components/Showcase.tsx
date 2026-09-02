@@ -215,6 +215,8 @@ export default function Showcase<T extends ShowcaseBaseItem>({
                       <img
                         src={current.screenshots[0]}
                         alt={current.vidLabel}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover/img:scale-105"
                       />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-250 group-hover/img:bg-black/25 group-hover/img:opacity-100">

@@ -15,6 +15,8 @@ export default function Marquee({ items }: { items: MarqueeItem[] }) {
                 src={item.logo}
                 alt={item.name}
                 title={item.name}
+            loading="lazy"
+            decoding="async"
                 className="h-14 w-auto max-w-[200px] object-contain transition-transform duration-200 hover:scale-110"
               />
             ) : (

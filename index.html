@@ -7,6 +7,14 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Hero marks. These are referenced from JSX/inline CSS mask-image, so the preload
+         scanner can't discover them until React has rendered (~1.5s in, measured). All
+         three sit above the fold on every page — one as the 3D hero, the other two as the
+         nav icons beside it — so none of these preloads go unused. -->
+    <link rel="preload" as="image" href="/logos/DB_black.svg" fetchpriority="high" />
+    <link rel="preload" as="image" href="/logos/DBD.svg" />
+    <link rel="preload" as="image" href="/logos/codeSymbol.webp" />
     <title>Dart Birnie @ Designs By Dart</title>
     <meta name="description" content="Software engineer and freelance web designer. Trimble, Designs By Dart, and side projects." />
 

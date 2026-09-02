@@ -52,7 +52,9 @@ export default function Home() {
                   className="flex h-26 w-26 flex-col items-center justify-center gap-2 rounded-3xl border border-line bg-panel backdrop-blur-lg transition-transform duration-250 ease-out hover:-translate-y-1 hover:shadow-[0_16px_32px_-14px_oklch(0.5_0.18_290_/_0.45)]"
                 >
                   {p.logo ? (
-                    <img src={p.logo} alt="" className="h-9 w-9 object-contain" />
+                    <img src={p.logo} alt="" loading="lazy"
+                      decoding="async"
+                      className="h-9 w-9 object-contain" />
                   ) : (
                     <span className="grad-text font-display text-xl font-extrabold">{p.glyph}</span>
                   )}

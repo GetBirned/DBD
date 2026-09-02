@@ -9,6 +9,8 @@ export default function Platforms() {
           src={p.logo}
           alt={p.name}
           title={p.name}
+            loading="lazy"
+            decoding="async"
           className="h-9 w-auto object-contain opacity-75 transition-opacity duration-250 hover:opacity-100"
         />
       ))}

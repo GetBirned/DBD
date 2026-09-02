@@ -2,10 +2,12 @@ import { useEffect, useRef, type CSSProperties, type RefObject } from 'react'
 
 export type LogoVariant = 'db' | 'dbd' | 'code'
 
-/** Real logo files (transparent images), masked and recolored per depth layer. */
+/** Real logo files, masked and recolored per depth layer. DB/DBD are traced to SVG so the
+ * hero mark stays crisp — the source PNGs were only 395px/493px wide but render up to
+ * 640px/780px, i.e. a >3x upscale on a 2x-DPR display. */
 const LOGO_SRC: Record<LogoVariant, string> = {
-  db: '/logos/DB_black.png',
-  dbd: '/logos/DBD.png',
+  db: '/logos/DB_black.svg',
+  dbd: '/logos/DBD.svg',
   code: '/logos/codeSymbol.webp',
 }
 

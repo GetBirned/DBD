@@ -1,26 +1,29 @@
 export default function Footer() {
+  // Base pill shared by all three actions — these are the primary conversion point of the
+  // whole site, so they're sized as the focal element rather than as trailing links.
+  const action =
+    'inline-flex items-center gap-2 rounded-full px-7 py-4 font-mono text-[12px] tracking-wide uppercase transition-transform hover:-translate-y-0.5'
+
   return (
     <footer className="border-t border-line bg-bg px-6 py-16 sm:px-12">
       <div className="mx-auto max-w-[1120px]">
-        <div className="font-mono text-xs tracking-widest text-ink-faint uppercase">Let's Chat</div>
-        <h2 className="mt-3.5 max-w-[520px] text-[44px] leading-[1.1]">Let's build something.</h2>
-        <div className="mt-7 flex gap-3.5">
+        <div className="flex flex-wrap gap-4">
           <a
             href="mailto:dartbirnie@gmail.com"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-grad-a to-grad-b px-5.5 py-3 font-mono text-[11px] tracking-wide text-white uppercase shadow-[0_8px_26px_-8px_oklch(0.5_0.17_290_/_0.5)] transition-transform hover:-translate-y-0.5"
+            className={`${action} bg-gradient-to-br from-grad-a to-grad-b text-white shadow-[0_10px_30px_-8px_oklch(0.5_0.17_290_/_0.55)]`}
           >
             Send Email
           </a>
           <a
             href="tel:+16038331781"
-            className="inline-flex items-center gap-2 rounded-full border border-line px-5.5 py-3 font-mono text-[11px] tracking-wide text-ink-dim uppercase transition-colors hover:border-grad-b hover:text-ink"
+            className={`${action} border border-line text-ink hover:border-grad-b`}
           >
             Call Me
           </a>
           <a
             href="/resume.pdf"
             download="Dartagnan_Birnie_Resume.pdf"
-            className="inline-flex items-center gap-2 rounded-full border border-line px-5.5 py-3 font-mono text-[11px] tracking-wide text-ink-dim uppercase transition-colors hover:border-grad-b hover:text-ink"
+            className={`${action} border border-line text-ink hover:border-grad-b`}
           >
             Download Résumé
           </a>
