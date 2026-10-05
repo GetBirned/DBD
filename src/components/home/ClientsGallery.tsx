@@ -96,7 +96,6 @@ function Intro({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
       </div>
       <ChapterHeading
         title="People I've put *online.*"
-        kicker="Sites I've built for local businesses since 2022 — open any of them for the walkthrough and the story."
         className="mb-8"
       />
       <div className="hidden items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-ink-faint uppercase md:flex">

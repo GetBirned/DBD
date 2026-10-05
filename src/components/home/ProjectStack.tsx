@@ -176,7 +176,6 @@ function Heading({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
     <div className="mx-auto flex max-w-[1120px] items-end justify-between gap-10 px-6 sm:px-12">
       <ChapterHeading
         title="Things I've *built.*"
-        kicker="Games, a companion app, and an ERP built for the fun of it — plus a senior capstone with a five-person team."
       />
       <div className="mb-16 hidden shrink-0 lg:block">
         <Logo3D variant="code" width={190} height={190 / LOGO_ASPECT.code} interactionRef={stageRef} />

@@ -38,7 +38,6 @@ function Testimonials() {
 
   return (
     <div ref={ref} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="mb-6 font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase">In their words</div>
       {/* Every quote stacked in one grid cell, so the block always takes the height of the
           longest. Swapping one quote for another used to resize it — Monzione's short quote
           pulled everything below up ~160px and the next one pushed it back, every rotation. */}

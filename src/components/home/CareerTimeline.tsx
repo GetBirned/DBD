@@ -136,7 +136,6 @@ export default function CareerTimeline() {
       <div className="mx-auto max-w-[1120px]">
         <ChapterHeading
           title="From the support desk to leading *implementations.*"
-          kicker="Promoted within six months at Trimble — and the coworker shoutouts are real, word for word."
         />
 
         <div className="grid gap-12 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]">
