@@ -13,9 +13,6 @@ export interface Shoutout {
   company: string
   /** Company logo, shown on a white disc beside the attribution. */
   logo?: string
-  /** Light company mark, shown on the shoutout's circle in the row below the quote. */
-  mark?: string
-  tint: string
 }
 
 /**
@@ -32,8 +29,6 @@ export function collectShoutouts(entries: ExperienceEntry[]): Shoutout[] {
         title: title || undefined,
         company: e.company.replace(' Inc.', ''),
         logo: e.logo,
-        mark: e.logoDark ?? e.logo,
-        tint: e.tint,
       }
     }),
   )
@@ -61,39 +56,10 @@ const swap: Variants = {
   hidden: { opacity: 0, y: -14, transition: { duration: 0.22, ease: EASE } },
 }
 
-/** The active avatar's ring fills over the interval, so it doubles as the auto-advance timer. */
-function TimerRing({ running }: { running: boolean }) {
-  const C = 2 * Math.PI * 21
-  return (
-    <svg aria-hidden viewBox="0 0 46 46" className="pointer-events-none absolute -top-[5px] -left-[5px] h-[46px] w-[46px] -rotate-90">
-      <defs>
-        <linearGradient id="shoutout-ring" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--color-grad-a)" />
-          <stop offset="100%" stopColor="var(--color-grad-c)" />
-        </linearGradient>
-      </defs>
-      <circle cx="23" cy="23" r="21" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="2" />
-      <motion.circle
-        cx="23"
-        cy="23"
-        r="21"
-        fill="none"
-        stroke="url(#shoutout-ring)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeDasharray={C}
-        initial={{ strokeDashoffset: running ? C : 0 }}
-        animate={{ strokeDashoffset: 0 }}
-        transition={{ duration: running ? INTERVAL : 0, ease: 'linear' }}
-      />
-    </svg>
-  )
-}
-
 /**
  * Coworker shoutouts given the same stage as the client testimonials: one at a time, large, in
- * the serif accent, advancing on their own while on screen. A row of circles — one per
- * shoutout, each with its company's logo — shows how many there are and jumps to any of them.
+ * the serif accent, advancing on their own while on screen. A row of story-style segments shows
+ * how many there are and how far along you are, and jumps to any of them.
  */
 export default function Shoutouts({
   items,
@@ -175,8 +141,11 @@ export default function Shoutouts({
           })}
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-6">
-          <div className="flex flex-wrap gap-2.5">
+        <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
+          {/* One slim segment per shoutout, story-style: seen ones stay lit, the current one
+              fills over its interval (so the bar doubles as the auto-advance timer), the rest
+              wait dim. Each is a tall, invisible hit area around a 3px line. */}
+          <div className="flex flex-1 items-center gap-1 sm:gap-1.5">
             {items.map((s, i) => {
               const on = i === active
               return (
@@ -186,17 +155,27 @@ export default function Shoutouts({
                   onClick={() => onChange(i)}
                   aria-label={`Shoutout ${i + 1} of ${items.length}${s.name ? ` — ${s.name}` : ''}`}
                   aria-current={on ? 'true' : undefined}
-                  className={`relative flex h-9 w-9 items-center justify-center rounded-full font-mono text-[11px] font-medium text-white transition-all duration-300 ${on ? 'scale-110' : 'opacity-40 hover:opacity-90'}`}
-                  style={{ background: s.tint }}
+                  className="group flex-1 py-3"
                 >
-                  {s.mark ? <img src={s.mark} alt="" className="h-[18px] w-[18px] object-contain" /> : '✦'}
-                  {on && <TimerRing key={`${active}-${running}`} running={running} />}
+                  <span
+                    className={`block h-[3px] overflow-hidden rounded-full transition-colors duration-300 ${i < active ? 'bg-white/45' : 'bg-white/[0.13] group-hover:bg-white/30'}`}
+                  >
+                    {on && (
+                      <motion.span
+                        key={`${active}-${running}`}
+                        className="brand-gradient block h-full"
+                        initial={{ width: running ? '0%' : '100%' }}
+                        animate={{ width: '100%' }}
+                        transition={{ duration: running ? INTERVAL : 0, ease: 'linear' }}
+                      />
+                    )}
+                  </span>
                 </button>
               )
             })}
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
+          <div className="flex shrink-0 items-center justify-end gap-3">
             <button
               type="button"
               onClick={() => go(-1)}
