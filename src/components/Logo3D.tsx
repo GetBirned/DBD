@@ -51,9 +51,9 @@ type DeviceOrientationEventiOS = typeof DeviceOrientationEvent & {
 
 /**
  * Mouse-follow 3D tilt on desktop, eased toward the cursor; device-orientation tilt
- * on phones, eased toward however the phone is physically tilted. Both track across
- * the whole `interactionRef` element (or, for orientation, the whole device), not
- * just the mark itself. Bypasses React state for a smooth loop.
+ * on phones, eased toward however the phone is physically tilted. The mouse is listened
+ * for across the whole `interactionRef` element (or, for orientation, the whole device),
+ * not just the mark itself. Bypasses React state for a smooth loop.
  */
 function useTilt3D(interactionRef: RefObject<HTMLElement | null>, groupRef: RefObject<HTMLDivElement | null>) {
   useEffect(() => {
@@ -66,11 +66,18 @@ function useTilt3D(interactionRef: RefObject<HTMLElement | null>, groupRef: RefO
     let cx = 0
     let cy = 0
     let raf = 0
+    let mouse: { x: number; y: number } | null = null
 
-    const onMove = (e: MouseEvent) => {
-      const r = container.getBoundingClientRect()
-      const px = (e.clientX - r.left) / r.width - 0.5
-      const py = (e.clientY - r.top) / r.height - 0.5
+    // Aims from the mark's own on-screen center, scaled by the viewport — not by the
+    // listening element's box. That box can be anything: the client gallery's is ~14
+    // screens tall, which pinned the vertical axis near a fixed 30° pitch when the cursor
+    // position was taken as a fraction of it. Measured on the unrotated parent, since the
+    // group's own box shifts as it tilts.
+    const aim = () => {
+      if (!mouse) return
+      const r = (group.parentElement ?? group).getBoundingClientRect()
+      const px = clamp((mouse.x - (r.left + r.width / 2)) / window.innerWidth, -0.5, 0.5)
+      const py = clamp((mouse.y - (r.top + r.height / 2)) / window.innerHeight, -0.5, 0.5)
       // Pitch (rotateX, from vertical mouse position) reads far more subtly than yaw on
       // a wide, flat mark like this one — the depth-layer parallax it creates is much
       // less pronounced than yaw's, so it needs a noticeably stronger multiplier to
@@ -78,7 +85,12 @@ function useTilt3D(interactionRef: RefObject<HTMLElement | null>, groupRef: RefO
       tx = px * 42
       ty = py * -65
     }
+    const onMove = (e: MouseEvent) => {
+      mouse = { x: e.clientX, y: e.clientY }
+      aim()
+    }
     const onLeave = () => {
+      mouse = null
       tx = 0
       ty = 0
     }
@@ -91,6 +103,9 @@ function useTilt3D(interactionRef: RefObject<HTMLElement | null>, groupRef: RefO
 
     container.addEventListener('mousemove', onMove)
     container.addEventListener('mouseleave', onLeave)
+    // Scrolling moves the mark under a still cursor (the client gallery slides it sideways),
+    // so re-aim then too — otherwise it keeps facing where the pointer used to be.
+    window.addEventListener('scroll', aim, { passive: true })
     raf = requestAnimationFrame(tick)
 
     // --- device tilt, for phones/tablets (coarse pointer, no hover) ---
@@ -164,6 +179,7 @@ function useTilt3D(interactionRef: RefObject<HTMLElement | null>, groupRef: RefO
     return () => {
       container.removeEventListener('mousemove', onMove)
       container.removeEventListener('mouseleave', onLeave)
+      window.removeEventListener('scroll', aim)
       cancelAnimationFrame(raf)
       cleanupOrientation()
     }
