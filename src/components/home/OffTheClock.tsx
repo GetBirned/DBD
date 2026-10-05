@@ -393,7 +393,6 @@ export default function OffTheClock() {
       <div className="mx-auto max-w-[1120px]">
         <ChapterHeading
           title="What I'm *into.*"
-          kicker="Pulled live from Spotify, Steam, and PlayStation — so it's whatever I've actually been listening to and playing."
         />
 
         <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">

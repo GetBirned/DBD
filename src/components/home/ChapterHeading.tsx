@@ -8,11 +8,9 @@ import { EASE, useMotionOK } from '@/lib/motion'
  */
 export default function ChapterHeading({
   title,
-  kicker,
   className = 'mb-12 sm:mb-16',
 }: {
   title: string
-  kicker?: string
   className?: string
 }) {
   const motionOK = useMotionOK()
@@ -44,16 +42,6 @@ export default function ChapterHeading({
           )
         })}
       </h2>
-
-      {kicker && (
-        <motion.p
-          variants={{ hidden: { opacity: 0, y: 14 }, shown: { opacity: 1, y: 0 } }}
-          transition={{ duration: 0.7, ease: EASE, delay: 0.25 + words.length * 0.07 }}
-          className="mt-6 max-w-[580px] text-[17px] leading-relaxed text-ink-dim"
-        >
-          {kicker}
-        </motion.p>
-      )}
     </motion.header>
   )
 }

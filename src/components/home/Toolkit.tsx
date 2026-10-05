@@ -37,7 +37,6 @@ export default function Toolkit() {
       <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
         <ChapterHeading
           title="What I build *with.*"
-          kicker="From .NET and SQL Server at work to React, Node, and Godot after hours."
         />
       </div>
 
