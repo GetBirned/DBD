@@ -173,12 +173,12 @@ function StackCard({
 
 function Heading({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
   return (
-    <div className="mx-auto flex max-w-[1120px] items-end justify-between gap-10 px-6 sm:px-12">
-      <ChapterHeading
-        title="Things I've *built.*"
-      />
-      <div className="mb-16 hidden shrink-0 lg:block">
-        <Logo3D variant="code" width={190} height={190 / LOGO_ASPECT.code} interactionRef={stageRef} />
+    // Centered on the title: the spacing below lives on this row rather than on the heading, so
+    // the heading's own bottom margin doesn't count toward the height the mark is centered on.
+    <div className="mx-auto mb-12 flex max-w-[1120px] items-center justify-between gap-10 px-6 sm:mb-16 sm:px-12">
+      <ChapterHeading title="Things I've *built.*" className="" />
+      <div className="hidden shrink-0 lg:block">
+        <Logo3D variant="code" width={190} height={190 / LOGO_ASPECT.code} interactionRef={stageRef} shadow={false} />
       </div>
     </div>
   )

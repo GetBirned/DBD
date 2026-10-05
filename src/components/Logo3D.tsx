@@ -217,11 +217,15 @@ export default function Logo3D({
   width,
   height,
   interactionRef,
+  shadow = true,
 }: {
   variant: LogoVariant
   width: number
   height: number
   interactionRef: RefObject<HTMLElement | null>
+  /** The soft ground shadow beneath the mark. Off for the small chapter marks: on the dark page it
+   *  reads as a smudge, and it adds height below the mark that throws off centering it on a line. */
+  shadow?: boolean
 }) {
   const groupRef = useRef<HTMLDivElement>(null)
   useTilt3D(interactionRef, groupRef)
@@ -249,10 +253,12 @@ export default function Logo3D({
           </div>
         </div>
       </div>
-      <div
-        className="-mt-2 h-8 rounded-full blur-xl"
-        style={{ width: `min(56vw, ${width * 0.7}px)`, background: 'oklch(0.12 0.02 260 / .32)' }}
-      />
+      {shadow && (
+        <div
+          className="-mt-2 h-8 rounded-full blur-xl"
+          style={{ width: `min(56vw, ${width * 0.7}px)`, background: 'oklch(0.12 0.02 260 / .32)' }}
+        />
+      )}
     </div>
   )
 }

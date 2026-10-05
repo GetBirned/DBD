@@ -92,7 +92,7 @@ function Intro({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
   return (
     <div className="w-full shrink-0 md:w-[min(40vw,520px)]">
       <div className="mb-8 hidden md:block">
-        <Logo3D variant="dbd" width={240} height={240 / LOGO_ASPECT.dbd} interactionRef={stageRef} />
+        <Logo3D variant="dbd" width={240} height={240 / LOGO_ASPECT.dbd} interactionRef={stageRef} shadow={false} />
       </div>
       <ChapterHeading
         title="People I've put *online.*"
