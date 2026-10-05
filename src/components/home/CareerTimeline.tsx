@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import ChapterHeading from './ChapterHeading'
-import Shoutouts, { collectShoutouts, initials, roleKey, type Shoutout } from './Shoutouts'
+import Shoutouts, { collectShoutouts } from './Shoutouts'
 import { experience, type ExperienceEntry } from '@/data/experience'
 import { EASE, useMotionOK } from '@/lib/motion'
 
@@ -32,26 +32,7 @@ const rowLabel = (r: Row) =>
     ? { title: r.job.role, sub: r.job.company.replace(' Inc.', ''), date: r.job.dateRange }
     : { title: EDUCATION.degree, sub: 'UNH', date: EDUCATION.date }
 
-/** Up to three faces from the job's named shoutouts, overlapped — a teaser for the band below.
- *  One face per person: some people gave more than one. */
-function FaceStack({ items }: { items: Shoutout[] }) {
-  const faces = items.filter((s, i) => s.name && items.findIndex((t) => t.name === s.name) === i).slice(0, 3)
-  return (
-    <span className="flex -space-x-2">
-      {faces.map((s, i) => (
-        <span
-          key={i}
-          className="flex h-7 w-7 items-center justify-center rounded-full font-mono text-[9px] font-medium text-white ring-2 ring-black/30"
-          style={{ background: `color-mix(in oklch, ${s.tint} 70%, white)` }}
-        >
-          {initials(s.name!)}
-        </span>
-      ))}
-    </span>
-  )
-}
-
-function JobCard({ job, onShoutouts }: { job: ExperienceEntry; onShoutouts: () => void }) {
+function JobCard({ job }: { job: ExperienceEntry }) {
   const dark = job.cardDark
   return (
     <div
@@ -108,16 +89,6 @@ function JobCard({ job, onShoutouts }: { job: ExperienceEntry; onShoutouts: () =
           {job.desc}
         </p>
 
-        {job.referrals && job.referrals.length > 0 && (
-          <button
-            type="button"
-            onClick={onShoutouts}
-            className={`mt-7 inline-flex items-center gap-3 rounded-full py-1.5 pr-4 pl-1.5 font-mono text-[11px] tracking-wide uppercase transition-colors ${dark ? 'bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/20' : 'bg-black/5 text-ink ring-1 ring-line hover:bg-black/10'}`}
-          >
-            <FaceStack items={SHOUTOUTS.filter((s) => s.role === roleKey(job))} />
-            {job.referrals.length} coworker shoutout{job.referrals.length === 1 ? '' : 's'} ↓
-          </button>
-        )}
       </div>
     </div>
   )
@@ -154,14 +125,6 @@ export default function CareerTimeline() {
   const [active, setActive] = useState(0)
   const [quote, setQuote] = useState(0)
   const trackRef = useRef<HTMLDivElement>(null)
-  const bandRef = useRef<HTMLDivElement>(null)
-
-  /** A card's shoutout button: cue up that job's first shoutout and bring the band into view. */
-  const showShoutouts = (job: ExperienceEntry) => {
-    const i = SHOUTOUTS.findIndex((s) => s.role === roleKey(job))
-    if (i >= 0) setQuote(i)
-    bandRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
 
   // The rail fills top to bottom as the cards pass the middle of the screen.
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ['start 0.6', 'end 0.6'] })
@@ -229,7 +192,7 @@ export default function CareerTimeline() {
                       viewport={{ once: true, margin: '-10% 0px' }}
                       transition={{ duration: 0.8, ease: EASE }}
                     >
-                      {r.kind === 'job' ? <JobCard job={r.job} onShoutouts={() => showShoutouts(r.job)} /> : <EducationCard />}
+                      {r.kind === 'job' ? <JobCard job={r.job} /> : <EducationCard />}
                     </motion.div>
                   </motion.div>
                 </div>
@@ -238,7 +201,7 @@ export default function CareerTimeline() {
           </div>
         </div>
 
-        <div ref={bandRef} className="mt-[16vh]">
+        <div className="mt-[16vh]">
           <Shoutouts items={SHOUTOUTS} active={quote} onChange={setQuote} />
         </div>
       </div>

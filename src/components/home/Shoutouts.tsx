@@ -13,14 +13,10 @@ export interface Shoutout {
   company: string
   /** Company logo, shown on a white disc beside the attribution. */
   logo?: string
-  /** Light company mark, standing in for initials on an unattributed shoutout's avatar. */
+  /** Light company mark, shown on the shoutout's circle in the row below the quote. */
   mark?: string
   tint: string
-  /** Which job it's about — lets a career card jump straight to its own shoutouts. */
-  role: string
 }
-
-export const roleKey = (e: ExperienceEntry) => `${e.company}|${e.role}`
 
 /**
  * Every referral across the career entries, dealt round-robin by role so the first few to come
@@ -38,7 +34,6 @@ export function collectShoutouts(entries: ExperienceEntry[]): Shoutout[] {
         logo: e.logo,
         mark: e.logoDark ?? e.logo,
         tint: e.tint,
-        role: roleKey(e),
       }
     }),
   )
@@ -50,14 +45,6 @@ export function collectShoutouts(entries: ExperienceEntry[]): Shoutout[] {
 
 /** Seconds each shoutout stays up — these run longer on average than the client quotes. */
 const INTERVAL = 8
-
-export const initials = (name: string) =>
-  name
-    .split(/\s+/)
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
 
 // Short quotes set bigger and long ones smaller, so a two-liner doesn't look lost and a
 // paragraph doesn't take over the screen.
@@ -105,8 +92,8 @@ function TimerRing({ running }: { running: boolean }) {
 
 /**
  * Coworker shoutouts given the same stage as the client testimonials: one at a time, large, in
- * the serif accent, advancing on their own while on screen. A row of faces — one per shoutout —
- * shows how many people said something and lets you jump to any of them.
+ * the serif accent, advancing on their own while on screen. A row of circles — one per
+ * shoutout, each with its company's logo — shows how many there are and jumps to any of them.
  */
 export default function Shoutouts({
   items,
@@ -202,13 +189,7 @@ export default function Shoutouts({
                   className={`relative flex h-9 w-9 items-center justify-center rounded-full font-mono text-[11px] font-medium text-white transition-all duration-300 ${on ? 'scale-110' : 'opacity-40 hover:opacity-90'}`}
                   style={{ background: s.tint }}
                 >
-                  {s.name ? (
-                    initials(s.name)
-                  ) : s.mark ? (
-                    <img src={s.mark} alt="" className="h-4 w-4 object-contain" />
-                  ) : (
-                    '✦'
-                  )}
+                  {s.mark ? <img src={s.mark} alt="" className="h-[18px] w-[18px] object-contain" /> : '✦'}
                   {on && <TimerRing key={`${active}-${running}`} running={running} />}
                 </button>
               )
