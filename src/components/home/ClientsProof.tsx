@@ -90,7 +90,7 @@ export default function ClientsProof() {
       </div>
       <div className="mt-[12vh]">
         <div className="mx-auto mb-6 max-w-[1120px] px-6 font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase sm:px-12">
-          All {companies.length} businesses
+          Everyone I've built for
         </div>
         <div className="space-y-4">
           <VelocityMarquee items={ROW_A} speed={-2.2} />

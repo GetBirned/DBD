@@ -5,7 +5,6 @@ import Logo3D, { LOGO_ASPECT } from '@/components/Logo3D'
 import MediaFrame from '@/components/MediaFrame'
 import { ArrowUpRight } from '@/components/icons'
 import { clientCases, isVideo, type CaseItem } from '@/lib/cases'
-import { companies } from '@/data/companies'
 import { platforms } from '@/data/platforms'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useMotionOK } from '@/lib/motion'
@@ -99,7 +98,7 @@ function Intro({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
         index="02"
         eyebrow="Designs By Dart"
         title="People I've put *online.*"
-        kicker={`${clientCases.length} of the ${companies.length} local businesses I've built sites for since 2022 — open any of them for the walkthrough and the story.`}
+        kicker="Sites I've built for local businesses since 2022 — open any of them for the walkthrough and the story."
         className="mb-8"
       />
       <div className="hidden items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-ink-faint uppercase md:flex">
