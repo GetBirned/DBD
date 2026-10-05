@@ -3,9 +3,7 @@ import { useLocation, useSearchParams } from 'react-router-dom'
 import PageTransition from '@/components/PageTransition'
 import CaseViewer from '@/components/CaseViewer'
 import { Chapter } from '@/components/chapters'
-import HeroScroll from '@/components/home/HeroScroll'
-import Manifesto from '@/components/home/Manifesto'
-import Stats from '@/components/home/Stats'
+import Hero from '@/components/home/Hero'
 import CareerTimeline from '@/components/home/CareerTimeline'
 import ClientsGallery from '@/components/home/ClientsGallery'
 import ClientsProof from '@/components/home/ClientsProof'
@@ -17,9 +15,9 @@ import { clientCases, projectCases } from '@/lib/cases'
 type Open = { kind: 'client' | 'project'; index: number } | null
 
 /**
- * The whole site as one scroll story, in chapters: the mark becomes the name, then the career,
- * the clients, the projects, the toolkit, and what I do off the clock. Any client site or project
- * opens as a full case study over the page.
+ * The whole site as one scroll story, in chapters: the opening mark, then straight into the
+ * career, the clients, the projects, the toolkit, and what I do off the clock. Any client site or
+ * project opens as a full case study over the page.
  */
 export default function Home() {
   const [params, setParams] = useSearchParams()
@@ -53,9 +51,7 @@ export default function Home() {
   return (
     <PageTransition>
       <Chapter id="top">
-        <HeroScroll />
-        <Manifesto />
-        <Stats />
+        <Hero />
       </Chapter>
       <Chapter id="career">
         <CareerTimeline />

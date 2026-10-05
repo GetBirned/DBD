@@ -1,7 +1,4 @@
-import { useRef } from 'react'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { ArrowUpRight, GitHubIcon, LinkedInIcon } from './icons'
-import { useMotionOK } from '@/lib/motion'
 
 /** Approved-contractor designations. The marks name their own issuing bodies. They're drawn for
  *  a white ground, so they sit on white tiles here. */
@@ -11,19 +8,13 @@ const CREDENTIALS = [
 ]
 
 export default function Footer() {
-  const motionOK = useMotionOK()
-  const ref = useRef<HTMLElement>(null)
-  // The closing wordmark rises into place over the last stretch of scroll.
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end end'] })
-  const rise = useSpring(useTransform(scrollYProgress, [0.25, 1], ['55%', '0%']), { stiffness: 120, damping: 28 })
-
   // Base pill shared by all three actions — these are the primary conversion point of the
   // whole site, so they're sized as the focal element rather than as trailing links.
   const action =
     'inline-flex items-center gap-2.5 rounded-full px-7 py-4 font-mono text-[12px] tracking-wide uppercase transition-transform hover:-translate-y-0.5'
 
   return (
-    <footer ref={ref} className="relative z-[1] overflow-hidden border-t border-line bg-[oklch(0.11_0.02_282)] px-6 pt-20 sm:px-12">
+    <footer className="relative z-[1] border-t border-line bg-[oklch(0.11_0.02_282)] px-6 pt-20 pb-12 sm:px-12">
       <div className="mx-auto max-w-[1120px]">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap gap-4">
@@ -75,16 +66,6 @@ export default function Footer() {
             </a>
           </span>
         </div>
-      </div>
-
-      {/* The sign-off: the name, set as large as the page is wide. */}
-      <div aria-hidden className="mt-10 overflow-hidden select-none">
-        <motion.div
-          style={motionOK ? { y: rise } : undefined}
-          className="grad-text text-center font-display text-[15.2vw] leading-[0.86] font-extrabold tracking-[-0.06em] whitespace-nowrap opacity-90"
-        >
-          Dart Birnie
-        </motion.div>
       </div>
     </footer>
   )

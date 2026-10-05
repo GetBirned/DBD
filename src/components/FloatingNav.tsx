@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } fr
 import { LogoIcon } from './Logo3D'
 import { GitHubIcon, LinkedInIcon } from './icons'
 import { CHAPTER_LINKS, goToChapter, useChapter, type ChapterId } from './chapters'
-import { EASE, useMotionOK } from '@/lib/motion'
+import { EASE } from '@/lib/motion'
 
 const GITHUB = 'https://github.com/GetBirned'
 const LINKEDIN = 'https://www.linkedin.com/in/dartagnan-birnie/'
@@ -27,16 +27,14 @@ function ResumeButton() {
  */
 export default function FloatingNav() {
   const { current } = useChapter()
-  const motionOK = useMotionOK()
   const { scrollY, scrollYProgress } = useScroll()
-  // With reduced motion the hero is shown already settled, and that state has its icon row
-  // faded out — so the nav is up from the start rather than waiting for a scroll.
-  const [shown, setShown] = useState(!motionOK)
+  const [shown, setShown] = useState(false)
   const [menu, setMenu] = useState(false)
   const bar = useSpring(scrollYProgress, { stiffness: 220, damping: 40 })
 
   useMotionValueEvent(scrollY, 'change', (y) => {
-    const show = !motionOK || y > window.innerHeight * 0.12
+    // The hero fades its own icon row out over this first stretch of scroll.
+    const show = y > window.innerHeight * 0.12
     setShown(show)
     if (!show) setMenu(false)
   })
@@ -108,14 +106,14 @@ export default function FloatingNav() {
               <div className="relative h-9 w-[124px] overflow-hidden lg:hidden">
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span
-                    key={currentLabel ?? 'intro'}
+                    key={currentLabel ?? 'home'}
                     initial={{ y: 18, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -18, opacity: 0 }}
                     transition={{ duration: 0.3, ease: EASE }}
                     className="absolute inset-0 flex items-center justify-center font-mono text-[11px] tracking-[0.14em] text-white/75 uppercase"
                   >
-                    {currentLabel ?? 'Intro'}
+                    {currentLabel ?? 'Home'}
                   </motion.span>
                 </AnimatePresence>
               </div>
