@@ -172,8 +172,6 @@ export default function CareerTimeline() {
     <section className="px-6 py-[12vh] sm:px-12">
       <div className="mx-auto max-w-[1120px]">
         <ChapterHeading
-          index="01"
-          eyebrow="Career"
           title="From the support desk to leading *implementations.*"
           kicker="Promoted within six months at Trimble — and the coworker shoutouts are real, word for word."
         />

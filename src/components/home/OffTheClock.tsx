@@ -392,8 +392,6 @@ export default function OffTheClock() {
     <section className="px-6 pt-[16vh] pb-[24vh] sm:px-12">
       <div className="mx-auto max-w-[1120px]">
         <ChapterHeading
-          index="05"
-          eyebrow="Off the clock"
           title="What I'm *into.*"
           kicker="Pulled live from Spotify, Steam, and PlayStation — so it's whatever I've actually been listening to and playing."
         />

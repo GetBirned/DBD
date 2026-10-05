@@ -175,8 +175,6 @@ function Heading({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
   return (
     <div className="mx-auto flex max-w-[1120px] items-end justify-between gap-10 px-6 sm:px-12">
       <ChapterHeading
-        index="03"
-        eyebrow="Projects"
         title="Things I've *built.*"
         kicker="Games, a companion app, and an ERP built for the fun of it — plus a senior capstone with a five-person team."
       />

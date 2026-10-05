@@ -2,19 +2,15 @@ import { motion } from 'framer-motion'
 import { EASE, useMotionOK } from '@/lib/motion'
 
 /**
- * Numbered section opener: a mono index line, then a large title whose words rise out of a clip
- * mask as it scrolls in. Wrap a word in asterisks — "Things I've *built*." — to set it in the
- * italic serif accent.
+ * Section opener: a large title whose words rise out of a clip mask as it scrolls in. Wrap a word
+ * in asterisks — "Things I've *built*." — to set it in the italic serif accent. Chapter names
+ * live only in the nav (see CHAPTER_LINKS); there's deliberately no visible label above the title.
  */
 export default function ChapterHeading({
-  index,
-  eyebrow,
   title,
   kicker,
   className = 'mb-12 sm:mb-16',
 }: {
-  index: string
-  eyebrow: string
   title: string
   kicker?: string
   className?: string
@@ -29,17 +25,7 @@ export default function ChapterHeading({
       viewport={{ once: true, margin: '-12% 0px' }}
       className={className}
     >
-      <div className="flex items-center gap-4 font-mono text-xs tracking-[0.2em] text-ink-faint uppercase">
-        <span className="text-ink">{index}</span>
-        <motion.span
-          variants={{ hidden: { scaleX: 0 }, shown: { scaleX: 1 } }}
-          transition={{ duration: 0.9, ease: EASE }}
-          className="h-px w-14 origin-left bg-line"
-        />
-        {eyebrow}
-      </div>
-
-      <h2 className="mt-5 font-display text-[clamp(42px,7.2vw,104px)] leading-[0.98] font-extrabold tracking-[-0.045em] text-ink">
+      <h2 className="font-display text-[clamp(42px,7.2vw,104px)] leading-[0.98] font-extrabold tracking-[-0.045em] text-ink">
         {words.map((raw, i) => {
           const accent = /^\*.+\*[.,!?]?$/.test(raw)
           const word = accent ? raw.replace(/\*/g, '') : raw

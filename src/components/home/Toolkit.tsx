@@ -36,8 +36,6 @@ export default function Toolkit() {
     <section className="py-[14vh]">
       <div className="mx-auto max-w-[1120px] px-6 sm:px-12">
         <ChapterHeading
-          index="04"
-          eyebrow="Toolkit"
           title="What I build *with.*"
           kicker="From .NET and SQL Server at work to React, Node, and Godot after hours."
         />
