@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useInView, type Variants } from 'framer-motion'
 import VelocityMarquee from '@/components/VelocityMarquee'
 import { clients } from '@/data/clients'
 import { companies } from '@/data/companies'
@@ -13,32 +13,45 @@ const ROW_B = companies.filter((_, i) => i % 2 === 1)
 const QUOTES = clients.filter((c) => c.quote)
 const INTERVAL = 7
 
+// Outgoing fades up and out first, then the next rises in from below.
+const swap: Variants = {
+  shown: { opacity: 1, y: [18, 0], filter: 'blur(0px)', transition: { duration: 0.55, ease: EASE, delay: 0.25 } },
+  hidden: { opacity: 0, y: -12, filter: 'blur(6px)', transition: { duration: 0.25, ease: EASE } },
+}
+
 function Testimonials() {
   const motionOK = useMotionOK()
+  const ref = useRef<HTMLDivElement>(null)
+  // Only rotates while on screen — nobody's reading it otherwise, and nobody arrives mid-rotation.
+  const inView = useInView(ref, { margin: '-20% 0px' })
   const [i, setI] = useState(0)
   const [paused, setPaused] = useState(false)
+  const running = motionOK && inView && !paused && QUOTES.length > 1
 
   useEffect(() => {
-    if (paused || !motionOK || QUOTES.length < 2) return
+    if (!running) return
     const t = setTimeout(() => setI((n) => (n + 1) % QUOTES.length), INTERVAL * 1000)
     return () => clearTimeout(t)
-  }, [i, paused, motionOK])
+  }, [i, running])
 
   if (QUOTES.length === 0) return null
-  const q = QUOTES[i]
 
   return (
-    <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+    <div ref={ref} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="mb-6 font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase">In their words</div>
+      {/* Every quote stacked in one grid cell, so the block always takes the height of the
+          longest. Swapping one quote for another used to resize it — Monzione's short quote
+          pulled everything below up ~160px and the next one pushed it back, every rotation. */}
       <div className="grid">
-        <AnimatePresence mode="wait" initial={false}>
+        {QUOTES.map((q, n) => (
           <motion.figure
             key={q.name}
-            initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -12, filter: 'blur(6px)' }}
-            transition={{ duration: 0.55, ease: EASE }}
-            className="col-start-1 row-start-1"
+            aria-hidden={n !== i}
+            initial={false}
+            animate={n === i ? 'shown' : 'hidden'}
+            variants={motionOK ? swap : undefined}
+            style={motionOK ? undefined : { opacity: n === i ? 1 : 0 }}
+            className={`col-start-1 row-start-1 ${n === i ? '' : 'pointer-events-none'}`}
           >
             <blockquote className="accent text-[clamp(28px,3.6vw,48px)] leading-[1.18] text-ink">
               <span className="grad-text">“</span>
@@ -50,7 +63,7 @@ function Testimonials() {
               <span className="font-mono text-xs text-ink-dim">{q.attr}</span>
             </figcaption>
           </motion.figure>
-        </AnimatePresence>
+        ))}
       </div>
 
       {QUOTES.length > 1 && (
@@ -66,11 +79,11 @@ function Testimonials() {
               {/* The active pill fills over the auto-advance interval, so it doubles as a timer. */}
               {n === i && (
                 <motion.span
-                  key={`${i}-${paused}`}
+                  key={`${i}-${running}`}
                   className="brand-gradient absolute inset-y-0 left-0"
-                  initial={{ width: paused || !motionOK ? '100%' : '0%' }}
+                  initial={{ width: running ? '0%' : '100%' }}
                   animate={{ width: '100%' }}
-                  transition={{ duration: paused || !motionOK ? 0 : INTERVAL, ease: 'linear' }}
+                  transition={{ duration: running ? INTERVAL : 0, ease: 'linear' }}
                 />
               )}
             </button>
