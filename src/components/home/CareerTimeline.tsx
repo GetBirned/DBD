@@ -214,17 +214,6 @@ export default function CareerTimeline() {
             <div className="space-y-10">
               {ROWS.map((r, i) => (
                 <div key={i}>
-                  {/* Between the two Trimble roles: the promotion, marked on the rail itself. */}
-                  {i === 1 && (
-                    <div className="relative -mt-4 mb-6 flex items-center">
-                      <span className="absolute -left-8 flex h-[16px] w-[16px] items-center justify-center sm:-left-12 sm:h-[24px] sm:w-[24px]">
-                        <span className="brand-gradient h-full w-full rounded-full ring-4 ring-bg" />
-                      </span>
-                      <span className="rounded-full bg-white/[0.06] px-3.5 py-1.5 font-mono text-[11px] tracking-wide text-ink uppercase ring-1 ring-white/15">
-                        ↑ Promoted within 6 months
-                      </span>
-                    </div>
-                  )}
                   {/* Two observers on purpose: this one keeps tracking which row is in the
                       middle band of the screen (both directions), while the reveal below fires
                       once and is done. */}

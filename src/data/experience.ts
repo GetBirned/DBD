@@ -34,7 +34,10 @@ export interface ExperienceEntry {
 }
 
 const TRIMBLE_BLUE = 'oklch(0.486 0.128 247)'
-const TRIMBLE_BLUE_CARD = 'oklch(0.486 0.128 247 / 0.96)'
+// Trimble blue taken down to a deep navy for the card itself, so it sits in the dark theme the
+// way Account Tree's card does. The full-strength blue stays as the accent (`tint`): the card's
+// border, its corner glow, and the coworker faces.
+const TRIMBLE_CARD = 'oklch(0.235 0.075 249 / 0.96)'
 
 export const experience: ExperienceEntry[] = [
   {
@@ -46,7 +49,7 @@ export const experience: ExperienceEntry[] = [
     dateRange: 'May 2026 – Present',
     desc: "Leading end-to-end B2W Estimate implementations — discovery through deployment, database population, training, and customer adoption — with integrations for telematics providers (John Deere, Komatsu, Samsara) on the AEMP2 standard. Also lead the licensing department as the primary escalation point for B2W activation and provisioning across the product suite.",
     tint: TRIMBLE_BLUE,
-    cardBg: TRIMBLE_BLUE_CARD,
+    cardBg: TRIMBLE_CARD,
     cardDark: true,
     referrals: [
       {
@@ -69,7 +72,7 @@ export const experience: ExperienceEntry[] = [
     dateRange: 'Sept. 2025 – May 2026',
     desc: "Resolved 1,400+ support cases in my first six months — L1/L2 technical resolution across the entire B2W software suite (Estimate, Track, Maintain, Schedule) for heavy civil construction clients, covering SQL, C#, bug discovery, and database management through the full ticket lifecycle in Salesforce. Promoted to Implementation Consultant within six months.",
     tint: TRIMBLE_BLUE,
-    cardBg: TRIMBLE_BLUE_CARD,
+    cardBg: TRIMBLE_CARD,
     cardDark: true,
     referrals: [
       {
