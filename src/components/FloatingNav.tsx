@@ -140,15 +140,14 @@ export default function FloatingNav() {
                   transition={{ duration: 0.25, ease: EASE }}
                   className="mt-2 origin-top rounded-3xl bg-[oklch(0.17_0.02_282/0.94)] p-3 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/10 backdrop-blur-xl lg:hidden"
                 >
-                  {CHAPTER_LINKS.map((c, i) => (
+                  {CHAPTER_LINKS.map((c) => (
                     <button
                       key={c.id}
                       type="button"
                       onClick={() => jump(c.id)}
-                      className={`flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left font-display text-lg font-bold transition-colors ${current === c.id ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5'}`}
+                      className={`flex w-full items-center rounded-2xl px-4 py-3.5 text-left font-display text-lg font-bold transition-colors ${current === c.id ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5'}`}
                     >
                       {c.label}
-                      <span className="font-mono text-[11px] text-white/35">0{i + 1}</span>
                     </button>
                   ))}
                   <div className="mt-2 flex gap-2 border-t border-white/10 px-1 pt-3">
