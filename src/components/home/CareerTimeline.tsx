@@ -13,6 +13,9 @@ const EDUCATION = {
   detail: "Dean's List — Fall 2024 & Spring 2025",
   location: 'Durham, NH',
   date: 'May 2025',
+  // The shield alone — the card's heading already spells out the name. Cropped from the
+  // official logo in the capstone deck (raw-media/pirail).
+  logo: '/logos/company_logos/unhShield.png',
 }
 
 type Row = { kind: 'job'; job: ExperienceEntry } | { kind: 'edu' }
@@ -99,15 +102,13 @@ function EducationCard() {
     <div className="rounded-[28px] bg-white/[0.04] p-7 ring-1 ring-line sm:p-9">
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div className="flex items-center gap-4">
-          <span className="brand-gradient flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-display text-[13px] font-extrabold text-white">
-            UNH
-          </span>
+          <img src={EDUCATION.logo} alt="" className="h-11 w-11 shrink-0 object-contain" />
           <div>
             <div className="mb-1.5 font-mono text-xs text-grad-a">{EDUCATION.degree}</div>
             <h3 className="text-[26px] leading-none sm:text-[30px]">{EDUCATION.school}</h3>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 sm:flex-col sm:items-end">
+        <div className="flex flex-wrap gap-2">
           {[EDUCATION.location, EDUCATION.date].map((t) => (
             <span key={t} className="rounded-full border border-line px-3.5 py-1.5 font-mono text-[11px] whitespace-nowrap text-ink-dim">
               {t}
