@@ -9,6 +9,8 @@ export default function PageTransition({ children }: { children: ReactNode }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      // Above the home page's fixed night backdrop (z-0) — see DarkZone.
+      className="relative z-[1]"
     >
       {children}
     </motion.div>

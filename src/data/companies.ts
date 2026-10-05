@@ -4,7 +4,7 @@ export interface CompanyLogo {
 }
 
 /**
- * The full "People I've Put Online" roster for the marquees (Home + Designs By Dart).
+ * The full "People I've Put Online" roster, shown as the logo wall under the client gallery.
  * Names are inferred from the logo filenames provided — correct any that are off,
  * these are just best-guess labels next to the real logo image.
  */

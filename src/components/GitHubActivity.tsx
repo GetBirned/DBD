@@ -1,13 +1,16 @@
+import { useRef } from 'react'
+import { useInView } from 'framer-motion'
 import { useGitHubData, type ContributionsData, type ContributionDay } from '@/hooks/useGitHubData'
+import { ArrowUpRight } from './icons'
 
 // Site palette rather than GitHub's green, so the board reads as part of the page instead of
 // a pasted-in widget. Index = GitHub's own 0–4 intensity bucket.
 const LEVEL_COLORS = [
-  'oklch(0.91 0.008 260)',
-  'oklch(0.80 0.07 268)',
-  'oklch(0.70 0.12 276)',
-  'oklch(0.60 0.16 288)',
-  'oklch(0.51 0.20 300)',
+  'oklch(1 0 0 / 0.06)',
+  'oklch(0.45 0.13 285)',
+  'oklch(0.55 0.17 292)',
+  'oklch(0.65 0.2 305)',
+  'oklch(0.76 0.17 330)',
 ]
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -27,11 +30,14 @@ function toWeeks(days: ContributionDay[]): (ContributionDay | null)[][] {
   return weeks
 }
 
+/** The last year of GitHub contributions; the cells pop in week by week once it's reached. */
 export default function GitHubActivity() {
   const { data } = useGitHubData<ContributionsData>('/api/github/contributions')
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-10% 0px' })
 
   // Silent no-op when the fetch fails — same policy as the Spotify/Steam/PSN widgets.
-  if (!data || data.days.length === 0) return null
+  if (!data || data.days.length === 0) return <div ref={ref} />
 
   const weeks = toWeeks(data.days)
 
@@ -46,27 +52,30 @@ export default function GitHubActivity() {
   })
 
   return (
-    <div>
-      <div className="mb-3.5 flex flex-wrap items-baseline justify-between gap-2">
-        <div className="font-mono text-xs text-ink-dim">
-          <b className="font-semibold text-ink">{data.total.toLocaleString()}</b> contributions in the last year
+    <div ref={ref} className={`rounded-[28px] bg-white/[0.035] p-6 ring-1 ring-line sm:p-8 ${inView ? 'gh-in' : ''}`}>
+      <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <div className="font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase">GitHub, last 12 months</div>
+          <div className="mt-1.5 font-display text-2xl font-bold text-ink">
+            {data.total.toLocaleString()} <span className="text-ink-dim">contributions</span>
+          </div>
         </div>
         <a
           href={data.profileUrl}
           target="_blank"
           rel="noreferrer"
-          className="font-mono text-[11px] text-grad-a hover:underline"
+          className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-dim transition-colors hover:text-ink"
         >
-          @{data.user} →
+          @{data.user} <ArrowUpRight />
         </a>
       </div>
 
       {/* Wide content scrolls inside its own container so the page body never scrolls sideways. */}
-      <div className="overflow-x-auto pb-1">
+      <div className="overflow-x-auto pb-1 [scrollbar-width:thin]">
         <div className="inline-block min-w-full">
           <div className="mb-1 flex gap-[3px]">
             {monthLabels.map((label, i) => (
-              <div key={i} className="w-[11px] shrink-0 font-mono text-[9px] text-ink-faint">
+              <div key={i} className="w-[12px] shrink-0 font-mono text-[9px] text-ink-faint">
                 {label}
               </div>
             ))}
@@ -78,8 +87,11 @@ export default function GitHubActivity() {
                   <div
                     key={di}
                     title={day ? `${day.count} contribution${day.count === 1 ? '' : 's'} on ${day.date}` : undefined}
-                    className="h-[11px] w-[11px] rounded-[2px]"
-                    style={{ background: day ? LEVEL_COLORS[day.level] ?? LEVEL_COLORS[0] : 'transparent' }}
+                    className="gh-cell h-[12px] w-[12px] rounded-[3px]"
+                    style={{
+                      background: day ? (LEVEL_COLORS[day.level] ?? LEVEL_COLORS[0]) : 'transparent',
+                      transitionDelay: `${wi * 14 + di * 8}ms`,
+                    }}
                   />
                 ))}
               </div>
@@ -88,10 +100,10 @@ export default function GitHubActivity() {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-end gap-1.5 font-mono text-[10px] text-ink-faint">
+      <div className="mt-4 flex items-center justify-end gap-1.5 font-mono text-[10px] text-ink-faint">
         <span>Less</span>
         {LEVEL_COLORS.map((c) => (
-          <span key={c} className="h-[11px] w-[11px] rounded-[2px]" style={{ background: c }} />
+          <span key={c} className="h-[12px] w-[12px] rounded-[3px]" style={{ background: c }} />
         ))}
         <span>More</span>
       </div>

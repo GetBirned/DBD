@@ -14,7 +14,7 @@ export interface ExperienceEntry {
   desc: string
   /** A short callout for a specific honor/award — rendered as a small badge. */
   badge?: string
-  /** Subtle per-card accent color, matching the Showcase card system. */
+  /** Accent for the card's gradient border and corner glow. */
   tint: string
   /** Overrides the card's panel fill (default: the standard translucent panel). */
   cardBg?: string

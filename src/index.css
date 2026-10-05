@@ -1,20 +1,25 @@
 @import "tailwindcss";
 
+/*
+ * Dark-first palette. Token names are unchanged from the light theme so every utility
+ * (text-ink, border-line, bg-panel…) flips with them: "ink" is now the light text color.
+ */
 @theme {
-  --color-bg: oklch(0.99 0.004 260);
-  --color-bg-soft: oklch(0.965 0.006 260);
-  --color-panel: oklch(1 0 0 / 0.65);
-  --color-ink: oklch(0.18 0.02 260);
-  --color-ink-dim: oklch(0.44 0.02 260);
-  --color-ink-faint: oklch(0.62 0.02 260);
-  --color-line: oklch(0.85 0.01 260);
-  --color-grad-a: oklch(0.58 0.16 255);
-  --color-grad-b: oklch(0.5 0.2 305);
-  --color-grad-c: oklch(0.55 0.19 335);
+  --color-bg: oklch(0.135 0.02 282);
+  --color-bg-soft: oklch(0.17 0.024 282);
+  --color-panel: oklch(1 0 0 / 0.045);
+  --color-ink: oklch(0.97 0.006 282);
+  --color-ink-dim: oklch(0.8 0.014 282);
+  --color-ink-faint: oklch(0.62 0.02 282);
+  --color-line: oklch(1 0 0 / 0.11);
+  --color-grad-a: oklch(0.7 0.15 252);
+  --color-grad-b: oklch(0.64 0.2 298);
+  --color-grad-c: oklch(0.7 0.19 338);
 
   --font-display: "Sora", "Segoe UI", sans-serif;
   --font-body: "Manrope", "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "Consolas", monospace;
+  --font-serif: "Instrument Serif", Georgia, serif;
 }
 
 /*
@@ -28,11 +33,13 @@
   body {
     margin: 0;
     background: var(--color-bg);
+    color-scheme: dark;
   }
 
   body {
     font-family: var(--font-body);
     color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
   }
 
   h1,
@@ -55,10 +62,15 @@
     border: none;
     color: inherit;
   }
+
+  ::selection {
+    background: oklch(0.64 0.2 298 / 0.45);
+    color: white;
+  }
 }
 
 .grad-text {
-  background: linear-gradient(135deg, var(--color-grad-a), var(--color-grad-b));
+  background: linear-gradient(120deg, var(--color-grad-a), var(--color-grad-b) 55%, var(--color-grad-c));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -68,17 +80,18 @@
   background: linear-gradient(135deg, var(--color-grad-a), var(--color-grad-b));
 }
 
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+/* The editorial accent: a word or two per headline set in italic serif. */
+.accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-.marquee-track {
-  animation: marquee 22s linear infinite;
+/* Hollow display type, for the kinetic skill rows. */
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1.5px oklch(1 0 0 / 0.38);
 }
 
 @keyframes bounce {
@@ -114,19 +127,33 @@
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
-/* `ellipse closest-side`, not `circle` + a % stop — see the matching comment
-   in IconHero.tsx. This is `position: fixed` (sized to the viewport), so a
-   `circle`'s farthest-corner sizing is especially prone to still carrying
-   visible color at the top/bottom edge on wide desktop windows. */
-.ambient-glow {
-  position: fixed;
-  inset: 0;
-  z-index: 998;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse closest-side at 15% 8%, oklch(0.65 0.15 265 / 0.05) 0%, transparent 100%),
-    radial-gradient(ellipse closest-side at 88% 18%, oklch(0.55 0.18 300 / 0.05) 0%, transparent 100%),
-    radial-gradient(ellipse closest-side at 50% 95%, oklch(0.6 0.15 280 / 0.04) 0%, transparent 100%);
+/* Slow, independent wander for each backdrop glow, so the background never sits still. */
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6vw, 4vh, 0) scale(1.12);
+  }
+}
+
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+  50% {
+    transform: translate3d(-7vw, -5vh, 0) scale(0.94);
+  }
+}
+
+.drift-a {
+  animation: drift-a 26s ease-in-out infinite;
+}
+
+.drift-b {
+  animation: drift-b 32s ease-in-out infinite;
 }
 
 .grain-overlay {
@@ -134,7 +161,53 @@
   inset: 0;
   z-index: 999;
   pointer-events: none;
-  opacity: 0.025;
+  opacity: 0.06;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes vinyl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Duration is set inline — 33⅓ rpm while a track is actually playing, slower otherwise. */
+.vinyl-spin {
+  position: relative;
+  animation: vinyl-spin 9s linear infinite;
+}
+
+/* GitHub cells pop in column by column once the grid is reached; delay is set per cell. */
+.gh-cell {
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 0.4s ease,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-in .gh-cell {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/*
+ * Visitors who ask the OS for reduced motion: stop the decorative CSS loops. The scroll-linked
+ * framer-motion choreography is switched off separately, in useMotionOK().
+ */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .scroll-bounce,
+  .vinyl-spin,
+  .drift-a,
+  .drift-b {
+    animation: none;
+  }
+
+  .gh-cell {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

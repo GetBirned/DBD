@@ -4,13 +4,60 @@ export interface SkillGroup {
 }
 
 /**
- * Compiled from what's actually shown across the site — this project's own stack,
- * and the tech listed on each Fun-page project. Review and edit freely; this is a
- * starting draft, not a verified-complete list of everything you know.
+ * Matches the résumé's Technical Skills section, plus the tools behind the projects on this site
+ * (Godot, Socket.IO, Tailwind, Framer Motion…). Keep the two in sync.
  */
 export const skills: SkillGroup[] = [
-  { label: 'Languages', items: ['JavaScript', 'TypeScript', 'Java', 'C', 'C#', 'GDScript'] },
-  { label: 'Frontend', items: ['React', 'Tailwind CSS', 'Framer Motion', 'HTML5 / CSS3'] },
-  { label: 'Backend', items: ['Node.js', 'Express', 'REST APIs', 'OAuth 2.0'] },
-  { label: 'Tools & Platforms', items: ['Git', 'GitHub', 'Vite', 'Railway', 'Godot', 'Dialogflow'] },
+  {
+    label: 'Languages',
+    items: ['C#', 'Python', 'Java', 'C', 'SQL', 'JavaScript', 'TypeScript', 'HTML5 / CSS', 'PHP', 'GDScript'],
+  },
+  {
+    label: 'Platforms & Data',
+    items: [
+      '.NET 8',
+      '.NET Framework',
+      'SQL Server',
+      'SSRS',
+      'IIS',
+      'REST APIs',
+      'Node.js',
+      'Express',
+      'React',
+      'PostgreSQL',
+      'MongoDB',
+      'Socket.IO',
+    ],
+  },
+  {
+    label: 'Tools',
+    items: [
+      'Git',
+      'GitHub',
+      'Visual Studio',
+      'SSMS',
+      'JIRA',
+      'Salesforce',
+      'Vite',
+      'Tailwind CSS',
+      'Framer Motion',
+      'Godot',
+      'Railway',
+      'Dialogflow',
+    ],
+  },
+  {
+    label: 'Systems & Practice',
+    items: [
+      'Agile / Scrum',
+      'Defect lifecycle',
+      'Root-cause analysis',
+      'Requirements (BRDs)',
+      'AEMP 2.0 · ISO 15143-3',
+      'GPS · IMU · LIDAR',
+      'Raspberry Pi',
+      'OpenStreetMap / GIS',
+      'OAuth 2.0',
+    ],
+  },
 ]

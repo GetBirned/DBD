@@ -1,4 +1,4 @@
-/** URL-safe id for a project, used to deep-link the Fun page's showcase to one card. */
+/** URL-safe id for a project or client — `?p=<slug>` opens that project's case study. */
 export const projectSlug = (name: string) =>
   name
     .toLowerCase()

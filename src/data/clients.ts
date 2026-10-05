@@ -11,7 +11,8 @@ export interface ClientData {
   vidLabel: string
   logo?: string
   screenshots?: string[]
-  /** A real screen-recording of scrolling through the live site — see Showcase.tsx. */
+  /** A real screen-recording of scrolling through the live site — plays on hover in the client
+   *  gallery and leads the case study. */
   video?: string
   /** The live site, for an outbound "Visit Site" link. */
   url?: string
