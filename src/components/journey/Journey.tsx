@@ -8,7 +8,7 @@ import { useMotionOK } from '@/lib/motion'
 import type { Timeline } from './motion'
 import { requestRedraw, setPlayhead, sky } from './store'
 import Title, { buildTitle } from './Title'
-import Clients, { buildClients, CLIENT_COUNT, CLIENTS_PER } from './scenes/Clients'
+import Clients, { buildClients } from './scenes/Clients'
 import Contact, { buildContact } from './scenes/Contact'
 import Hero, { buildHero, OPENING_LEN } from './scenes/Hero'
 import Life, { buildLife } from './scenes/Life'
@@ -47,7 +47,7 @@ const START = 0.26
 const SCENES: Scene[] = [
   { id: 'hero', chapter: 'top', len: OPENING_LEN, planet: 0.85, land: 0, build: buildHero },
   { id: 'words', chapter: 'words', len: 1.8, planet: 1.2, land: 0.8, build: buildWords },
-  { id: 'clients', chapter: 'clients', len: 0.6 + CLIENT_COUNT * CLIENTS_PER, planet: 2.0, land: 0.9, build: buildClients },
+  { id: 'clients', chapter: 'clients', len: 1.8, planet: 2.0, land: 0.8, build: buildClients },
   {
     id: 'projects',
     chapter: 'projects',
