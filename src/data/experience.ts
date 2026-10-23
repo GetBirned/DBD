@@ -31,6 +31,8 @@ export interface ExperienceEntry {
   cardTexture?: string
   /** Coworker shoutouts — when present, rendered as a cycling carousel. */
   referrals?: Referral[]
+  /** The company's logo traced in ASCII, for its personnel file on the ship's screen. */
+  ascii?: string
 }
 
 const TRIMBLE_BLUE = 'oklch(0.486 0.128 247)'
@@ -39,11 +41,76 @@ const TRIMBLE_BLUE = 'oklch(0.486 0.128 247)'
 // border, its corner glow, and the coworker faces.
 const TRIMBLE_CARD = 'oklch(0.235 0.075 249 / 0.96)'
 
+/** Trimble's globe-and-arrows mark, traced at 48 columns. */
+const TRIMBLE_ASCII = `
+   *+-
+   #@@@#=.
+   #@@@@@@%+-
+   #@@@@@#+-:.  .....
+   #@@*-   .-=*##+-:. .
+   *=.  :--=--:    :*@@@@#+-
+       #@@@@@@= :#+-  -*@%+-
+   -. *@@@@@@@  #@@@@*: . .=#@-
+  +%  @@@@@@@@: +@@@*: .: :%@@%
+ +@#  @@@@@@@@#  *=. -*@@+  *@%  *
+:@@@. #@@@@@@@@*   :%@@@@@#. =: =@:  :#=.
+#@@@= :@@@@@@@=  =: .-+****-  .*@@=   %@@%+-
+@@@@@: =@@@@*. =%@@%*=-::::-=  %@@: . *@@@@@@*=.
+%@@@@%: -%%- .#@@@@@@@@@@@@@@= :@# :: *@@@@@@*=.
+*@@@@@@= .. =@@@@@@@@@@@@@@@@%  +..#  %@@%+-
+:@@@@@@@+   =#@@@@@@@@@@@@@@@@:  :%+ :#=:
+ +@@@@@*  *+: .-+*#%@@@@@%#+=.  :@#
+  +@@@*  #@@@%*=-.        .:=+= -#.
+   -%%. *@@@@@@@@@@@%%#%%@@@@@- :
+     . -@@@@@@@@@@@@@@@@@@@@@%
+   *=. :*%@@@@@@@@@@@@@@@@@#=.
+   #@@*-. :=*#%@@@@@@%#*=:
+   #@@@@@#+=:.
+   #@@@@@@%+-
+   #@@@#=.
+   *+-
+`.slice(1, -1)
+
+/** Account Tree's tree, traced at 60 columns from its dark ink: the trunk and branches solid, the
+ *  canopy of school things around them as a lighter speckle. */
+const ACCOUNT_TREE_ASCII = `
+                          .... .: : ::
+                   . ..... .. ... ::::. :+=
+               :.:   .  . ..:.:: . .. : +=:  :
+          ...: : . :- .:..:.  :-   :: . ::.: ::.:
+         :::::. :   :..::.:.  ::.  -:  -.::   -  .
+      :: .:.::: :---:          :   -.   : :.. : .-++=:
+    :::   - ..:-. :-=-:=-.:=-    -::..  : .    =@@@@@*.
+    :...::..   =  +@@@: ..: ::.- -=:   :. =+ .. *#*#+-- .
+   .::..::      -  =%*..-  :--: .-=  =-: . %* .:...-    ..
+  ..   ..    :: :.:-**= : .+   :  -:*+::: -%* ..: :::.:-.:
+.:  :  .  -=:    :--:+:.--*: =   . *#-::  ::  :-: .  -.::.:
+  :- ...   .* --.:==#+..::-+ =- :: +@=: --.:- ::=::--:   ..
+...-:-:=-===##.------%*:.  @-:: += *@=-+-    :.:===+-. :::.-
+  .: :.: :  -%= .: .--%%===@.    =*%%*= :. : =+*+=::--:.::::
+ .:    ..  ..-%. :.:=-:+#@@@*:  -#@@=--... -*@#**=--...--:.
+:::-====+=.   #%=:  -*+= :=%@@+%@@*+-+*#*%#@*-::-=-::- :: :.
+ ..   .: .*%=*#@%%#*++:=##=-@@@@%=:##*#+*@@+  .. ::.:  . :.
+    :.:   :*@#-::=+#@@@%=-#%%@@@*   -*%%@@@@#*+==:=: ..::.
+  ::=: :- :#%:.    =*#%@@%+*@@@@+:*@@@%*=: .-+%#+++-::.-:
+   -::::-+@#-==:  +*--:+%@@#%%%@%%@@%:=#::  .  =@%#%@# -
+  :-==+**+-.-:+- .+= ...:%@@@@+@@@@%: .:*:.::: -.-+#*+=:.
+     .-=.  .=:-:-: -.:..--%@@@*%@@%=- :==:::::...--:
+     .: ::  ::--:   ::  .-+@@@%*@#+ :..   . ... .
+       .:  .  .     ......#%@@@#@+=:::
+              -:         .%@@@@@@#-  .-.
+                          %@@@@@@@=  :-:
+                         +*@@@@@@@%.
+                        --@@@@@@@@@%-
+                       :=@@@@@@@@@@@@*:
+`.slice(1, -1)
+
 export const experience: ExperienceEntry[] = [
   {
     company: 'Trimble Inc.',
     logo: '/logos/company_logos/trimble.png',
     logoDark: '/logos/company_logos/trimbleWhite.png',
+    ascii: TRIMBLE_ASCII,
     role: 'Software Implementation Consultant',
     location: 'Portsmouth, NH · Hybrid',
     dateRange: 'May 2026 – Present',
@@ -67,6 +134,7 @@ export const experience: ExperienceEntry[] = [
     company: 'Trimble Inc.',
     logo: '/logos/company_logos/trimble.png',
     logoDark: '/logos/company_logos/trimbleWhite.png',
+    ascii: TRIMBLE_ASCII,
     role: 'Technical Support Engineer',
     location: 'Portsmouth, NH · Hybrid',
     dateRange: 'Sept. 2025 – May 2026',
@@ -129,6 +197,7 @@ export const experience: ExperienceEntry[] = [
     company: 'Account Tree',
     logo: '/logos/company_logos/accountTreeLogo.webp',
     logoDark: '/logos/company_logos/accountTreeLogoWhite.webp',
+    ascii: ACCOUNT_TREE_ASCII,
     role: 'Software Development & Marketing Intern',
     location: 'Dover, NH',
     dateRange: 'May 2024 – Aug. 2024',

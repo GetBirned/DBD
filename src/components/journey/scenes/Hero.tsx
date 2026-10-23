@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react'
 import { experience, type ExperienceEntry } from '@/data/experience'
+import { Ascii } from '@/components/Monitor'
 import Credit, { type CreditName } from '../Credit'
 import { pass, type Timeline } from '../motion'
 import Popup from '../Popup'
@@ -20,14 +21,22 @@ function RoleDetails({ e }: { e: ExperienceEntry }) {
   ]
   return (
     <div>
-      <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-1 uppercase">
-        {rows.map(([k, v]) => (
-          <Fragment key={k}>
-            <dt className="crt-dim">{k}</dt>
-            <dd>{v}</dd>
-          </Fragment>
-        ))}
-      </dl>
+      {/* The record, with the company's mark in ASCII beside it (above it, on a phone). */}
+      <div className="grid items-center gap-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,13rem)]">
+        {e.ascii && (
+          <div className="mx-auto w-[min(100%,13rem)] sm:order-2">
+            <Ascii art={e.ascii} />
+          </div>
+        )}
+        <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-1 uppercase sm:order-1">
+          {rows.map(([k, v]) => (
+            <Fragment key={k}>
+              <dt className="crt-dim">{k}</dt>
+              <dd>{v}</dd>
+            </Fragment>
+          ))}
+        </dl>
+      </div>
       <div className="crt-box mt-6 p-4 sm:p-5">{e.desc}</div>
       {e.badge && <p className="mt-5 uppercase">&gt; {e.badge}</p>}
     </div>

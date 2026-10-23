@@ -52,6 +52,22 @@ export function BarButton({ label, onClick, children }: { label: string; onClick
   )
 }
 
+/**
+ * A logo traced in ASCII, drawn in the screen's phosphor type and sized so its widest line spans
+ * its container: VT323's characters are 0.4em wide (with a hair to spare for rounding). `pre`
+ * would otherwise take the browser's own monospace, which is far wider.
+ */
+export function Ascii({ art }: { art: string }) {
+  const widest = Math.max(...art.split('\n').map((l) => l.length))
+  return (
+    <div className="[container-type:inline-size]">
+      <pre aria-hidden className="overflow-hidden leading-[0.8] whitespace-pre [font-family:inherit]" style={{ fontSize: `calc(100cqw / ${0.41 * widest})` }}>
+        {art}
+      </pre>
+    </div>
+  )
+}
+
 /** A small heading over part of a screen. */
 export function ReadoutLabel({ children }: { children: ReactNode }) {
   return <div className="crt-dim mt-7 mb-2 uppercase first:mt-0">{children}</div>
