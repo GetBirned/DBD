@@ -10,9 +10,6 @@ export interface CaseItem {
   /** A wordmark that stands in for the name heading, when the brand has one drawn for a dark
    *  ground. */
   titleImage?: string
-  /** Location for a client, tech stack for a project. */
-  meta: string
-  tag: string
   desc: string
   quote?: string
   attr?: string
@@ -31,8 +28,6 @@ export const clientCases: CaseItem[] = clients.map((c) => ({
   key: projectSlug(c.name),
   kind: 'client',
   name: c.name,
-  meta: c.loc,
-  tag: c.tag,
   desc: c.desc,
   quote: c.quote,
   attr: c.attr,
@@ -48,8 +43,6 @@ export const projectCases: CaseItem[] = projects.map((p) => {
     name: p.name,
     // The viewer is dark, so only a wordmark drawn for a dark ground; otherwise the name is set.
     titleImage: p.nameLogo ?? p.logoDark,
-    meta: p.stack,
-    tag: p.tag,
     desc: p.desc,
     url: p.url,
     repo: p.repo,

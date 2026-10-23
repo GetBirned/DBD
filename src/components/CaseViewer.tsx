@@ -200,12 +200,8 @@ export default function CaseViewer({
                           <img src={item.titleImage} alt="" className="mx-auto h-auto max-h-[clamp(44px,6vw,96px)] w-auto max-w-full object-contain" />
                         </>
                       ) : (
-                        <h2 className="text-[clamp(28px,2.8vw,48px)] leading-[1.1] font-normal">{item.name}</h2>
+                        <h2 className="credit text-[clamp(28px,2.8vw,48px)] leading-[1.1]">{item.name}</h2>
                       )}
-
-                      <div className="mt-3 font-mono text-[10px] tracking-[0.14em] text-ink-faint uppercase [text-shadow:none] sm:text-[11px]">
-                        {item.tag} · {item.meta}
-                      </div>
 
                       <p className="mx-auto mt-[3vh] max-w-[32em] text-[clamp(15px,1.1vw,18px)] leading-relaxed text-ink/80">{item.desc}</p>
 
