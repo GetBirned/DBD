@@ -102,9 +102,9 @@ function Showcase({ p, i, still, active, onOpen }: { p: ProjectData; i: number; 
             rel="noreferrer"
             aria-label={`${p.name} source on GitHub`}
             title="Source on GitHub"
-            className="flex h-[42px] w-[42px] items-center justify-center border border-line transition-colors hover:border-ink"
+            className="flex h-[42px] w-[42px] items-center justify-center text-ink/80 transition-colors hover:text-ink"
           >
-            <GitHubIcon size={15} />
+            <GitHubIcon size={26} />
           </a>
         </div>
       </div>
