@@ -38,18 +38,19 @@ export default function Title({ still = false }: { still?: boolean }) {
   )
 }
 
+/** Screens of scroll each stroke takes to fade in — slow, so it's a gradual arrival, not a blink. */
+const FADE = 1.4
+
 /**
- * Spreads the strokes from just after the page opens to `end`, a little closer together as it
- * goes. Each one stutters on in cold blue and settles to white, as the film's pieces do; scrolling
- * back takes them away again.
+ * Spreads the strokes from just after the page opens so the last is fully in at `end`, a little
+ * closer together as it goes. Each one fades in slowly from a faint cold blue to white, as the
+ * film's pieces come up; scrolling back fades them out again.
  */
 export function buildTitle(tl: Timeline, root: Element, start: number, end: number) {
   const last = STROKES.length - 1
   root.querySelectorAll<SVGPathElement>('path[data-step]').forEach((p) => {
     const k = Number(p.dataset.step)
-    const t = start + Math.pow(k / last, 0.9) * (end - start)
-    tl.fromTo(p, { opacity: 0, fill: '#7ea2ff' }, { opacity: 1, duration: 0.05 }, t)
-    tl.to(p, { opacity: 0.2, duration: 0.035 }, t + 0.05)
-    tl.to(p, { opacity: 1, fill: '#f4f6ff', duration: 0.12 }, t + 0.085)
+    const t = start + Math.pow(k / last, 0.9) * (end - FADE - start)
+    tl.fromTo(p, { opacity: 0, fill: '#7ea2ff' }, { opacity: 1, fill: '#f4f6ff', duration: FADE, ease: 'sine.inOut' }, t)
   })
 }
