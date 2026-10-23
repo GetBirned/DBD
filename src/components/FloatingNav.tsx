@@ -9,9 +9,9 @@ const LINKEDIN = 'https://www.linkedin.com/in/dartagnan-birnie/'
 
 /**
  * Site nav: a line of links straight over the sky — no bar behind it — kept out of the opening
- * frame and appearing once the title has gone. Desktop lists every chapter, underlining whichever
- * one you're in; phones show that chapter's name and a menu for the rest. Each one jumps to its
- * point in the journey.
+ * frame and appearing once the title has gone. Desktop lists every chapter, the one you're in
+ * glowing; phones show that chapter's name and a menu for the rest. Each one jumps to its point in
+ * the journey.
  */
 export default function FloatingNav() {
   const { current } = useChapter()
@@ -51,16 +51,9 @@ export default function FloatingNav() {
                   type="button"
                   onClick={() => jump(c.id)}
                   aria-current={current === c.id ? 'true' : undefined}
-                  className={`credit relative px-3 py-2 text-[15px] transition-colors [text-shadow:none] ${current === c.id ? 'text-ink' : 'text-ink/55 hover:text-ink'}`}
+                  className={`credit px-3 py-2 text-[15px] transition-[color,text-shadow] duration-300 ${current === c.id ? 'nav-glow text-ink' : 'text-ink/55 [text-shadow:none] hover:text-ink'}`}
                 >
                   {c.label}
-                  {current === c.id && (
-                    <motion.span
-                      layoutId="nav-underline"
-                      transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                      className="absolute inset-x-3 -bottom-px h-px bg-ink"
-                    />
-                  )}
                 </button>
               ))}
             </div>
@@ -74,7 +67,7 @@ export default function FloatingNav() {
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -18, opacity: 0 }}
                   transition={{ duration: 0.3, ease: EASE }}
-                  className="credit absolute inset-0 flex items-center text-[15px] [text-shadow:none]"
+                  className="credit nav-glow absolute inset-0 flex items-center text-[15px]"
                 >
                   {currentLabel ?? 'credits'}
                 </motion.span>
@@ -101,7 +94,7 @@ export default function FloatingNav() {
               <a
                 href="/resume.pdf"
                 download="Dartagnan_Birnie_Resume.pdf"
-                className="credit border border-line px-4 py-2 text-[14px] transition-colors [text-shadow:none] hover:border-ink"
+                className="credit px-2 py-2 text-[15px] text-ink/80 transition-[color,text-shadow] duration-300 [text-shadow:none] hover:text-ink hover:[text-shadow:0_0_1px_rgb(255_255_255/0.6),0_0_10px_rgb(255_226_180/0.5)]"
               >
                 résumé
               </a>
@@ -123,7 +116,7 @@ export default function FloatingNav() {
                       key={c.id}
                       type="button"
                       onClick={() => jump(c.id)}
-                      className={`credit block w-full py-2.5 text-left text-[22px] [text-shadow:none] ${current === c.id ? 'text-ink' : 'text-ink/55'}`}
+                      className={`credit block w-full py-2.5 text-left text-[22px] ${current === c.id ? 'nav-glow text-ink' : 'text-ink/55 [text-shadow:none]'}`}
                     >
                       {c.label}
                     </button>

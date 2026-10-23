@@ -6,7 +6,6 @@ import MediaFrame from './MediaFrame'
 import { ArrowUpRight, ChevronLeft, ChevronRight, CloseIcon, ExpandIcon, GitHubIcon } from './icons'
 import { isVideo, type CaseItem } from '@/lib/cases'
 import { EASE } from '@/lib/motion'
-import { playClick } from '@/lib/sound'
 
 /**
  * The piece of media on show. Client sites are screenshots of a page, so they're cropped from the
@@ -103,7 +102,6 @@ export default function CaseViewer({
     const dx = e.changedTouches[0].clientX - s.x
     const dy = e.changedTouches[0].clientY - s.y
     if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return
-    playClick()
     go(dx < 0 ? 1 : -1)
   }
 

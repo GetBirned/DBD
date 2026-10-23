@@ -40,7 +40,7 @@ export default function Credit({
             return (
               <div key={i}>
                 {name.onClick ? (
-                  <button type="button" onClick={name.onClick} className="credit-link">
+                  <button type="button" onClick={name.onClick} aria-haspopup="dialog" className="credit-link">
                     {name.text}
                   </button>
                 ) : name.href ? (

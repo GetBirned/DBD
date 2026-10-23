@@ -80,7 +80,7 @@ function Showcase({ p, i, still, active, onOpen }: { p: ProjectData; i: number; 
         <p className="credit mx-auto mt-[2.4vh] max-w-[30ch] text-[clamp(16px,min(1.45vw,2.5vh),24px)] leading-[1.3]">{p.pitch}</p>
         {/* The ways in, as glowing text like the names on the cards rather than buttons. */}
         <div className="credit mt-[2.6vh] flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[clamp(17px,1.4vw,22px)]">
-          <button type="button" onClick={onOpen} className="credit-link">
+          <button type="button" onClick={onOpen} aria-haspopup="dialog" className="credit-link">
             case study
           </button>
           {p.url && (

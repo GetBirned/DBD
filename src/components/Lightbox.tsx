@@ -21,6 +21,9 @@ export default function Lightbox({ src, onClose }: { src: string | null; onClose
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Enlarged media"
           className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 p-6"
           onClick={onClose}
         >

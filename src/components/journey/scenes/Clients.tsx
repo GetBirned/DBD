@@ -30,6 +30,7 @@ function SiteCard({ item, onOpen }: { item: CaseItem; onOpen: () => void }) {
         setArmed(true)
       }}
       onMouseLeave={() => setHover(false)}
+      aria-haspopup="dialog"
       className="group w-[74vw] shrink-0 snap-center text-left sm:w-[min(24vw,calc((100svh-360px)*1.6))]"
       aria-label={`${item.name} — open case study`}
     >

@@ -167,6 +167,14 @@
     0 0 34px rgb(255 196 120 / 0.5);
 }
 
+/* The nav's current chapter: lit the same warm way as a clickable name on the cards. */
+.nav-glow {
+  text-shadow:
+    0 0 1px rgb(255 255 255 / 0.7),
+    0 0 10px rgb(255 226 180 / 0.6),
+    0 0 22px rgb(255 196 120 / 0.35);
+}
+
 /* The title's letters: plain white, with the faint bloom of light through a print. */
 .title-glyph {
   filter: drop-shadow(0 0 7px rgb(190 210 255 / 0.3));
