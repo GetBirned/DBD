@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 /*
- * Palette, after Alien (1979): black space, warm-white type, and a dim amber as the one accent. The token names predate this theme — "ink" is the text color
+ * Palette, after Alien (1979): black space, white type, and the amber of the planet's rings as
+ * the one accent. The token names predate this theme — "ink" is the text color
  * and "paper" the ground — so every utility (text-ink, border-line, bg-paper…) follows along.
  */
 @theme {
@@ -13,7 +14,7 @@
   --color-ink-dim: #b4b1aa;
   --color-ink-faint: #7b7871;
   --color-line: rgb(241 239 233 / 0.16);
-  --color-accent: #dba05a;
+  --color-accent: #c9963f;
 
   /* Headings and labels in a geometric sans — Jost, a free Futura, the face the film's title is
      often mistaken for. Reading text in Helvetica (Arial on Windows, Inter where there's

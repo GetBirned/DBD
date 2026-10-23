@@ -46,14 +46,9 @@ const GLYPHS: Record<string, Glyph> = {
   },
 }
 
-/** Space between letters, in the same units — wide, the way the film spaces ALIEN. */
-const TRACK = 150
-
-export interface PlacedStroke {
-  d: string
-  x: number
-  /** 0–1: when this stroke arrives in the assembly. */
-  rank: number
+export interface TitleLetter {
+  width: number
+  strokes: { d: string; rank: number }[]
 }
 
 /** Small seeded PRNG, so the order is the same on every visit. */
@@ -70,18 +65,20 @@ function mulberry32(seed: number) {
 // three separate phases.
 const SPANS: Record<Kind, [number, number]> = { line: [0, 0.55], bar: [0.35, 0.85], curve: [0.5, 1] }
 
-/** Lays out a word as positioned strokes, each with the point in the assembly it arrives at. */
-export function layoutWord(word: string): { width: number; strokes: PlacedStroke[] } {
-  const strokes: PlacedStroke[] = []
-  let x = 0
-  ;[...word].forEach((ch, i) => {
+/**
+ * A word as separate letters (the title spaces them across the whole frame), each stroke ranked
+ * 0–1 by when it arrives in the assembly.
+ */
+export function titleLetters(word: string): TitleLetter[] {
+  return [...word].map((ch, i) => {
     const g = GLYPHS[ch]
     const rand = mulberry32((i + 1) * 7919)
-    g.strokes.forEach(([d, kind]) => {
-      const [a, b] = SPANS[kind]
-      strokes.push({ d, x, rank: a + (b - a) * rand() })
-    })
-    x += g.width + TRACK
+    return {
+      width: g.width,
+      strokes: g.strokes.map(([d, kind]) => {
+        const [a, b] = SPANS[kind]
+        return { d, rank: a + (b - a) * rand() }
+      }),
+    }
   })
-  return { width: x - TRACK, strokes }
 }

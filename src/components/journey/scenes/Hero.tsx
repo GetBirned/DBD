@@ -1,64 +1,77 @@
-import { layoutWord } from '../glyphs'
-import { vw, type Timeline } from '../motion'
+import { experience } from '@/data/experience'
+import Credit, { type CreditName } from '../Credit'
+import { pass, type Timeline } from '../motion'
 
-const TITLE = layoutWord('DART')
-/** Each stroke's place in the assembly order. */
-const STEP = TITLE.strokes.map((s) => TITLE.strokes.filter((o) => o.rank < s.rank).length)
+interface Card {
+  role?: string
+  names: (string | CreditName)[]
+  note?: string
+}
 
-/** This many strokes are already up when the page opens — a couple of stray fragments. */
-const INITIAL = 2
-/** Share of the scene the title takes to finish assembling. */
-const ASSEMBLE = 0.5
+const job = (i: number): Card => {
+  const e = experience[i]
+  return {
+    role: e.role.toLowerCase(),
+    names: [e.company.replace(' Inc.', '')],
+    note: [e.dateRange, e.badge ? 'Featured intern' : e.location.split(' · ')[0]].join(' · '),
+  }
+}
 
-/** The opening frame: DART, in fragments, beside the edge of the planet. Complete when `still`. */
+/** The opening credits — everything basic, one card at a time. */
+const CARDS: Card[] = [
+  { names: ['Dart Birnie'], note: 'Software engineer & developer' },
+  job(0),
+  job(1),
+  { role: 'founder and web designer', names: ['Designs By Dart'], note: 'Since 2022 · Alton, NH' },
+  job(2),
+  { role: 'b.s. in computer science', names: ['University of New Hampshire'], note: "May 2025 · Dean's List" },
+  {
+    role: 'approved web design contractor',
+    names: [{ text: 'NH SBDC', href: 'https://www.nhsbdc.org/' }, 'and', { text: 'GRDC', href: 'https://graftonrdc.org/' }],
+  },
+  { role: 'based in', names: ['Alton, New Hampshire'] },
+]
+
+/** Screens of scroll: open space at first, then each card, then a beat before About. */
+const OPEN = 0.9
+const CARD_LEN = 0.8
+const OUT = 0.4
+export const OPENING_LEN = OPEN + CARDS.length * CARD_LEN + OUT
+
+/**
+ * The opening credits, centered under the title the way the film's sit under ALIEN: the page opens
+ * on empty space, then each card dissolves in and out in its own stretch of the scroll.
+ */
 export default function Hero({ still = false }: { still?: boolean }) {
-  return (
-    <div className="flex h-full flex-col items-center justify-center px-[6vw]">
-      <div data-hero className="flex flex-col items-center">
+  if (still) {
+    return (
+      <div className="space-y-[14vh] px-[6vw] pt-[16vh] pb-[6vh]">
         <h1 className="sr-only">Dart Birnie — software engineer and developer</h1>
-        <svg viewBox={`-2 -4 ${TITLE.width + 4} 108`} className="title-glyph h-auto w-[min(80vw,760px)] overflow-visible" aria-hidden>
-          {TITLE.strokes.map((s, i) => (
-            <path
-              key={i}
-              d={s.d}
-              transform={`translate(${s.x} 0)`}
-              data-step={STEP[i]}
-              fill="#f4f6ff"
-              // Hidden from the first paint, so nothing flashes before the timeline takes over.
-              style={still || STEP[i] < INITIAL ? undefined : { opacity: 0 }}
-            />
-          ))}
-        </svg>
-        <p data-sub className="scene-label mt-[6vh] text-center text-ink-dim" style={still ? undefined : { opacity: 0 }}>
-          Software engineer &amp; developer
-        </p>
+        {CARDS.map((c, i) => (
+          <Credit key={i} role={c.role} names={c.names} note={c.note} />
+        ))}
       </div>
-      {!still && (
-        <div data-hint className="scene-label absolute inset-x-0 bottom-8 text-center text-[10px] text-ink-faint">
-          Scroll
+    )
+  }
+
+  return (
+    <div className="h-full">
+      <h1 className="sr-only">Dart Birnie — software engineer and developer</h1>
+      {CARDS.map((c, i) => (
+        <div key={i} data-card className="absolute inset-x-[6vw] top-[58%] -translate-y-1/2">
+          <Credit role={c.role} names={c.names} note={c.note} />
         </div>
-      )}
+      ))}
+      <div data-hint className="scene-label absolute inset-x-0 bottom-8 text-center text-[10px] text-ink-faint">
+        Scroll
+      </div>
     </div>
   )
 }
 
-/**
- * Scrolling assembles the title a stroke at a time — each one stutters on in cold blue and
- * settles to white, as the film's pieces do — then the subtitle arrives, and the title drifts off
- * left with the planet. Scrolling back takes it apart again.
- */
-export function buildHero(tl: Timeline, root: Element, start: number, len: number) {
-  const later = TITLE.strokes.length - INITIAL - 1
-  root.querySelectorAll<SVGPathElement>('path[data-step]').forEach((p) => {
-    const step = Number(p.dataset.step)
-    if (step < INITIAL) return
-    // Spaced out at first and quickening, the way the film's title comes together.
-    const t = start + 0.04 + Math.pow((step - INITIAL) / later, 0.8) * len * ASSEMBLE
-    tl.fromTo(p, { opacity: 0, fill: '#7ea2ff' }, { opacity: 1, duration: 0.03 }, t)
-    tl.to(p, { opacity: 0.2, duration: 0.02 }, t + 0.03)
-    tl.to(p, { opacity: 1, fill: '#f4f6ff', duration: 0.07 }, t + 0.05)
+export function buildHero(tl: Timeline, root: Element, start: number) {
+  root.querySelectorAll('[data-card]').forEach((card, i) => {
+    pass(tl, card, start + OPEN + i * CARD_LEN, CARD_LEN, { drift: 0.006, enter: 0.3, exit: 0.3 })
   })
-  tl.fromTo(root.querySelector('[data-sub]'), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: len * 0.12, ease: 'sine.out' }, start + len * (ASSEMBLE + 0.06))
-  tl.to(root.querySelector('[data-hint]'), { autoAlpha: 0, duration: len * 0.1 }, start)
-  tl.to(root.querySelector('[data-hero]'), { autoAlpha: 0, x: vw(-0.05), duration: len * 0.2, ease: 'sine.in' }, start + len * 0.8)
+  tl.to(root.querySelector('[data-hint]'), { autoAlpha: 0, duration: 0.25 }, start)
 }

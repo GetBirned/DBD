@@ -7,11 +7,12 @@ import { projects } from '@/data/projects'
 import { useMotionOK } from '@/lib/motion'
 import type { Timeline } from './motion'
 import { requestRedraw, setPlayhead, sky } from './store'
+import Title, { buildTitle } from './Title'
 import About, { buildAbout } from './scenes/About'
 import Clients, { buildClients, CLIENT_COUNT, CLIENTS_PER } from './scenes/Clients'
 import Contact, { buildContact } from './scenes/Contact'
 import Experience, { buildExperience, ENTRIES, EXPERIENCE_PER } from './scenes/Experience'
-import Hero, { buildHero } from './scenes/Hero'
+import Hero, { buildHero, OPENING_LEN } from './scenes/Hero'
 import Life, { buildLife } from './scenes/Life'
 import Projects, { buildProjects, PROJECTS_LEAD, PROJECTS_PER } from './scenes/Projects'
 import Skills, { buildSkills } from './scenes/Skills'
@@ -46,8 +47,8 @@ const START = 0.26
  * for skills and contact.
  */
 const SCENES: Scene[] = [
-  { id: 'hero', chapter: 'top', len: 2.4, planet: 0.42, land: 0, build: buildHero },
-  { id: 'about', chapter: 'about', len: 2.2, planet: 0.82, land: 0.9, build: buildAbout },
+  { id: 'hero', chapter: 'top', len: OPENING_LEN, planet: 0.5, land: 0, build: buildHero },
+  { id: 'about', chapter: 'about', len: 2.2, planet: 0.85, land: 0.9, build: buildAbout },
   {
     id: 'experience',
     chapter: 'experience',
@@ -154,6 +155,8 @@ function Cinematic({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number)
         s.build(tl, root, STARTS[i], s.len)
         pos = s.planet
       })
+      // The title fills in across the whole journey and is whole just as the contact scene arrives.
+      buildTitle(tl, stage.current!.querySelector('[data-title-layer]')!, 0.35, startOf('contact') + 0.4)
       // Pad to exactly TOTAL screens, so timeline time maps 1:1 onto screens of scroll.
       tl.set({}, {}, TOTAL)
 
@@ -187,6 +190,9 @@ function Cinematic({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number)
             {content(s.id, false, onOpen)}
           </div>
         ))}
+        <div data-title-layer>
+          <Title />
+        </div>
       </div>
     </div>
   )
@@ -207,10 +213,11 @@ function Still({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number) => 
         </Suspense>
       </div>
       <div className="relative">
+        <Title still />
         {chapters.map((c) => (
           <Chapter key={c} id={c}>
             {SCENES.filter((s) => s.chapter === c).map((s) => (
-              <section key={s.id} className={s.id === 'hero' ? 'h-[100svh]' : ''}>
+              <section key={s.id}>
                 {content(s.id, true, onOpen)}
               </section>
             ))}

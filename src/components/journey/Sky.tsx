@@ -6,8 +6,8 @@ import { setRedraw, sky } from './store'
 /*
  * The planet isn't a mesh: a mesh sphere this much bigger than the screen shows its facets along
  * the limb. Instead one full-screen quad works out a perfect sphere per pixel, so the horizon is
- * exact at any size — then adds the stars behind it, the thin silver light along its edge, the
- * faint texture of its night side, and a ring of dust around it.
+ * exact at any size — then adds the stars behind it, the thin golden light along its edge, the
+ * faint texture of its night side, and the amber belts of its rings.
  *
  * It's seen through a very long lens, so it's drawn orthographically: screen units, with the
  * screen 2 tall and 2 × aspect wide, centered on 0.
@@ -44,7 +44,6 @@ uniform float uDpr;
 uniform vec2 uC;
 uniform float uR;
 uniform float uPos;
-uniform vec3 uRingN;
 uniform vec3 uLight;
 
 float hash12(vec2 p) {
@@ -103,6 +102,26 @@ vec3 starLayer(vec2 px, float cell, float chance, vec2 radius, vec2 bright, floa
   return c * b * exp(-d * d / (r * r));
 }
 
+// The rings, as the film shows them: seen almost edge-on, so they cross the frame as a few broad,
+// soft amber belts on a slow diagonal, rising to the right and passing behind the planet. They're
+// laid out from the planet's position, so they travel with it. Returns their density, 0–1.
+float belts(vec2 p) {
+  const float TILT = 0.17;
+  const float BEND = 30.0;
+  vec2 along = vec2(cos(TILT), sin(TILT));
+  vec2 across = vec2(-along.y, along.x);
+  vec2 origin = vec2(uC.x, 0.9);
+  // Distance across the belts, measured round a huge circle below them, so they curve gently.
+  float s = length(p - (origin - across * BEND)) - BEND;
+  float t = dot(p - origin, along);
+  float d = 0.8 * exp(-pow((s - 0.46) / 0.16, 2.0))
+          + 1.0 * exp(-pow((s + 0.12) / 0.19, 2.0))
+          + 0.55 * exp(-pow((s + 0.82) / 0.24, 2.0))
+          + 0.07 * exp(-pow((s + 0.15) / 1.1, 2.0));
+  // Uneven along their length, like dust rather than paint.
+  return d * (0.7 + 0.3 * noise(vec3(t * 0.55, s * 2.5, 3.0)));
+}
+
 void main() {
   vec2 frag = gl_FragCoord.xy;
   vec2 px = frag / uDpr;
@@ -111,45 +130,39 @@ void main() {
   vec2 p = ndc * vec2(aspect, 1.0);
 
   // Stars, nearly still: each layer slides a little as the journey goes, the nearest most.
-  vec3 col = starLayer(px + vec2(uPos * 14.0, 0.0), 12.0, 0.06, vec2(0.6, 0.8), vec2(0.08, 0.3), 0.0)
-           + starLayer(px + vec2(uPos * 32.0, 0.0), 31.0, 0.09, vec2(0.65, 0.95), vec2(0.22, 0.55), 50.0)
-           + starLayer(px + vec2(uPos * 60.0, 0.0), 89.0, 0.18, vec2(0.8, 1.3), vec2(0.45, 0.9), 100.0);
+  vec3 col = starLayer(px + vec2(uPos * 14.0, 0.0), 12.0, 0.06, vec2(0.6, 0.8), vec2(0.1, 0.32), 0.0)
+           + starLayer(px + vec2(uPos * 32.0, 0.0), 31.0, 0.09, vec2(0.65, 0.95), vec2(0.25, 0.6), 50.0)
+           + starLayer(px + vec2(uPos * 60.0, 0.0), 89.0, 0.18, vec2(0.8, 1.3), vec2(0.5, 0.95), 100.0);
 
   // The planet. Facing us is +z.
   vec2 rel = (p - uC) / uR;
   float dist = length(rel);
-  float zs = -1.0;
+
   if (dist < 1.0) {
-    zs = sqrt(1.0 - dist * dist);
+    float zs = sqrt(1.0 - dist * dist);
     vec3 n = vec3(rel, zs);
-    // The night side: very dark, with slow, faint variation in the ground and finer grain in it.
+    // The night side: near black, warm, with slow faint variation in the ground and finer grain.
     float big = fbm(n * 7.0, 4);
     float mid = fbm(n * 24.0 + 9.0, 3);
     float fine = fbm(n * 90.0 + 4.0, 2);
-    float albedo = 0.011 + 0.075 * big * big + 0.016 * mid + 0.008 * fine;
-    vec3 surface = vec3(albedo) * vec3(0.92, 0.94, 1.0);
-    // Backlit: the sun is behind the planet, so light only catches a thin sliver along the limb.
+    float albedo = 0.009 + 0.06 * big * big + 0.014 * mid + 0.007 * fine;
+    vec3 surface = vec3(albedo) * vec3(1.0, 0.9, 0.74);
+    // Backlit: the sun is behind the planet, so light only catches a thin golden sliver at the
+    // limb — brighter where the rings pass behind it.
+    float glow = 0.5 + 1.2 * belts(p);
     float lit = max(dot(n, uLight), 0.0);
-    surface += vec3(0.80, 0.84, 0.92) * lit * (0.3 + 0.5 * big);
-    surface += vec3(0.55, 0.60, 0.70) * pow(1.0 - zs, 6.0) * 0.18;
+    surface += vec3(0.95, 0.70, 0.36) * lit * (0.25 + 0.4 * big) * glow;
+    surface += vec3(0.85, 0.60, 0.30) * pow(1.0 - zs, 7.0) * 0.22 * glow;
     col = surface;
   } else {
-    // Just off the limb: a thin line of atmosphere glow, brightest toward the light.
+    // Out in space: the belts, a fine dust of specks caught in them, and a thin line of golden
+    // atmosphere just off the limb.
+    float b = belts(p);
+    col += vec3(0.72, 0.5, 0.21) * b * 0.7;
+    col += starLayer(px + vec2(uPos * 40.0, 0.0), 7.0, 0.2, vec2(0.5, 0.7), vec2(0.25, 0.7), 150.0) * smoothstep(0.08, 0.55, b);
     float x = dist - 1.0;
-    float facing = 0.3 + 0.7 * clamp(dot(normalize(rel), uLight.xy) * 0.5 + 0.5, 0.0, 1.0);
-    col += vec3(0.72, 0.78, 0.9) * (exp(-x / 0.0016) * 0.3 + exp(-x / 0.014) * 0.045) * facing;
-  }
-
-  // The ring: faint dusty bands around the planet, hidden where it's behind the planet.
-  if (abs(uRingN.z) > 1e-3) {
-    float zr = -(uRingN.x * rel.x + uRingN.y * rel.y) / uRingN.z;
-    if (zs < 0.0 || zr > zs) {
-      float r = length(vec3(rel, zr));
-      float band = smoothstep(1.3, 1.45, r) * (1.0 - smoothstep(1.95, 2.35, r));
-      float stripes = 0.5 + 0.5 * sin(r * 70.0) * sin(r * 17.0 + 2.0);
-      float dust = 0.6 + 0.4 * noise(vec3(r * 40.0, 0.5, 0.5));
-      col += vec3(0.6, 0.57, 0.52) * band * stripes * dust * 0.045;
-    }
+    float glow = 0.35 + 1.4 * b;
+    col += vec3(0.95, 0.72, 0.4) * (exp(-x / 0.0016) * 0.32 + exp(-x / 0.014) * 0.05) * glow;
   }
 
   // A soft vignette, and a little noise so the near-blacks don't band.
@@ -168,7 +181,6 @@ function Backdrop() {
       uC: { value: new THREE.Vector2(10, CY) },
       uR: { value: RADIUS },
       uPos: { value: sky.pos },
-      uRingN: { value: new THREE.Vector3(0.12, 0.55, 1).normalize() },
       uLight: { value: new THREE.Vector3(0, 0.45, -1).normalize() },
     }),
     [],
@@ -196,8 +208,8 @@ function Backdrop() {
 }
 
 /**
- * The space the whole site happens in, after the opening of Alien (1979): sparse stars and an
- * enormous dark planet whose position is set by the scroll timeline. Nothing here runs on a
+ * The space the whole site happens in, after the opening of Alien (1979): sparse stars, amber ring
+ * belts, and an enormous dark planet whose position is set by the scroll timeline. Nothing here runs on a
  * clock — it draws a frame when the scroll moves it, and otherwise sits still.
  */
 export default function Sky() {

@@ -50,9 +50,9 @@ const swap: Variants = {
 }
 
 /**
- * Quotes as a credit — the label on the left of the axis, one quote on the right. They never
- * advance on their own (nothing on this page moves unless you move it): a row of thin segments and
- * arrows step through them.
+ * Quotes as a title card — the label, then one quote under it, all centered. They never advance on
+ * their own (nothing on this page moves unless you move it): a row of thin segments and arrows step
+ * through them.
  */
 export default function Words({ set, still = false }: { set: keyof typeof SETS; still?: boolean }) {
   const { label, noun, items } = SETS[set]
@@ -61,13 +61,10 @@ export default function Words({ set, still = false }: { set: keyof typeof SETS; 
   const go = (d: number) => setActive((a) => (a + d + items.length) % items.length)
 
   return (
-    <div className={`flex items-center px-[7vw] ${still ? 'py-[8vh]' : 'h-full'}`}>
-      <div
-        data-in
-        className="credit mx-auto grid w-full max-w-[1400px] grid-cols-1 gap-y-6 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] sm:gap-x-[0.9em]"
-      >
-        <div className="text-center text-[clamp(19px,2.6vw,46px)] leading-[1.18] text-ink/75 sm:text-right">{label}</div>
-        <div>
+    <div className={`flex items-center px-[7vw] ${still ? 'py-[8vh]' : 'h-full pt-[12vh]'}`}>
+      <div data-in className="credit mx-auto w-full max-w-[60rem] text-center">
+        <div className="text-[clamp(20px,2.6vw,46px)] leading-[1.18] text-ink/75">{label}</div>
+        <div className="mt-[4vh]">
           {/* Every quote stacked in one grid cell: the cell sizes to the tallest, so nothing
               shifts as they change. Only the active one is visible. */}
           <div className="grid">
@@ -83,7 +80,7 @@ export default function Words({ set, still = false }: { set: keyof typeof SETS; 
                   style={motionOK ? undefined : { opacity: on ? 1 : 0 }}
                   className={`col-start-1 row-start-1 ${on ? '' : 'pointer-events-none'}`}
                 >
-                  <blockquote className={`${size(q.quote)} max-w-[27em] leading-[1.28]`}>“{q.quote}”</blockquote>
+                  <blockquote className={`${size(q.quote)} mx-auto max-w-[27em] leading-[1.28]`}>“{q.quote}”</blockquote>
                   <figcaption className="mt-5 font-mono text-[10px] tracking-[0.16em] text-ink-faint uppercase [text-shadow:none] sm:text-[11px]">
                     {q.caption}
                   </figcaption>
@@ -93,7 +90,7 @@ export default function Words({ set, still = false }: { set: keyof typeof SETS; 
           </div>
 
           {items.length > 1 && (
-            <div className="mt-8 flex items-center gap-5 [text-shadow:none]">
+            <div className="mx-auto mt-8 flex max-w-[36rem] items-center gap-5 [text-shadow:none]">
               <div className="flex flex-1 items-center gap-1">
                 {items.map((_, i) => (
                   <button

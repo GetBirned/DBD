@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { GitHubIcon, LinkedInIcon } from './icons'
 import { CHAPTER_LINKS, goToChapter, useChapter, type ChapterId } from './chapters'
 import { EASE } from '@/lib/motion'
@@ -8,16 +8,14 @@ const GITHUB = 'https://github.com/GetBirned'
 const LINKEDIN = 'https://www.linkedin.com/in/dartagnan-birnie/'
 
 /**
- * Site nav: a slim, see-through bar across the top, kept out of the opening frame — it appears once
- * the title has gone. Desktop lists every chapter, underlining whichever one you're in; phones show
- * that chapter's name and a menu for the rest. Each one jumps to its point in the journey. Its
- * bottom edge doubles as a progress line.
+ * Site nav: a line of links straight over the sky — no bar behind it — kept out of the opening
+ * frame and appearing once the title has gone. Desktop lists every chapter, underlining whichever
+ * one you're in; phones show that chapter's name and a menu for the rest. Each one jumps to its
+ * point in the journey.
  */
 export default function FloatingNav() {
   const { current } = useChapter()
-  const { scrollYProgress } = useScroll()
   const [menu, setMenu] = useState(false)
-  const bar = useSpring(scrollYProgress, { stiffness: 220, damping: 40 })
   const shown = current !== 'top'
   // Closing the menu when the nav hides — adjusted during render rather than in an effect.
   if (!shown && menu) setMenu(false)
@@ -38,7 +36,7 @@ export default function FloatingNav() {
           animate={{ y: 0 }}
           exit={{ y: '-100%' }}
           transition={{ duration: 0.4, ease: EASE }}
-          className="fixed inset-x-0 top-0 z-[990] border-b border-line bg-paper/75 backdrop-blur-md"
+          className="fixed inset-x-0 top-0 z-[990]"
         >
           <div className="flex h-14 items-center gap-4 px-[4vw]">
             <button type="button" onClick={() => jump('top')} aria-label="Back to top" className="flex h-10 items-center">
@@ -110,8 +108,6 @@ export default function FloatingNav() {
             </div>
           </div>
 
-          <motion.div aria-hidden style={{ scaleX: bar }} className="absolute inset-x-0 -bottom-px h-px origin-left bg-ink/70" />
-
           <AnimatePresence>
             {menu && (
               <motion.div
@@ -119,7 +115,7 @@ export default function FloatingNav() {
                 animate={{ height: 'auto' }}
                 exit={{ height: 0 }}
                 transition={{ duration: 0.35, ease: EASE }}
-                className="overflow-hidden border-t border-line lg:hidden"
+                className="overflow-hidden bg-black/85 lg:hidden"
               >
                 <div className="px-[4vw] py-3">
                   {CHAPTER_LINKS.map((c) => (

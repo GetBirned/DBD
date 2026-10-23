@@ -12,7 +12,7 @@ const link = 'inline-flex items-center gap-2 border-b border-line pb-1.5 transit
 /** The end of the journey: open space, and the ways to reach me. It stays — there's no reset. */
 export default function Contact({ still = false }: { still?: boolean }) {
   return (
-    <div className={`flex flex-col items-center justify-center px-[8vw] text-center ${still ? 'py-[14vh]' : 'h-full'}`}>
+    <div className={`flex flex-col items-center justify-center px-[8vw] text-center ${still ? 'py-[14vh]' : 'h-full pt-[10vh]'}`}>
       <h2 data-in className="display text-[clamp(30px,5.2vw,92px)] leading-[1.05] tracking-[0.14em]">Let's build something.</h2>
       <p data-in className="mt-[3.5vh] max-w-[34em] text-[clamp(14px,1.1vw,18px)] leading-relaxed text-ink-dim">
         Hiring, starting a project, or just want to talk shop — I'd like to hear from you.

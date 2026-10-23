@@ -53,34 +53,36 @@ function EntryBlock({ e, i, still }: { e: Entry; i: number; still: boolean }) {
   return (
     <article
       data-beat
-      className={`max-w-[60rem] ${still ? 'py-[6vh]' : 'absolute inset-x-[8vw] top-[54%] -translate-y-1/2'}`}
+      className={`mx-auto w-[min(86vw,60rem)] text-center ${still ? 'py-[6vh]' : 'absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2'}`}
     >
-      <div className="flex items-center gap-4 font-mono text-[10px] tracking-[0.16em] text-ink-faint uppercase sm:text-[11px]">
+      <div className="flex items-center justify-center gap-4 font-mono text-[10px] tracking-[0.16em] text-ink-faint uppercase sm:text-[11px]">
         <span className="tabular-nums">
           {String(i + 1).padStart(2, '0')} / {String(ENTRIES.length).padStart(2, '0')}
         </span>
         <span className="h-px w-10 bg-accent/70" />
         <span>{e.when}</span>
       </div>
-      <div className="mt-[3vh] flex items-center gap-3">
-        {e.logo && <img src={e.logo} alt="" className="h-5 w-auto opacity-80 sm:h-6" />}
-        <span className="scene-label text-ink-dim">{e.org}</span>
-      </div>
-      <h3 className="mt-[1.6vh] text-[clamp(26px,3.3vw,58px)] leading-[1.06] font-normal tracking-[-0.01em] text-ink">{e.role}</h3>
-      <div className="mt-[1.4vh] font-mono text-[11px] tracking-[0.08em] text-ink-faint">{e.where}</div>
+      {e.logo && <img src={e.logo} alt="" className="mx-auto mt-[3vh] h-5 w-auto opacity-80 sm:h-6" />}
+      {/* Set as a title card: the role, then who it was for. */}
+      <h3 className="credit mt-[2.4vh] text-[clamp(22px,2.7vw,48px)] leading-[1.18]">
+        <span className="text-ink/75">{e.role.toLowerCase()}</span> {e.org}
+      </h3>
+      <div className="mt-[1.6vh] font-mono text-[11px] tracking-[0.08em] text-ink-faint">{e.where}</div>
       {e.desc && (
-        <p className="mt-[3vh] max-w-[44em] border-t border-line pt-[3vh] text-[clamp(14px,1.05vw,17px)] leading-relaxed text-ink-dim">{e.desc}</p>
+        <p className="mx-auto mt-[3vh] max-w-[44em] border-t border-line pt-[3vh] text-[clamp(14px,1.05vw,17px)] leading-relaxed text-ink-dim">
+          {e.desc}
+        </p>
       )}
       {e.note && <p className="mt-[2vh] font-mono text-[11px] tracking-[0.08em] text-accent">{e.note}</p>}
     </article>
   )
 }
 
-/** Career, one entry at a time, each crossing the frame as the planet's surface takes over. */
+/** Career, one entry at a time, centered, each crossing the frame as the planet's surface takes over. */
 export default function Experience({ still = false }: { still?: boolean }) {
   return (
     <div className={still ? 'px-[8vw]' : 'h-full'}>
-      <h2 data-heading className={`scene-heading ${still ? '' : 'absolute top-[12vh] left-[8vw]'}`}>
+      <h2 data-heading className={`scene-heading text-center ${still ? '' : 'absolute inset-x-0 top-[24vh]'}`}>
         Experience
       </h2>
       {ENTRIES.map((e, i) => (
