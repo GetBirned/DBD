@@ -3,8 +3,8 @@ import { useMotionOK } from '@/lib/motion'
 import { terminal } from '@/lib/sound'
 
 /**
- * Every few seconds, at random, the screen glitches for a moment — true while it does. Off with
- * reduced motion.
+ * Now and then, at random (every 20–45 seconds), the screen glitches for a moment — true while it
+ * does. Off with reduced motion.
  */
 function useGlitch() {
   const motionOK = useMotionOK()
@@ -21,7 +21,7 @@ function useGlitch() {
             next()
           }, 260)
         },
-        3500 + Math.random() * 6000,
+        20000 + Math.random() * 25000,
       )
     }
     next()
@@ -33,8 +33,8 @@ function useGlitch() {
 /**
  * One of the ship's screens from Alien: a curved green-phosphor CRT in a plastic bezel, with a
  * cyan title bar across the top (`controls` sit at its right end), the content in the middle, and
- * a line of key hints at the bottom. The content scrolls inside the screen if it runs long. Every
- * so often the picture glitches.
+ * a line of key hints at the bottom. The content scrolls inside the screen if it runs long. Once
+ * in a while the picture glitches.
  */
 export default function Monitor({
   title,
