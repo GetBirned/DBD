@@ -72,7 +72,7 @@ export default function Hero({ still = false }: { still?: boolean }) {
     job(1),
     { role: 'founder and web designer', names: ['Designs By Dart'] },
     job(2),
-    { role: 'b.s. in computer science at', names: ['University of New Hampshire'], note: 'grad. 2025' },
+    { role: 'b.s. in computer science at', names: ['University of New Hampshire'] },
     {
       role: 'approved web design contractor',
       names: [{ text: 'NH SBDC', href: 'https://www.nhsbdc.org/' }, 'and', { text: 'GRDC', href: 'https://graftonrdc.org/' }],
