@@ -45,8 +45,8 @@ export interface ProjectData {
   cardScrim?: number
   /** A light-colored variant of `logo`, used instead when `cardDark` is set. */
   logoDark?: string
-  /** The logo traced in ASCII, for the ship's green screens when there's no wordmark drawn for a
-   *  dark ground. Set in VT323, whose characters are 0.4em wide. */
+  /** The logo traced in ASCII, shown on the ship's green screens in place of the image. Set in
+   *  VT323, whose characters are 0.4em wide. */
   ascii?: string
 }
 
@@ -69,6 +69,67 @@ const DARTERP_ASCII = `
                                        =%%#     .#%%#.
 `.slice(1, -1)
 
+/** FortLotto's wordmark traced at 96 columns. */
+const FORTLOTTO_ASCII = `
+%%%%%%%%#                            .::   :##%%=                    .:.      .::
+@@@@@@@@*                          #@@@+   -@@@@=                 :%@@@-    *@@@%
+@@@@%+++:   .:---:           ..    %@@@*:: -@@@@=       :---:     -@@@@=:.  #@@@%::     :---:
+@@@@%::.  :#@@@@@@%-  +%@@*=@@@%.:@@@@@@@@ -@@@@=     +%@@@@@@+. #@@@@@@@=:@@@@@@@@  .*@@@@@@%=
+@@@@@@@% .%@@@%*@@@@= +@@@@#@@@@+:*%@@@%#% -@@@@=    #@@@@+%@@@# =#@@@@%#=.*%@@@@#%  %@@@%+@@@@=
+@@@@@@@% =@@@@=.@@@@% +@@@@ %%%%+  %@@@+   -@@@@=   .@@@@# #@@@@: :@@@@-    #@@@%   -@@@@+ @@@@%
+@@@@%::. =@@@@=.@@@@@ +@@@@        %@@@+   -@@@@=   :@@@@# #@@@@: :@@@@-    #@@@%   -@@@@+ @@@@@
+@@@@%    :@@@@*-@@@@* +@@@@        #@@@%--.-@@@@%*** %@@@%.#@@@@. .@@@@#--  *@@@@=-..@@@@#:@@@@*
+@@@@%     +@@@@@@@@#. +@@@@        :@@@@@@=-@@@@@@@% -@@@@@@@@@-   +@@@@@@  .%@@@@@+ =@@@@@@@@%.
+%%#*=      :+*###*-   :----         .-=+==::#***+++=  .=*###*=.     :=++=-    -=+==:  :+*###*=
+`.slice(1, -1)
+
+/** DeadLotto's wordmark traced at 110 columns. */
+const DEADLOTTO_ASCII = `
+=***=::==:    -***+:.:=*-      :**+ .****.:-=-.    .****=       :+==#%#*-  -*=-****:::-***+-+*. .-:-=+##*=.
+:@@@=   :#@*: .@@@*    -+     =@@@=  *@@@    =@%=   *@@@.      *@:   -%@@%::.  %@@*    @@@+  -:#*      :#@@*.
+ @@@=    .%@@- @@@#----:    :+ @@@-  +@@@     =@@%. +@@@      *@@.    .%@@%    %@@+    %@@+  .%@:        +@@@:
+ @@@=     +@@% @@@+  -*=   =+ .@@@-  +@@@      @@@+ +@@@      %@@*     :@@@:   %@@+    %@@+  *@@-         *@@#
+ @@@=     +@@@ @@@+      .*#---@@@-  +@@@      @@@+ +@@@      =@@@+     #@%    %@@+    %@@+  *@@%         :@@%
+ @@@=     %@@+ @@@+     :%@-  .@@@-  +@@@     -@@%. +@@@       -%@@#:  .%*.    %@@+    %@@+  .%@@#        .@@-
+.@@@=   .*@%-  @@@#.  .+@@@   -@@@=  *@@@    -%@*.  *@@@    :=#+ :=**+--.      %@@*    @@@*   .#@@%-      +%-
+=###+::=+=.   =############-  *###* .####::-+=-    .*###***#####*-            -####.  -####.    :=*%%+=---:
+`.slice(1, -1)
+
+/** Die Or Die's wordmark traced at 96 columns: the black faces of its letters, without the blocks. */
+const DIEORDIE_ASCII = `
++%*=-.      :+:       .-*#:            ::         ::.           *#*=:       =+:        .:=*#=
+-@@+#@#=    -@%    :+%%+-           :+%%%%*=   .*%%%%#+-        +@@+%@*-    +@%     :=#%*=:
+:@%  :%@*   -@%    *@*             #@#-  +@@:  .@@:  -%@+       -@@  :%@+   +@%     %@+
+:@%   %@*   -@%    *@#+%+          #@+   =@@:  .@@=-*@#=.       -@@   %@+   +@%     %@#+#%
+:@@-  %@*   -@%    *@#-            #@+   =@@:  .@@#@%-          -@@:  %@+   +@%     %@#-.
+:@@+ -@@+   -@%    *@*  .-+        #@#. :#@%.  .@@::#@+.        -@@= -%@=   +@%     %@+   -=-
+.=#%%@*:    :#%    *@#*%#+-        .=#@%%*:    .@@:  -#%-       .*@%%%+.    -%%     %@#+##+-.
+    -.        .    -#+:                :        ..     --          --         :     =#+:.
+`.slice(1, -1)
+
+/** PiRail's logo traced at 72 columns: the rail, the name, and the signal running off it. */
+const PIRAIL_ASCII = `
+      .-------------.
+     =-             -=   :::::-:.   .:-:..:::::-:.               **  +*
+     =:             :=   #@#****%%-  :-:.-@%*****%%=             --  #@
+      =--         --=    #@:     #@: -+. -@+      #@-   =+*+=:   +=  #@
+        .=-.   .-=.      #@:     #@: *@. -@+      #@: .%%-::#@-  @%  #@
+           =- :=         #@+===+#@=  *@. -@%****#%%-   ..:::=@+  @%  #@
+           := -:         #@+====-.   *@. -@*:::=@#    :#@*++*@+  @%  #@
+           := -:         #@:         *@. -@+    -@#.  *@-   +@+  @%  #@
+           := -:         #@:         *@. -@+     :%%. =@#-=**@#- @%  #@
+           := -:         :-.         :-  .-:      .-:  :===. :=- --  --
+           := -:                                   -
+           := -:                                   #.
+           := -:                                  :-=
+           := -:                                  =.=
+       ..:-=   =-:..      ..::.   -:      ==   =  = =        ==  .-.
+:-----::.         .::-----:.  .-.=.:-    -..=.=:: = :-      =. =:- :-.::
+                                :.  :-  -:   :  +:-  =.-- .-.  .:    .
+                                      :-        -*   -:  -:
+                                                 =   ..::
+`.slice(1, -1)
+
 export const projects: ProjectData[] = [
   {
     name: 'DeadLotto',
@@ -76,6 +137,7 @@ export const projects: ProjectData[] = [
     glyph: 'DL',
     logo: '/logos/project_logos/deadLotto_logo.png',
     nameLogo: '/logos/project_logos/deadLottoWordmark.png',
+    ascii: DEADLOTTO_ASCII,
     tag: 'Companion App',
     pitch: 'Real-time multiplayer strat-roulette for Deadlock, with lobbies, achievements, and leaderboards.',
     tint: 'hsl(38, 65%, 45%)',
@@ -125,6 +187,7 @@ export const projects: ProjectData[] = [
     logo: '/logos/project_logos/FortLottoBlack.png',
     logoDark: '/logos/project_logos/FortLottoWhite.png',
     nameLogo: '/logos/project_logos/fortLottoWordmark.png',
+    ascii: FORTLOTTO_ASCII,
     tag: 'Web Game',
     pitch: 'Strat-roulette for Fortnite squads: random drops, random challenges, and a running scoreboard.',
     tint: 'oklch(0.58 0.19 275)',
@@ -149,6 +212,7 @@ export const projects: ProjectData[] = [
     glyph: 'DD',
     logo: '/logos/project_logos/dieordie.png',
     nameLogo: '/logos/project_logos/dieOrDieWordmark.png',
+    ascii: DIEORDIE_ASCII,
     nameLogoHeight: 'h-10 sm:h-14 lg:h-[72px] xl:h-20',
     tag: 'Deck-Builder',
     pitch: 'A rogue-like deck-builder where you build a bag of physics-based dice and roll poker hands.',
@@ -173,6 +237,7 @@ export const projects: ProjectData[] = [
     glyph: 'PR',
     logo: '/logos/project_logos/pirailBlack.png',
     logoDark: '/logos/project_logos/pirailLight.png',
+    ascii: PIRAIL_ASCII,
     tag: 'Senior Capstone',
     pitch: 'Waze, but for railroads: a live track-inspection map fed by GPS, IMU, and LIDAR on a Raspberry Pi.',
     tint: 'hsl(0, 65%, 45%)',
