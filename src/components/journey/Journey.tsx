@@ -48,7 +48,7 @@ const SCENES: Scene[] = [
   { id: 'words', chapter: 'words', len: 1.8, planet: 1.3, land: 0.8, build: buildWords },
   { id: 'clients', chapter: 'clients', len: 1.8, planet: 1.75, land: 0.8, build: buildClients },
   { id: 'projects', chapter: 'projects', len: 1.8, planet: 2.25, land: 0.8, build: buildProjects },
-  { id: 'skills', chapter: 'skills', len: 2.6, planet: 2.65, land: 1.1, build: buildSkills },
+  { id: 'skills', chapter: 'skills', len: 1.8, planet: 2.65, land: 0.8, build: buildSkills },
   { id: 'life', chapter: 'life', len: 1.7, planet: 2.9, land: 0.8, build: buildLife },
   { id: 'contact', chapter: 'contact', len: 1.8, planet: 2.985, land: 1.8, build: buildContact },
 ]

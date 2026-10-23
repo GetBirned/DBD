@@ -1,49 +1,38 @@
 export interface SkillGroup {
   label: string
-  items: string[]
+  /** One or more lists, each with an optional small heading. */
+  sections: { label?: string; items: string[] }[]
 }
 
 /**
  * Everything from the résumé's Technical Skills section, plus the tools behind the projects on
- * this site (Godot, Socket.IO, Tailwind, Framer Motion…), sorted by what they're for. Keep the
- * items in sync with the résumé.
+ * this site (Godot, Socket.IO, Tailwind, Framer Motion…), in the four groups the skills card
+ * names. Keep the items in sync with the résumé.
  */
 export const skills: SkillGroup[] = [
   {
     label: 'Languages',
-    items: ['C#', 'Python', 'Java', 'C', 'SQL', 'JavaScript', 'TypeScript', 'PHP', 'GDScript'],
+    sections: [{ items: ['C#', 'Python', 'Java', 'C', 'SQL', 'JavaScript', 'TypeScript', 'PHP', 'GDScript', 'HTML5 / CSS'] }],
   },
   {
-    label: 'Frontend',
-    items: ['React', 'HTML5 / CSS', 'Tailwind CSS', 'Framer Motion', 'Vite'],
+    label: 'Integrations',
+    sections: [
+      {
+        items: ['REST APIs', 'AEMP 2.0 · ISO 15143-3', 'OAuth 2.0', 'Salesforce', 'Dialogflow', 'Socket.IO', 'OpenStreetMap / GIS', 'GPS · IMU · LIDAR'],
+      },
+    ],
   },
   {
-    label: 'Backend',
-    items: ['.NET 8', '.NET Framework', 'Node.js', 'Express', 'Socket.IO', 'IIS'],
+    label: 'Tools',
+    sections: [
+      { label: 'frameworks', items: ['React', '.NET 8', '.NET Framework', 'Node.js', 'Express', 'Tailwind CSS', 'Framer Motion', 'Vite'] },
+      { label: 'platforms', items: ['IIS', 'Railway', 'Raspberry Pi', 'Godot'] },
+      { label: 'software', items: ['Git', 'GitHub', 'Visual Studio', 'JIRA'] },
+      { label: 'practice', items: ['Agile / Scrum', 'Defect lifecycle', 'Root-cause analysis', 'Requirements (BRDs)'] },
+    ],
   },
   {
     label: 'Databases',
-    items: ['SQL Server', 'SSRS', 'SSMS', 'PostgreSQL', 'MongoDB'],
-  },
-  {
-    label: 'Integrations & APIs',
-    items: ['REST APIs', 'AEMP 2.0 · ISO 15143-3', 'OAuth 2.0', 'Salesforce', 'Dialogflow', 'OpenStreetMap / GIS'],
-  },
-  {
-    label: 'Tools & Practice',
-    items: [
-      'Git',
-      'GitHub',
-      'Visual Studio',
-      'JIRA',
-      'Railway',
-      'Godot',
-      'Raspberry Pi',
-      'GPS · IMU · LIDAR',
-      'Agile / Scrum',
-      'Defect lifecycle',
-      'Root-cause analysis',
-      'Requirements (BRDs)',
-    ],
+    sections: [{ items: ['SQL Server', 'SSRS', 'SSMS', 'PostgreSQL', 'MongoDB'] }],
   },
 ]
