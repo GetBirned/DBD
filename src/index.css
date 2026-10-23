@@ -147,14 +147,18 @@
 }
 
 /*
- * A name on a card you can click or follow: a faint underline so it reads as one, and a soft glow
- * when it's pointed at — as if the light behind the print came up a little.
+ * A name on a card you can click or follow. It glows a little all the time, warm against the
+ * credits' plain white, so it reads as something to press; pointing at it brings the light up.
  */
 .credit-link {
   text-decoration: underline;
   text-decoration-color: rgb(241 239 233 / 0.22);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
+  text-shadow:
+    0 0 1px rgb(255 255 255 / 0.6),
+    0 0 10px rgb(255 226 180 / 0.5),
+    0 0 24px rgb(255 196 120 / 0.3);
   transition:
     text-shadow 0.3s ease,
     text-decoration-color 0.3s ease;
@@ -164,9 +168,9 @@
 .credit-link:focus-visible {
   text-decoration-color: rgb(241 239 233 / 0.55);
   text-shadow:
-    0 0 1px rgb(255 255 255 / 0.7),
-    0 0 14px rgb(255 255 255 / 0.45),
-    0 0 30px rgb(255 214 150 / 0.3);
+    0 0 1px rgb(255 255 255 / 0.85),
+    0 0 14px rgb(255 232 196 / 0.75),
+    0 0 34px rgb(255 196 120 / 0.5);
 }
 
 /* The title's letters: plain white, with the faint bloom of light through a print. */

@@ -62,6 +62,14 @@ export interface TopAlbum {
   url: string | null
 }
 
+/** One of the last few tracks played (from /recent). */
+export interface RecentTrack {
+  name: string
+  artist: string
+  albumArt: string | null
+  url: string | null
+}
+
 export interface TopItemsData {
   tracks: TopTrack[]
   albums: TopAlbum[]

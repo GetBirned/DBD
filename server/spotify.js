@@ -117,6 +117,45 @@ router.get('/now-playing', async (_req, res) => {
   }
 })
 
+// The last few distinct tracks played — the listening history on the site's music card.
+let recentCache = { data: null, expiresAt: 0 }
+
+router.get('/recent', async (_req, res) => {
+  try {
+    if (recentCache.data && recentCache.expiresAt > Date.now()) {
+      return res.json(recentCache.data)
+    }
+
+    const token = await getUserAccessToken()
+    const r = await fetch(`${SPOTIFY_API_URL}/me/player/recently-played?limit=30`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!r.ok) throw new Error(`Spotify recently-played request failed: ${r.status}`)
+    const data = await r.json()
+
+    // A track played on repeat shows up once per play; keep each track once, newest first.
+    const seen = new Set()
+    const tracks = []
+    for (const item of data.items || []) {
+      const t = item.track
+      if (!t || seen.has(t.id)) continue
+      seen.add(t.id)
+      tracks.push({
+        name: t.name,
+        artist: t.artists.map((a) => a.name).join(', '),
+        albumArt: t.album?.images?.[0]?.url ?? null,
+        url: t.external_urls?.spotify ?? null,
+      })
+      if (tracks.length === 6) break
+    }
+    recentCache = { data: tracks, expiresAt: Date.now() + 60_000 }
+    res.json(tracks)
+  } catch (err) {
+    console.error('[spotify] recent error:', err.message)
+    res.status(503).json({ error: 'spotify_unavailable' })
+  }
+})
+
 let playlistCache = { data: null, expiresAt: 0 }
 
 router.get('/playlists', async (_req, res) => {
