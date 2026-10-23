@@ -4,6 +4,8 @@
 let audioCtx: AudioContext | null = null
 /** Set by the speaker toggle: when the visitor turns sound off, the effects go quiet too. */
 let muted = false
+/** Overall level of the effects: kept low, so they sit under the music rather than over it. */
+const VOLUME = 0.4
 
 export function setMuted(m: boolean) {
   muted = m
@@ -33,7 +35,7 @@ export function playClick() {
   osc.frequency.exponentialRampToValueAtTime(420, now + 0.09)
 
   gain.gain.setValueAtTime(0.0001, now)
-  gain.gain.exponentialRampToValueAtTime(0.16, now + 0.008)
+  gain.gain.exponentialRampToValueAtTime(0.1, now + 0.008)
   gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11)
 
   osc.connect(gain)
@@ -49,6 +51,7 @@ function tone(ctx: AudioContext, at: number, dur: number, freq: number, { type =
   const t = ctx.currentTime + at
   const osc = ctx.createOscillator()
   const gain = ctx.createGain()
+  level *= VOLUME
   osc.type = type
   osc.frequency.setValueAtTime(freq, t)
   if (to) osc.frequency.exponentialRampToValueAtTime(to, t + dur)
@@ -74,7 +77,7 @@ function thump(ctx: AudioContext, at: number, dur: number, { level = 0.22, cutof
   filter.type = 'lowpass'
   filter.frequency.value = cutoff
   const gain = ctx.createGain()
-  gain.gain.value = level
+  gain.gain.value = level * VOLUME
   src.connect(filter)
   filter.connect(gain)
   gain.connect(ctx.destination)
