@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { SpeakerIcon } from './icons'
 
 const SRC = '/audio/alien-main-title.mp3'
-/** Very faint — a bed under the page, not a feature. */
-const VOLUME = 0.1
+/** The track as mastered — no turning it down. */
+const VOLUME = 1
 /** Remembers someone turning it off, so it stays off on their next visit. */
 const KEY = 'soundtrack'
 
@@ -23,8 +24,8 @@ const remember = (on: boolean) => {
 }
 
 /**
- * The film's main title theme, very faintly, looping under the page, with a small toggle in the
- * corner. Browsers won't let a page start sound on its own, so it starts on the visitor's first
+ * The film's main title theme, looping under the page, with a small speaker icon in the corner to
+ * turn it off and on. Browsers won't let a page start sound on its own, so it starts on the visitor's first
  * click, tap or key press (or straight away, where the browser allows it), fading in. It pauses
  * while the tab is hidden.
  */
@@ -117,9 +118,10 @@ export default function Soundtrack() {
       onClick={toggle}
       aria-pressed={playing}
       aria-label={playing ? 'Turn the soundtrack off' : 'Turn the soundtrack on'}
-      className={`credit fixed bottom-5 left-[4vw] z-[991] px-1 py-1 text-[14px] transition-[color,text-shadow] duration-300 ${playing ? 'nav-glow text-ink' : 'text-ink/50 [text-shadow:none] hover:text-ink'}`}
+      title={playing ? 'Sound off' : 'Sound on'}
+      className={`fixed bottom-4 left-[4vw] z-[991] flex h-10 w-10 items-center justify-center transition-[color,filter] duration-300 ${playing ? 'text-ink drop-shadow-[0_0_6px_rgb(255_226_180/0.6)]' : 'text-ink/50 hover:text-ink'}`}
     >
-      sound {playing ? 'on' : 'off'}
+      <SpeakerIcon size={20} muted={!playing} />
     </button>
   )
 }

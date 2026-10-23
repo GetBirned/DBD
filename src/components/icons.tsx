@@ -69,3 +69,17 @@ export function CloseIcon({ size = 20 }: { size?: number }) {
     </svg>
   )
 }
+
+/** A speaker with sound coming out of it, or (`muted`) crossed out. */
+export function SpeakerIcon({ size = 18, muted = false }: { size?: number; muted?: boolean }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinejoin="round" d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" />
+      {muted ? (
+        <path strokeLinecap="round" d="M16 9.5l5 5M21 9.5l-5 5" />
+      ) : (
+        <path strokeLinecap="round" d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11" />
+      )}
+    </svg>
+  )
+}
