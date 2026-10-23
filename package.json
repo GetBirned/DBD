@@ -18,13 +18,17 @@
   "description": "",
   "type": "module",
   "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@react-three/fiber": "^9.8.2",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "framer-motion": "^13.1.1",
+    "gsap": "^3.15.0",
     "psn-api": "^2.18.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.2"
+    "react-router-dom": "^7.18.2",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -32,6 +36,7 @@
     "@types/node": "^26.3.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
+    "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^4.7.0",
     "concurrently": "^10.0.5",
     "cross-env": "^10.1.0",

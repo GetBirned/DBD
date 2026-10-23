@@ -1,24 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
-import PageTransition from '@/components/PageTransition'
 import CaseViewer from '@/components/CaseViewer'
-import { Chapter } from '@/components/chapters'
-import TitleSequence from '@/components/home/TitleSequence'
-import Shoutouts from '@/components/home/Shoutouts'
-import ClientsGallery from '@/components/home/ClientsGallery'
-import ClientsProof from '@/components/home/ClientsProof'
-import ProjectStack from '@/components/home/ProjectStack'
-import Toolkit from '@/components/home/Toolkit'
-import OffTheClock from '@/components/home/OffTheClock'
+import { goToChapter, CHAPTER_LINKS, type ChapterId } from '@/components/chapters'
+import Journey from '@/components/journey/Journey'
 import { clientCases, projectCases } from '@/lib/cases'
 
 type Open = { kind: 'client' | 'project'; index: number } | null
 
 /**
- * The whole site as one scroll story over a generated sky: an opening title sequence (DART and
- * the basic facts as credits), then the coworker shoutouts, the clients, the projects, the
- * toolkit, and what I do off the clock. Any client site or project opens as a full case study
- * over the page.
+ * The whole site as one continuous shot through space (see Journey), with any client site or
+ * project opening as a full case study over it.
  */
 export default function Home() {
   const [params, setParams] = useSearchParams()
@@ -33,11 +24,12 @@ export default function Home() {
     if (i >= 0) setOpen({ kind: 'project', index: i })
   }, [params])
 
-  // `#chapter` scrolls to it — deferred past App's ScrollToTop, which runs on the same route change.
+  // `#chapter` jumps straight to that point in the journey — deferred past App's ScrollToTop,
+  // which runs on the same route change.
   useEffect(() => {
-    const id = hash.slice(1)
-    if (!id) return
-    const t = setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }), 250)
+    const id = hash.slice(1) as ChapterId
+    if (!CHAPTER_LINKS.some((c) => c.id === id)) return
+    const t = setTimeout(() => goToChapter(id, true), 300)
     return () => clearTimeout(t)
   }, [hash])
 
@@ -50,31 +42,14 @@ export default function Home() {
   }
 
   return (
-    <PageTransition>
-      <Chapter id="career">
-        <TitleSequence />
-        <Shoutouts />
-      </Chapter>
-      <Chapter id="clients">
-        <ClientsGallery onOpen={(index) => setOpen({ kind: 'client', index })} />
-        <ClientsProof />
-      </Chapter>
-      <Chapter id="projects">
-        <ProjectStack onOpen={(index) => setOpen({ kind: 'project', index })} />
-      </Chapter>
-      <Chapter id="toolkit">
-        <Toolkit />
-      </Chapter>
-      <Chapter id="life">
-        <OffTheClock />
-      </Chapter>
-
+    <>
+      <Journey onOpen={(kind, index) => setOpen({ kind, index })} />
       <CaseViewer
         items={open?.kind === 'client' ? clientCases : projectCases}
         index={open?.index ?? null}
         onIndex={(index) => setOpen((o) => (o ? { ...o, index } : o))}
         onClose={close}
       />
-    </PageTransition>
+    </>
   )
 }

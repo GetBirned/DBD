@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
 import { GitHubIcon, LinkedInIcon } from './icons'
 import { CHAPTER_LINKS, goToChapter, useChapter, type ChapterId } from './chapters'
 import { EASE } from '@/lib/motion'
@@ -8,26 +8,19 @@ const GITHUB = 'https://github.com/GetBirned'
 const LINKEDIN = 'https://www.linkedin.com/in/dartagnan-birnie/'
 
 /**
- * Site nav: a slim, see-through bar across the top, kept out of the way until the opening credits
- * have finished. Desktop lists every chapter, underlining whichever one you're reading; phones
- * show that chapter's name and a menu for the rest. Its bottom edge doubles as a scroll-progress
- * line.
+ * Site nav: a slim, see-through bar across the top, kept out of the opening frame — it appears once
+ * the title has gone. Desktop lists every chapter, underlining whichever one you're in; phones show
+ * that chapter's name and a menu for the rest. Each one jumps to its point in the journey. Its
+ * bottom edge doubles as a progress line.
  */
 export default function FloatingNav() {
   const { current } = useChapter()
-  const { scrollY, scrollYProgress } = useScroll()
-  const [shown, setShown] = useState(false)
+  const { scrollYProgress } = useScroll()
   const [menu, setMenu] = useState(false)
   const bar = useSpring(scrollYProgress, { stiffness: 220, damping: 40 })
-
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    // Hidden through the title sequence — it would sit right on top of the title.
-    const seq = document.getElementById('title-sequence')
-    const after = seq ? seq.offsetTop + seq.offsetHeight - window.innerHeight * 1.2 : window.innerHeight * 0.35
-    const show = y > after
-    setShown(show)
-    if (!show) setMenu(false)
-  })
+  const shown = current !== 'top'
+  // Closing the menu when the nav hides — adjusted during render rather than in an effect.
+  if (!shown && menu) setMenu(false)
 
   // No playClick() here: these are <button>s, and ClickSound already plays for every button.
   const jump = (id: ChapterId) => {
@@ -134,7 +127,7 @@ export default function FloatingNav() {
                       key={c.id}
                       type="button"
                       onClick={() => jump(c.id)}
-                      className={`credit block w-full py-2 text-left text-[30px] ${current === c.id ? 'text-ink' : 'text-ink/55'}`}
+                      className={`scene-label block w-full py-3 text-left text-[14px] ${current === c.id ? 'text-ink' : 'text-ink-faint'}`}
                     >
                       {c.label}
                     </button>

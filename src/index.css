@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Title-sequence palette, after Alien (1979): black space, warm-white type, and the amber of the
- * planet's haze as the one accent. The token names predate this theme — "ink" is the text color
+ * Palette, after Alien (1979): black space, warm-white type, and a dim amber as the one accent. The token names predate this theme — "ink" is the text color
  * and "paper" the ground — so every utility (text-ink, border-line, bg-paper…) follows along.
  */
 @theme {
@@ -16,10 +15,10 @@
   --color-line: rgb(241 239 233 / 0.16);
   --color-accent: #dba05a;
 
-  /* Credits in Helvetica, as the film's are — Arial where there's no Helvetica (Windows), and
-     Inter, the nearest web font, on systems with neither (Android). Big type leads with Inter,
-     whose black weight stands in for the title's Helvetica Black. */
-  --font-display: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Headings and labels in a geometric sans — Jost, a free Futura, the face the film's title is
+     often mistaken for. Reading text in Helvetica (Arial on Windows, Inter where there's
+     neither), as the film's credits are. */
+  --font-display: "Jost", "Futura", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Helvetica Neue", Helvetica, Arial, "Inter", sans-serif;
   --font-mono: "IBM Plex Mono", "Consolas", monospace;
 }
@@ -71,79 +70,68 @@
   }
 }
 
-/*
- * Big type, after the film's title: Helvetica Black, in caps, opened up a little. Inter's black
- * weight stands in for it, since Helvetica Black isn't something a browser can count on having.
- */
+/* Big type: geometric caps, opened up wide. */
 .display {
   font-family: var(--font-display);
-  font-weight: 900;
+  font-weight: 500;
   text-transform: uppercase;
-  line-height: 0.95;
-  letter-spacing: 0.04em;
+  line-height: 1;
+  letter-spacing: 0.12em;
 }
 
-/* Film grain over the whole frame, jittered a few times a second like projected stock. */
-@keyframes grain {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(-3%, 2%);
-  }
-  50% {
-    transform: translate(2%, -3%);
-  }
-  75% {
-    transform: translate(-2%, -1%);
+/* Each scene's heading — thin, spaced capitals, the way the film sets everything but its title. */
+.scene-heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(20px, 2.2vw, 36px);
+  line-height: 1.1;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+/* Small spaced capitals for labels, subtitles and nav. */
+.scene-label {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(11px, 0.85vw, 14px);
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+}
+
+/*
+ * The journey's scenes are stacked full-screen layers, and an empty layer on top would swallow
+ * every click meant for the one showing. So the layers don't take the pointer — only the things
+ * in them you can actually use do (hidden ones are visibility: hidden, so they can't).
+ */
+[data-scene] {
+  pointer-events: none;
+}
+
+[data-scene] :is(a, button) {
+  pointer-events: auto;
+}
+
+/* The sky eases in once its renderer is ready, instead of popping on. */
+@keyframes sky-in {
+  from {
+    opacity: 0;
   }
 }
 
+.sky-fade canvas {
+  animation: sky-in 1.2s ease-out both;
+}
+
+/* Film grain over the whole frame. Still, like everything else that isn't being scrolled. */
 .grain-overlay {
   position: fixed;
-  inset: -10%;
+  inset: 0;
   z-index: 999;
   pointer-events: none;
   opacity: 0.07;
   mix-blend-mode: screen;
-  animation: grain 0.6s steps(1) infinite;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/*
- * A stroke of the title arriving: it stutters on cold blue and settles to white, the way the
- * film's pieces strobe through. Stepped, so it reads as mechanical rather than a smooth fade.
- */
-@keyframes piece-in {
-  0% {
-    opacity: 0;
-    fill: #7ea2ff;
-  }
-  14% {
-    opacity: 1;
-  }
-  28% {
-    opacity: 0.2;
-  }
-  42% {
-    opacity: 1;
-    fill: #a7beff;
-  }
-  56% {
-    opacity: 0.55;
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-    fill: #f4f6ff;
-  }
-}
-
-.piece-in {
-  animation: piece-in 0.9s steps(9, end) both;
 }
 
 /* Credit type: the film's white Helvetica, with the slight bloom of light through a print. */
@@ -162,46 +150,9 @@
   filter: drop-shadow(0 0 7px rgb(190 210 255 / 0.3));
 }
 
-@keyframes vinyl-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Duration is set inline — 33⅓ rpm while a track is actually playing, slower otherwise. */
-.vinyl-spin {
-  position: relative;
-  animation: vinyl-spin 9s linear infinite;
-}
-
-/* GitHub cells pop in column by column once the grid is reached; delay is set per cell. */
-.gh-cell {
-  opacity: 0;
-  transform: scale(0.4);
-  transition:
-    opacity 0.4s ease,
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.gh-in .gh-cell {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/*
- * Visitors who ask the OS for reduced motion: stop the decorative CSS loops. The scroll-linked
- * framer-motion choreography is switched off separately, in useMotionOK().
- */
+/* Visitors who ask the OS for reduced motion get the plain page (see Journey) and no fade. */
 @media (prefers-reduced-motion: reduce) {
-  .vinyl-spin,
-  .grain-overlay,
-  .piece-in {
+  .sky-fade canvas {
     animation: none;
-  }
-
-  .gh-cell {
-    opacity: 1;
-    transform: none;
-    transition: none;
   }
 }
