@@ -123,7 +123,7 @@ export default function CaseViewer({
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[995] overflow-y-auto overscroll-contain bg-black/85 text-ink outline-none backdrop-blur-sm"
           >
-            <div className="flex min-h-full flex-col px-[4vw] py-3 sm:py-4">
+            <div className="film flex min-h-full flex-col px-[4vw] py-3 sm:py-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="credit text-[15px] text-ink/60 [text-shadow:none]">
                   {kindLabel} <span className="tabular-nums">{String(index! + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>

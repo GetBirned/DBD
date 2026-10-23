@@ -184,13 +184,16 @@ function Cinematic({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number)
             <Sky />
           </Suspense>
         </div>
-        {SCENES.map((s) => (
-          <div key={s.id} data-scene={s.id} className="absolute inset-0">
-            {content(s.id, false, onOpen)}
+        {/* Everything in front of the sky, under one soft-focus filter, like an old print. */}
+        <div className="film absolute inset-0">
+          {SCENES.map((s) => (
+            <div key={s.id} data-scene={s.id} className="absolute inset-0">
+              {content(s.id, false, onOpen)}
+            </div>
+          ))}
+          <div data-title-layer>
+            <Title />
           </div>
-        ))}
-        <div data-title-layer>
-          <Title />
         </div>
       </div>
     </div>
@@ -211,7 +214,7 @@ function Still({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number) => 
           <Sky />
         </Suspense>
       </div>
-      <div className="relative">
+      <div className="film relative">
         <Title still />
         {chapters.map((c) => (
           <Chapter key={c} id={c}>

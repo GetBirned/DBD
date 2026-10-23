@@ -50,7 +50,7 @@ export default function Popup({ open, onClose, label, children }: { open: boolea
             exit={{ y: 8 }}
             transition={{ duration: 0.4, ease: EASE }}
             onClick={(e) => e.stopPropagation()}
-            className="relative max-h-[86svh] w-full max-w-[56rem] overflow-y-auto border border-line bg-[#060504]/95 px-[6vw] py-[7vh] sm:px-14"
+            className="film relative max-h-[86svh] w-full max-w-[56rem] overflow-y-auto border border-line bg-[#060504]/95 px-[6vw] py-[7vh] sm:px-14"
           >
             <button
               type="button"

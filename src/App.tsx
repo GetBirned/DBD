@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import ClickSound from './components/ClickSound'
 import FloatingNav from './components/FloatingNav'
 import Soundtrack from './components/Soundtrack'
+import FilmGrain from './components/FilmGrain'
 import { ChapterProvider } from './components/chapters'
 
 function ScrollToTop() {
@@ -29,7 +30,7 @@ export default function App() {
       <ClickSound />
       <FloatingNav />
       <Soundtrack />
-      <div className="grain-overlay" />
+      <FilmGrain />
       <Routes>
         <Route path="/" element={<Home />} />
         {/* The site used to be three pages. Old links land on the matching chapter. */}

@@ -36,7 +36,7 @@ export default function FloatingNav() {
           animate={{ y: 0 }}
           exit={{ y: '-100%' }}
           transition={{ duration: 0.4, ease: EASE }}
-          className="fixed inset-x-0 top-0 z-[990]"
+          className="film fixed inset-x-0 top-0 z-[990]"
         >
           <div className="flex h-14 items-center gap-4 px-[4vw]">
             <button type="button" onClick={() => jump('top')} aria-label="Back to top" className="flex h-10 items-center">
