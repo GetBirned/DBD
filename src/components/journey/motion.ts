@@ -30,11 +30,11 @@ export function pass(
 
 /**
  * Items that take turns in one spot: each passes through in its own slice of `len`, overlapping
- * the next a little, so one is receding while the next arrives.
+ * the next by `overlap` (a fraction of a slice), so one is receding while the next arrives.
  */
-export function beats(tl: Timeline, items: Element[], start: number, len: number, { drift = 0.16 } = {}) {
+export function beats(tl: Timeline, items: Element[], start: number, len: number, { drift = 0.16, overlap: share = 0.14 } = {}) {
   const per = len / items.length
-  const overlap = per * 0.14
+  const overlap = per * share
   items.forEach((el, i) => {
     const s = start + i * per - (i > 0 ? overlap : 0)
     const e = start + (i + 1) * per + (i < items.length - 1 ? overlap : 0)

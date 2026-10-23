@@ -142,5 +142,7 @@ export default function Projects({ still = false, start = 0, onOpen }: { still?:
 }
 
 export function buildProjects(tl: Timeline, root: Element, start: number, len: number) {
-  beats(tl, [...root.querySelectorAll('[data-beat]')], start + PROJECTS_LEAD, len - PROJECTS_LEAD - 0.05, { drift: 0.22 })
+  // Barely overlapping: two side-by-side layouts crossfading at once read as a jumble, so each one
+  // is nearly gone before the next arrives.
+  beats(tl, [...root.querySelectorAll('[data-beat]')], start + PROJECTS_LEAD, len - PROJECTS_LEAD - 0.05, { drift: 0.22, overlap: 0.03 })
 }

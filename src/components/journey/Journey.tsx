@@ -10,7 +10,7 @@ import { requestRedraw, setPlayhead, sky } from './store'
 import Title, { buildTitle } from './Title'
 import Clients, { buildClients, CLIENT_COUNT, CLIENTS_PER } from './scenes/Clients'
 import Contact, { buildContact } from './scenes/Contact'
-import Hero, { buildHero, OPENING_LEN, TITLE_DONE } from './scenes/Hero'
+import Hero, { buildHero, OPENING_LEN } from './scenes/Hero'
 import Life, { buildLife } from './scenes/Life'
 import Projects, { buildProjects, PROJECTS_LEAD, PROJECTS_PER } from './scenes/Projects'
 import Skills, { buildSkills } from './scenes/Skills'
@@ -64,6 +64,23 @@ const SCENES: Scene[] = [
 const STARTS = SCENES.map((_, i) => SCENES.slice(0, i).reduce((t, s) => t + s.len, 0))
 const TOTAL = SCENES.reduce((t, s) => t + s.len, 0)
 const startOf = (id: string) => STARTS[SCENES.findIndex((s) => s.id === id)]
+
+/** The point in the journey (in screens) at which the planet reaches `pos` — see `sky.pos`. */
+function timeAtPlanet(pos: number) {
+  let from = START
+  for (let i = 0; i < SCENES.length; i++) {
+    const to = SCENES[i].planet
+    if (pos <= to) return STARTS[i] + (SCENES[i].len * (pos - from)) / (to - from)
+    from = to
+  }
+  return TOTAL
+}
+
+/**
+ * The title is whole once the planet's far edge has nearly left the frame — a tenth of the way in
+ * from the left, where ALIEN completes over the last of the planet in the film.
+ */
+const TITLE_DONE = timeAtPlanet(2.9)
 
 function content(id: string, still: boolean, open: (kind: 'client' | 'project', i: number) => void): ReactNode {
   switch (id) {
@@ -137,7 +154,7 @@ function Cinematic({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number)
         s.build(tl, root, STARTS[i], s.len)
         pos = s.planet
       })
-      // The title fills in across the opening credits, is whole as the last card arrives, and stays.
+      // The title fills in across the journey and is whole as the planet's far edge leaves the frame.
       buildTitle(tl, stage.current!.querySelector('[data-title-layer]')!, 0.35, TITLE_DONE)
       // Pad to exactly TOTAL screens, so timeline time maps 1:1 onto screens of scroll.
       tl.set({}, {}, TOTAL)

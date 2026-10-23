@@ -35,12 +35,9 @@ function RoleDetails({ e }: { e: ExperienceEntry }) {
 const OPEN = 0.9
 const CARD_LEN = 0.8
 const OUT = 0.4
-/** How many cards there are; the title is whole by the time the last one is up. */
+/** How many cards there are — keep in step with `cards` below. */
 const COUNT = 8
 export const OPENING_LEN = OPEN + COUNT * CARD_LEN + OUT
-/** When the title finishes assembling: just as the last card arrives, as ALIEN completes under
- *  "directed by". */
-export const TITLE_DONE = OPEN + (COUNT - 1) * CARD_LEN + 0.15
 
 /**
  * The opening credits, centered under the title the way the film's sit under ALIEN: the page opens
@@ -54,8 +51,8 @@ export default function Hero({ still = false }: { still?: boolean }) {
     const e = experience[i]
     return {
       role: e.role.toLowerCase(),
+      // Dates and the rest live in the popup the company name opens.
       names: [{ text: e.company.replace(' Inc.', ''), onClick: () => setOpen(i) }],
-      note: e.dateRange,
     }
   }
 
@@ -73,7 +70,7 @@ export default function Hero({ still = false }: { still?: boolean }) {
     },
     job(0),
     job(1),
-    { role: 'founder and web designer', names: ['Designs By Dart'], note: 'since 2022' },
+    { role: 'founder and web designer', names: ['Designs By Dart'] },
     job(2),
     { role: 'b.s. in computer science', names: ['University of New Hampshire'], note: 'grad. 2025' },
     {
