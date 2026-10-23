@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
-import { LogoIcon } from './Logo3D'
 import { GitHubIcon, LinkedInIcon } from './icons'
 import { CHAPTER_LINKS, goToChapter, useChapter, type ChapterId } from './chapters'
 import { EASE } from '@/lib/motion'
@@ -9,9 +8,10 @@ const GITHUB = 'https://github.com/GetBirned'
 const LINKEDIN = 'https://www.linkedin.com/in/dartagnan-birnie/'
 
 /**
- * Site nav: a slim bar across the top once the hero's own links have scrolled away. Desktop lists
- * every chapter, underlining whichever one you're reading; phones show that chapter's name and a
- * menu for the rest. Its bottom edge doubles as a scroll-progress line.
+ * Site nav: a slim, see-through bar across the top, kept out of the way until the opening credits
+ * have finished. Desktop lists every chapter, underlining whichever one you're reading; phones
+ * show that chapter's name and a menu for the rest. Its bottom edge doubles as a scroll-progress
+ * line.
  */
 export default function FloatingNav() {
   const { current } = useChapter()
@@ -21,7 +21,10 @@ export default function FloatingNav() {
   const bar = useSpring(scrollYProgress, { stiffness: 220, damping: 40 })
 
   useMotionValueEvent(scrollY, 'change', (y) => {
-    const show = y > window.innerHeight * 0.35
+    // Hidden through the title sequence — it would sit right on top of the title.
+    const seq = document.getElementById('title-sequence')
+    const after = seq ? seq.offsetTop + seq.offsetHeight - window.innerHeight * 1.2 : window.innerHeight * 0.35
+    const show = y > after
     setShown(show)
     if (!show) setMenu(false)
   })
@@ -42,11 +45,11 @@ export default function FloatingNav() {
           animate={{ y: 0 }}
           exit={{ y: '-100%' }}
           transition={{ duration: 0.4, ease: EASE }}
-          className="fixed inset-x-0 top-0 z-[990] border-b border-ink bg-paper"
+          className="fixed inset-x-0 top-0 z-[990] border-b border-line bg-paper/75 backdrop-blur-md"
         >
           <div className="flex h-14 items-center gap-4 px-[4vw]">
             <button type="button" onClick={() => jump('top')} aria-label="Back to top" className="flex h-10 items-center">
-              <LogoIcon variant="db" height={18} />
+              <img src="/logos/DB_black.svg" alt="" className="h-[18px] w-auto opacity-90 invert" />
             </button>
 
             {/* Desktop: every chapter. */}
@@ -64,7 +67,7 @@ export default function FloatingNav() {
                     <motion.span
                       layoutId="nav-underline"
                       transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                      className="absolute inset-x-3 -bottom-px h-[2px] bg-accent"
+                      className="absolute inset-x-3 -bottom-px h-px bg-ink"
                     />
                   )}
                 </button>
@@ -107,14 +110,14 @@ export default function FloatingNav() {
               <a
                 href="/resume.pdf"
                 download="Dartagnan_Birnie_Resume.pdf"
-                className="bg-ink px-4 py-2.5 font-mono text-[11px] tracking-[0.1em] text-paper uppercase transition-colors hover:bg-accent"
+                className="border border-line px-4 py-2.5 font-mono text-[11px] tracking-[0.1em] text-ink uppercase transition-colors hover:border-ink"
               >
                 Résumé
               </a>
             </div>
           </div>
 
-          <motion.div aria-hidden style={{ scaleX: bar }} className="absolute inset-x-0 -bottom-px h-[2px] origin-left bg-accent" />
+          <motion.div aria-hidden style={{ scaleX: bar }} className="absolute inset-x-0 -bottom-px h-px origin-left bg-ink/70" />
 
           <AnimatePresence>
             {menu && (
@@ -123,7 +126,7 @@ export default function FloatingNav() {
                 animate={{ height: 'auto' }}
                 exit={{ height: 0 }}
                 transition={{ duration: 0.35, ease: EASE }}
-                className="overflow-hidden border-t border-ink lg:hidden"
+                className="overflow-hidden border-t border-line lg:hidden"
               >
                 <div className="px-[4vw] py-3">
                   {CHAPTER_LINKS.map((c) => (
@@ -131,7 +134,7 @@ export default function FloatingNav() {
                       key={c.id}
                       type="button"
                       onClick={() => jump(c.id)}
-                      className={`display block w-full py-2 text-left text-[44px] ${current === c.id ? 'text-accent' : 'text-ink'}`}
+                      className={`credit block w-full py-2 text-left text-[30px] ${current === c.id ? 'text-ink' : 'text-ink/55'}`}
                     >
                       {c.label}
                     </button>

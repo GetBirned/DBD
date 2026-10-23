@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState, type RefObject } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useInView, useMotionValueEvent, useScroll, useTransform, type MotionValue } from 'framer-motion'
-import ChapterHeading from './ChapterHeading'
-import Logo3D, { LOGO_ASPECT } from '@/components/Logo3D'
 import { ArrowUpRight, GitHubIcon } from '@/components/icons'
 import { projects, type ProjectData } from '@/data/projects'
 import { useMotionOK } from '@/lib/motion'
@@ -89,8 +87,11 @@ function StackCard({
   const media = p.video ?? p.screenshots?.[0]
   const video = !!media && media.endsWith('.webm')
   const ground = [p.cardTexture, p.cardBg].filter(Boolean).join(', ')
-  const fg = dark ? 'text-paper' : 'text-ink'
-  const rule = dark ? 'border-paper/25' : 'border-ink/25'
+  // Literal colors rather than the page's tokens: these sit on the project's own ground, which is
+  // light for some projects and dark for others, whatever the page around them is doing.
+  const fg = dark ? 'text-[#f4f2ec]' : 'text-[#141413]'
+  const rule = dark ? 'border-white/20' : 'border-black/20'
+  const outline = dark ? 'border-white/40 hover:border-white' : 'border-black/40 hover:border-black'
 
   const card = (
     <motion.article
@@ -99,7 +100,7 @@ function StackCard({
           ? { scale, top: '50%', y: `calc(-50% + ${(index - (N - 1) / 2) * PEEK}px)`, maxHeight: `calc(100% - ${(N - 1) * PEEK}px)` }
           : undefined
       }
-      className={`isolate flex origin-top flex-col overflow-hidden border border-ink ${fg} ${motionOK ? 'absolute inset-x-0' : 'relative'}`}
+      className={`isolate flex origin-top flex-col overflow-hidden border border-line ${fg} ${motionOK ? 'absolute inset-x-0' : 'relative'}`}
     >
       {/* Card ground: the project's own fill, plus its photo layer where it has one. `isolate`
           keeps these -z layers inside the card, so a covered card's text never shows through. */}
@@ -144,16 +145,16 @@ function StackCard({
               className="h-auto max-h-[min(clamp(40px,6vw,110px),11vh)] w-auto max-w-full object-contain object-left"
             />
           ) : (
-            <h3 className="display text-[min(clamp(44px,6vw,110px),11vh)]">{p.name}</h3>
+            <h3 className="display text-[min(clamp(36px,4.6vw,84px),10vh)]">{p.name}</h3>
           )}
-          <p className={`mt-[clamp(8px,1.6vh,18px)] max-w-[36ch] text-[clamp(15px,min(1.4vw,2.2vh),21px)] leading-snug ${dark ? 'text-paper/85' : 'text-ink-dim'}`}>
+          <p className={`mt-[clamp(8px,1.6vh,18px)] max-w-[36ch] text-[clamp(15px,min(1.4vw,2.2vh),21px)] leading-snug ${dark ? 'text-white/80' : 'text-black/65'}`}>
             {p.pitch}
           </p>
           <div className="mt-[clamp(10px,2vh,22px)] flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={onOpen}
-              className={`inline-flex items-center gap-2 px-4 py-3 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors sm:px-5 ${dark ? 'bg-paper text-ink hover:bg-white' : 'bg-ink text-paper hover:bg-accent'}`}
+              className={`inline-flex items-center gap-2 px-4 py-3 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors sm:px-5 ${dark ? 'bg-white text-[#141413] hover:bg-white/85' : 'bg-[#141413] text-white hover:bg-black'}`}
             >
               Case study
               <ArrowUpRight />
@@ -163,7 +164,7 @@ function StackCard({
                 href={p.url}
                 target="_blank"
                 rel="noreferrer"
-                className={`inline-flex items-center gap-2 border px-4 py-3 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors sm:px-5 ${dark ? 'border-paper/40 hover:border-paper' : 'border-ink/40 hover:border-ink'}`}
+                className={`inline-flex items-center gap-2 border px-4 py-3 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors sm:px-5 ${outline}`}
               >
                 Visit
                 <ArrowUpRight />
@@ -174,7 +175,7 @@ function StackCard({
               target="_blank"
               rel="noreferrer"
               aria-label={`${p.name} on GitHub`}
-              className={`flex h-[42px] w-[42px] items-center justify-center border transition-colors ${dark ? 'border-paper/40 hover:border-paper' : 'border-ink/40 hover:border-ink'}`}
+              className={`flex h-[42px] w-[42px] items-center justify-center border transition-colors ${outline}`}
             >
               <GitHubIcon size={15} />
             </a>
@@ -195,25 +196,12 @@ function StackCard({
   )
 }
 
-function Heading({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
-  return (
-    // Centered on the title: the spacing below lives on this row rather than on the heading, so
-    // the heading's own bottom margin doesn't count toward the height the mark is centered on.
-    <div className="mb-[6vw] flex items-center justify-between gap-10 px-[4vw]">
-      <ChapterHeading title="Things I've *built.*" className="" />
-      <div className="hidden shrink-0 lg:block">
-        <Logo3D variant="code" width={230} height={230 / LOGO_ASPECT.code} interactionRef={stageRef} shadow={false} />
-      </div>
-    </div>
-  )
-}
-
 /**
- * The projects as a deck: each card pins to the screen and the next slides up over it, while the
- * ones beneath shrink back and dim, their edges still peeking out above.
+ * The projects as a deck, with no heading — the cards are the chapter: each one pins to the screen
+ * and the next slides up over it, while the ones beneath shrink back and dim, their edges still
+ * peeking out above.
  */
 export default function ProjectStack({ onOpen }: { onOpen: (i: number) => void }) {
-  const sectionRef = useRef<HTMLElement>(null)
   const deckRef = useRef<HTMLDivElement>(null)
   const motionOK = useMotionOK()
   const { scrollYProgress } = useScroll({ target: deckRef, offset: ['start start', 'end end'] })
@@ -230,8 +218,7 @@ export default function ProjectStack({ onOpen }: { onOpen: (i: number) => void }
   })
 
   return (
-    <section ref={sectionRef} className="pt-[14vh]">
-      <Heading stageRef={sectionRef} />
+    <section className="pt-[10vh]">
       <div ref={deckRef} className="relative">
         {projects.map((p, i) => (
           <StackCard key={p.name} project={p} index={i} progress={scrollYProgress} active={active} near={near} onOpen={() => onOpen(i)} />

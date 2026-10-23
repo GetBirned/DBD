@@ -1,25 +1,26 @@
 @import "tailwindcss";
 
 /*
- * Editorial palette: warm paper, ink, one flat cobalt accent. The only gradient on the page is
- * the DB mark's own (grad-a → grad-b, used by Logo3D). Dark stretches of the page use the
- * `paper`/`ink` pair inverted rather than separate tokens.
+ * Title-sequence palette, after Alien (1979): black space, warm-white type, and the amber of the
+ * planet's haze as the one accent. The token names predate this theme — "ink" is the text color
+ * and "paper" the ground — so every utility (text-ink, border-line, bg-paper…) follows along.
  */
 @theme {
-  --color-bg: #eeebe4;
-  --color-paper: #eeebe4;
-  --color-bg-soft: #e5e1d8;
-  --color-panel: #f7f5f0;
-  --color-ink: #141413;
-  --color-ink-dim: #4a4843;
-  --color-ink-faint: #7d7970;
-  --color-line: rgb(20 20 19 / 0.16);
-  --color-accent: #2244f2;
-  --color-grad-a: oklch(0.62 0.17 255);
-  --color-grad-b: oklch(0.55 0.21 300);
+  --color-bg: #020203;
+  --color-paper: #020203;
+  --color-bg-soft: #0e0e11;
+  --color-panel: rgb(241 239 233 / 0.04);
+  --color-ink: #f1efe9;
+  --color-ink-dim: #b4b1aa;
+  --color-ink-faint: #7b7871;
+  --color-line: rgb(241 239 233 / 0.16);
+  --color-accent: #dba05a;
 
-  --font-display: "Archivo", "Arial Narrow", sans-serif;
-  --font-body: "Archivo", "Segoe UI", sans-serif;
+  /* Credits in Helvetica, as the film's are — Arial where there's no Helvetica (Windows), and
+     Inter, the nearest web font, on systems with neither (Android). Big type leads with Inter,
+     whose black weight stands in for the title's Helvetica Black. */
+  --font-display: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: "Helvetica Neue", Helvetica, Arial, "Inter", sans-serif;
   --font-mono: "IBM Plex Mono", "Consolas", monospace;
 }
 
@@ -66,72 +67,99 @@
 
   ::selection {
     background: var(--color-accent);
-    color: white;
+    color: #020203;
   }
 }
 
 /*
- * Poster type: Archivo squeezed to its narrowest width at a heavy weight, set in caps. This is
- * what lets a headline run edge to edge at a size that fills the screen without wrapping into
- * a tower of one-word lines.
+ * Big type, after the film's title: Helvetica Black, in caps, opened up a little. Inter's black
+ * weight stands in for it, since Helvetica Black isn't something a browser can count on having.
  */
 .display {
   font-family: var(--font-display);
-  font-stretch: 62%;
-  font-weight: 800;
+  font-weight: 900;
   text-transform: uppercase;
-  line-height: 0.86;
-  letter-spacing: -0.01em;
+  line-height: 0.95;
+  letter-spacing: 0.04em;
 }
 
-/* Hollow display type, for the kinetic skill rows. */
-.outline-text {
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--color-ink);
-}
-
-@keyframes bounce {
+/* Film grain over the whole frame, jittered a few times a second like projected stock. */
+@keyframes grain {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-3%, 2%);
   }
   50% {
-    transform: translateY(6px);
+    transform: translate(2%, -3%);
+  }
+  75% {
+    transform: translate(-2%, -1%);
   }
 }
 
-.scroll-bounce {
-  animation: bounce 1.8s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-14px) rotate(0.6deg);
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.marquee-mask {
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-}
-
-/* Paper tooth: a faint noise multiplied into everything, so flat fills don't read as screen-flat. */
 .grain-overlay {
   position: fixed;
-  inset: 0;
+  inset: -10%;
   z-index: 999;
   pointer-events: none;
   opacity: 0.07;
-  mix-blend-mode: multiply;
+  mix-blend-mode: screen;
+  animation: grain 0.6s steps(1) infinite;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
+ * A stroke of the title arriving: it stutters on cold blue and settles to white, the way the
+ * film's pieces strobe through. Stepped, so it reads as mechanical rather than a smooth fade.
+ */
+@keyframes piece-in {
+  0% {
+    opacity: 0;
+    fill: #7ea2ff;
+  }
+  14% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 0.2;
+  }
+  42% {
+    opacity: 1;
+    fill: #a7beff;
+  }
+  56% {
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    fill: #f4f6ff;
+  }
+}
+
+.piece-in {
+  animation: piece-in 0.9s steps(9, end) both;
+}
+
+/* Credit type: the film's white Helvetica, with the slight bloom of light through a print. */
+.credit {
+  font-family: var(--font-body);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  color: var(--color-ink);
+  text-shadow:
+    0 0 1px rgb(255 255 255 / 0.45),
+    0 0 12px rgb(255 255 255 / 0.18);
+}
+
+/* The title's letters: plain white, with the faint bloom of light through a print. */
+.title-glyph {
+  filter: drop-shadow(0 0 7px rgb(190 210 255 / 0.3));
 }
 
 @keyframes vinyl-spin {
@@ -165,9 +193,9 @@
  * framer-motion choreography is switched off separately, in useMotionOK().
  */
 @media (prefers-reduced-motion: reduce) {
-  .animate-float,
-  .scroll-bounce,
-  .vinyl-spin {
+  .vinyl-spin,
+  .grain-overlay,
+  .piece-in {
     animation: none;
   }
 

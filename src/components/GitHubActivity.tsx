@@ -3,9 +3,9 @@ import { useInView } from 'framer-motion'
 import { useGitHubData, type ContributionsData, type ContributionDay } from '@/hooks/useGitHubData'
 import { ArrowUpRight } from './icons'
 
-// The page's cobalt rather than GitHub's green, so the board reads as part of the page instead of
-// a pasted-in widget. Index = GitHub's own 0–4 intensity bucket.
-const LEVEL_COLORS = ['rgb(20 20 19 / 0.08)', '#bcc6fb', '#8193f8', '#4d66f5', '#2244f2']
+// Starlight rather than GitHub's green — dim to bright white — so the board reads as part of the
+// sky instead of a pasted-in widget. Index = GitHub's own 0–4 intensity bucket.
+const LEVEL_COLORS = ['rgb(241 239 233 / 0.06)', 'rgb(241 239 233 / 0.24)', 'rgb(241 239 233 / 0.45)', 'rgb(241 239 233 / 0.7)', '#f4f6ff']
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -46,11 +46,11 @@ export default function GitHubActivity() {
   })
 
   return (
-    <div ref={ref} className={`border border-ink bg-panel p-5 sm:p-8 ${inView ? 'gh-in' : ''}`}>
+    <div ref={ref} className={`border border-line p-5 sm:p-8 ${inView ? 'gh-in' : ''}`}>
       <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
         <div>
-          <div className="font-mono text-[12px] tracking-[0.1em] text-ink-dim uppercase">GitHub, last 12 months</div>
-          <div className="display mt-2 text-[clamp(36px,4vw,64px)] text-ink">{data.total.toLocaleString()} contributions</div>
+          <div className="font-mono text-[11px] tracking-[0.14em] text-ink-faint uppercase">GitHub, last 12 months</div>
+          <div className="credit mt-2 text-[clamp(22px,2.4vw,40px)]">{data.total.toLocaleString()} contributions</div>
         </div>
         <a
           href={data.profileUrl}

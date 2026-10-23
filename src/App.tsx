@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Footer from './components/Footer'
 import ClickSound from './components/ClickSound'
 import FloatingNav from './components/FloatingNav'
+import SpaceBackground from './components/SpaceBackground'
 import { ChapterProvider } from './components/chapters'
 
 function ScrollToTop() {
@@ -30,6 +31,7 @@ export default function App() {
     <ChapterProvider>
       <ScrollToTop />
       <ClickSound />
+      <SpaceBackground />
       <FloatingNav />
       <div className="grain-overlay" />
       {/* No `initial={false}` here: it's inherited by every motion element on the page and would

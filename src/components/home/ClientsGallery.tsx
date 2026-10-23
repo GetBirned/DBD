@@ -1,7 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
-import ChapterHeading from './ChapterHeading'
-import Logo3D, { LOGO_ASPECT } from '@/components/Logo3D'
+import Credit from './Credit'
 import MediaFrame from '@/components/MediaFrame'
 import { ArrowUpRight } from '@/components/icons'
 import { clientCases, isVideo, type CaseItem } from '@/lib/cases'
@@ -12,7 +11,7 @@ import { useMotionOK } from '@/lib/motion'
 /**
  * A client site in a browser window. Shows a screenshot until hovered, then fades into the site's
  * scrolling walkthrough video — which isn't fetched at all until the first hover. On hover the
- * card lifts off the page onto a hard ink shadow.
+ * card lifts slightly and its frame brightens.
  */
 function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOpen: () => void }) {
   const [hover, setHover] = useState(false)
@@ -40,11 +39,11 @@ function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOp
       className="group w-[86vw] shrink-0 snap-center text-left md:w-[min(62vw,calc((100svh-250px)*1.6),1150px)]"
       aria-label={`${item.name} — open case study`}
     >
-      <div className="mb-3 flex items-baseline justify-between border-b border-ink pb-2 font-mono text-[11px] tracking-[0.1em] text-ink uppercase">
+      <div className="mb-3 flex items-baseline justify-between border-b border-line pb-2 font-mono text-[11px] tracking-[0.12em] text-ink-faint uppercase">
         <span>{String(index + 1).padStart(2, '0')}</span>
-        <span className="text-ink-dim">{item.tag}</span>
+        <span>{item.tag}</span>
       </div>
-      <div className="transition-[transform,box-shadow] duration-300 ease-out group-hover:-translate-x-1.5 group-hover:-translate-y-1.5 group-hover:shadow-[8px_8px_0_0_var(--color-ink)]">
+      <div className="transition-[transform,filter] duration-500 ease-out group-hover:-translate-y-1 group-hover:brightness-110">
         <MediaFrame chrome domain={item.domain}>
           <div className="relative aspect-[16/10] overflow-hidden bg-bg-soft">
             {poster && (
@@ -71,10 +70,10 @@ function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOp
       </div>
       <div className="mt-4 flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <div className="display truncate text-[clamp(30px,3.2vw,52px)] text-ink">{item.name}</div>
-          <div className="mt-1 truncate font-mono text-[11px] tracking-[0.06em] text-ink-dim uppercase">{item.meta}</div>
+          <div className="credit truncate text-[clamp(21px,2.1vw,36px)]">{item.name}</div>
+          <div className="mt-1.5 truncate font-mono text-[11px] tracking-[0.1em] text-ink-faint uppercase">{item.meta}</div>
         </div>
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-ink text-ink transition-colors group-hover:bg-ink group-hover:text-paper">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-line text-ink-dim transition-colors group-hover:border-ink group-hover:text-ink">
           <ArrowUpRight />
         </span>
       </div>
@@ -82,18 +81,12 @@ function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOp
   )
 }
 
-function Intro({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
+/** The gallery's opening credit, set before the first site. */
+function Intro() {
   return (
-    <div className="w-full shrink-0 md:w-[min(44vw,820px)]">
-      <div className="mb-[3vw] hidden md:block">
-        <Logo3D variant="dbd" width={260} height={260 / LOGO_ASPECT.dbd} interactionRef={stageRef} shadow={false} />
-      </div>
-      <ChapterHeading
-        title="People I've put *online.*"
-        className="mb-6"
-        size="text-[clamp(52px,13.5vw,250px)] md:text-[clamp(52px,8.4vw,170px)]"
-      />
-      <div className="hidden items-center gap-3 font-mono text-[12px] tracking-[0.1em] text-ink-dim uppercase md:flex">
+    <div className="w-full shrink-0 md:w-[min(58vw,1000px)]">
+      <Credit role="client websites by" names={['Designs By Dart']} note="Since 2022 · Alton, NH" className="mb-10" />
+      <div className="hidden items-center justify-center gap-3 font-mono text-[11px] tracking-[0.2em] text-ink-faint uppercase md:flex">
         Keep scrolling
         <motion.span animate={{ x: [0, 8, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}>
           →
@@ -105,31 +98,32 @@ function Intro({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
 
 function Outro() {
   return (
-    <div className="flex w-[86vw] max-w-[520px] shrink-0 snap-center flex-col justify-center gap-8 border-l border-ink pl-[4vw] md:w-[min(36vw,520px)]">
+    <div className="flex w-[86vw] max-w-[520px] shrink-0 snap-center flex-col justify-center gap-10 border-l border-line pl-[4vw] md:w-[min(36vw,520px)]">
       <div>
-        <div className="mb-4 font-mono text-[11px] tracking-[0.1em] text-ink-dim uppercase">Approved contractor</div>
+        <div className="mb-5 font-mono text-[11px] tracking-[0.14em] text-ink-faint uppercase">Approved contractor</div>
         <div className="flex flex-wrap items-center gap-3">
           {[
             { src: '/logos/sbdc.svg', alt: "America's SBDC New Hampshire", href: 'https://www.nhsbdc.org/' },
             { src: '/logos/grdc.webp', alt: 'Grafton Regional Development Corporation', href: 'https://graftonrdc.org/' },
           ].map((c) => (
-            <a key={c.src} href={c.href} target="_blank" rel="noreferrer" title={c.alt} className="border border-ink bg-white px-4 py-3 transition-transform hover:-translate-y-0.5">
-              <img src={c.src} alt={c.alt} loading="lazy" className="h-10 w-auto" />
+            <a key={c.src} href={c.href} target="_blank" rel="noreferrer" title={c.alt} className="opacity-75 transition-opacity hover:opacity-100">
+              {/* Knocked out to white, so the marks sit in the sky rather than on white tiles. */}
+              <img src={c.src} alt={c.alt} loading="lazy" className="h-11 w-auto brightness-0 invert" />
             </a>
           ))}
         </div>
       </div>
       <div>
-        <div className="mb-4 font-mono text-[11px] tracking-[0.1em] text-ink-dim uppercase">Built on whatever fits</div>
-        <div className="flex items-center gap-5">
+        <div className="mb-5 font-mono text-[11px] tracking-[0.14em] text-ink-faint uppercase">Built on whatever fits</div>
+        <div className="flex items-center gap-6">
           {platforms.map((p) => (
-            <img key={p.name} src={p.logo} alt={p.name} title={p.name} loading="lazy" className="h-7 w-auto opacity-80" />
+            <img key={p.name} src={p.logo} alt={p.name} title={p.name} loading="lazy" className="h-7 w-auto opacity-60 brightness-0 invert" />
           ))}
         </div>
       </div>
       <a
         href="mailto:dartbirnie@gmail.com?subject=Website%20project"
-        className="inline-flex w-fit items-center gap-2 bg-ink px-6 py-4 font-mono text-xs tracking-[0.1em] text-paper uppercase transition-colors hover:bg-accent"
+        className="inline-flex w-fit items-center gap-2 border border-line px-6 py-4 font-mono text-xs tracking-[0.12em] text-ink uppercase transition-colors hover:border-ink"
       >
         Start a site with me <ArrowUpRight />
       </a>
@@ -175,7 +169,7 @@ export default function ClientsGallery({ onOpen }: { onOpen: (i: number) => void
     return (
       <section ref={sectionRef} className="py-[12vh]">
         <div className="px-[4vw]">
-          <Intro stageRef={sectionRef} />
+          <Intro />
         </div>
         <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-[4vw] pt-6 pb-8 [scrollbar-width:none]">
           {cards}
@@ -193,7 +187,7 @@ export default function ClientsGallery({ onOpen }: { onOpen: (i: number) => void
           style={{ x }}
           className="flex w-max items-center gap-[4vw] pr-[6vw] pl-[4vw]"
         >
-          <Intro stageRef={sectionRef} />
+          <Intro />
           {cards}
           <Outro />
         </motion.div>

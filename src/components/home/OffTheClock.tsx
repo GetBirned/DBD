@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion'
-import ChapterHeading from './ChapterHeading'
+import Credit from './Credit'
 import { ArrowUpRight, ChevronDown } from '@/components/icons'
 import {
   useSpotifyData,
@@ -389,12 +389,9 @@ function Games() {
 
 export default function OffTheClock() {
   return (
-    <section className="bg-ink px-[4vw] pt-[16vh] pb-[18vh] text-paper">
+    <section className="px-[4vw] pt-[16vh] pb-[18vh] text-white">
       <div>
-        <ChapterHeading
-          tone="paper"
-          title="What I'm *into.*"
-        />
+        <Credit role="off the clock" names={['music', 'and', 'games']} className="mb-[12vh]" />
 
         <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
           <Vinyl />

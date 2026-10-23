@@ -114,7 +114,7 @@ export default function CaseViewer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className={`fixed inset-0 z-[995] overflow-y-auto overscroll-contain outline-none transition-[background] duration-500 ${item.dark ? 'text-paper' : 'text-ink'}`}
+            className={`fixed inset-0 z-[995] overflow-y-auto overscroll-contain outline-none transition-[background] duration-500 ${item.ground ? (item.dark ? 'text-[#f4f2ec]' : 'text-[#141413]') : 'text-ink'}`}
             style={{ background: item.ground ?? 'var(--color-paper)' }}
           >
             <div className="relative flex min-h-full flex-col px-[4vw] py-4 sm:py-6">
@@ -141,7 +141,7 @@ export default function CaseViewer({
                     type="button"
                     onClick={onClose}
                     aria-label="Close"
-                    className={`ml-2 flex h-11 w-11 items-center justify-center transition-colors ${item.dark ? 'bg-paper text-ink' : 'bg-ink text-paper hover:bg-accent'}`}
+                    className={`ml-2 flex h-11 w-11 items-center justify-center transition-colors ${item.ground && !item.dark ? 'bg-[#141413] text-white hover:bg-black' : 'bg-ink text-paper hover:bg-white'}`}
                   >
                     <CloseIcon size={18} />
                   </button>
@@ -206,7 +206,7 @@ export default function CaseViewer({
                       ) : (
                         <div className="flex items-center gap-4">
                           {item.logo && (
-                            <img src={item.logo} alt="" className="h-14 w-14 shrink-0 border border-ink bg-white object-contain p-1.5" />
+                            <img src={item.logo} alt="" className="h-14 w-14 shrink-0 bg-white object-contain p-1.5" />
                           )}
                           <h2 className="display text-[clamp(44px,4.6vw,84px)]">{item.name}</h2>
                         </div>
@@ -235,7 +235,7 @@ export default function CaseViewer({
                             href={item.url}
                             target="_blank"
                             rel="noreferrer"
-                            className={`inline-flex items-center gap-2 px-5 py-3.5 font-mono text-xs tracking-[0.1em] uppercase transition-colors ${item.dark ? 'bg-paper text-ink' : 'bg-ink text-paper hover:bg-accent'}`}
+                            className={`inline-flex items-center gap-2 px-5 py-3.5 font-mono text-xs tracking-[0.1em] uppercase transition-colors ${item.ground && !item.dark ? 'bg-[#141413] text-white hover:bg-black' : 'bg-ink text-paper hover:bg-white'}`}
                           >
                             Visit site <ArrowUpRight />
                           </a>
