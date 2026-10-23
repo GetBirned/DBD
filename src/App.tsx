@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import Home from './pages/Home'
 import ClickSound from './components/ClickSound'
 import FloatingNav from './components/FloatingNav'
+import Soundtrack from './components/Soundtrack'
 import { ChapterProvider } from './components/chapters'
 
 function ScrollToTop() {
@@ -27,6 +28,7 @@ export default function App() {
       <ScrollToTop />
       <ClickSound />
       <FloatingNav />
+      <Soundtrack />
       <div className="grain-overlay" />
       <Routes>
         <Route path="/" element={<Home />} />
