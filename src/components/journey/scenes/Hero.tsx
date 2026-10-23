@@ -1,6 +1,8 @@
-import { experience } from '@/data/experience'
+import { useState } from 'react'
+import { experience, type ExperienceEntry } from '@/data/experience'
 import Credit, { type CreditName } from '../Credit'
 import { pass, type Timeline } from '../motion'
+import Popup from '../Popup'
 
 interface Card {
   role?: string
@@ -8,48 +10,94 @@ interface Card {
   note?: string
 }
 
-const job = (i: number): Card => {
-  const e = experience[i]
-  return {
-    role: e.role.toLowerCase(),
-    names: [e.company.replace(' Inc.', '')],
-    note: [e.dateRange, e.badge ? 'Featured intern' : e.location.split(' · ')[0]].join(' · '),
-  }
+/** What I did in one role, as it opens from its card. */
+function RoleDetails({ e }: { e: ExperienceEntry }) {
+  return (
+    <div className="text-center">
+      {e.logoDark && <img src={e.logoDark} alt="" className="mx-auto h-6 w-auto opacity-85" />}
+      <div className="mt-6">
+        <Credit
+          role={e.role.toLowerCase()}
+          names={[e.company.replace(' Inc.', '')]}
+          note={`${e.dateRange} · ${e.location}`}
+          size="text-[clamp(20px,2.3vw,38px)]"
+        />
+      </div>
+      <p className="mx-auto mt-[4vh] max-w-[40em] border-t border-line pt-[4vh] text-[clamp(15px,1.15vw,18px)] leading-relaxed text-ink-dim">
+        {e.desc}
+      </p>
+      {e.badge && <p className="mt-5 font-mono text-[11px] tracking-[0.08em] text-accent">{e.badge}</p>}
+    </div>
+  )
 }
 
-/** The opening credits — everything basic, one card at a time. */
-const CARDS: Card[] = [
-  { names: ['Dart Birnie'], note: 'Software engineer & developer' },
-  job(0),
-  job(1),
-  { role: 'founder and web designer', names: ['Designs By Dart'], note: 'Since 2022 · Alton, NH' },
-  job(2),
-  { role: 'b.s. in computer science', names: ['University of New Hampshire'], note: "May 2025 · Dean's List" },
-  {
-    role: 'approved web design contractor',
-    names: [{ text: 'NH SBDC', href: 'https://www.nhsbdc.org/' }, 'and', { text: 'GRDC', href: 'https://graftonrdc.org/' }],
-  },
-  { role: 'based in', names: ['Alton, New Hampshire'] },
-]
-
-/** Screens of scroll: open space at first, then each card, then a beat before About. */
+/** Screens of scroll: open space at first, then each card, then a beat before what's next. */
 const OPEN = 0.9
 const CARD_LEN = 0.8
 const OUT = 0.4
-export const OPENING_LEN = OPEN + CARDS.length * CARD_LEN + OUT
+/** How many cards there are; the title is whole by the time the last one is up. */
+const COUNT = 8
+export const OPENING_LEN = OPEN + COUNT * CARD_LEN + OUT
+/** When the title finishes assembling: just as the last card arrives, as ALIEN completes under
+ *  "directed by". */
+export const TITLE_DONE = OPEN + (COUNT - 1) * CARD_LEN + 0.15
 
 /**
  * The opening credits, centered under the title the way the film's sit under ALIEN: the page opens
- * on empty space, then each card dissolves in and out in its own stretch of the scroll.
+ * on empty space, then each card dissolves in and out in its own stretch of the scroll. A company
+ * name on a job's card opens what I did there.
  */
 export default function Hero({ still = false }: { still?: boolean }) {
+  const [open, setOpen] = useState<number | null>(null)
+
+  const job = (i: number): Card => {
+    const e = experience[i]
+    return {
+      role: e.role.toLowerCase(),
+      names: [{ text: e.company.replace(' Inc.', ''), onClick: () => setOpen(i) }],
+      note: e.dateRange,
+    }
+  }
+
+  const cards: Card[] = [
+    {
+      names: [
+        {
+          text: (
+            <>
+              <span className="text-ink/75">a</span> Dart Birnie <span className="text-ink/75">site</span>
+            </>
+          ),
+        },
+      ],
+    },
+    job(0),
+    job(1),
+    { role: 'founder and web designer', names: ['Designs By Dart'], note: 'since 2022' },
+    job(2),
+    { role: 'b.s. in computer science', names: ['University of New Hampshire'], note: 'grad. 2025' },
+    {
+      role: 'approved web design contractor',
+      names: [{ text: 'NH SBDC', href: 'https://www.nhsbdc.org/' }, 'and', { text: 'GRDC', href: 'https://graftonrdc.org/' }],
+    },
+    { role: 'filmed in', names: ['Alton, NH'] },
+  ]
+
+  const details = open === null ? null : experience[open]
+  const popup = (
+    <Popup open={!!details} onClose={() => setOpen(null)} label={details ? `${details.role}, ${details.company}` : ''}>
+      {details && <RoleDetails e={details} />}
+    </Popup>
+  )
+
   if (still) {
     return (
       <div className="space-y-[14vh] px-[6vw] pt-[16vh] pb-[6vh]">
         <h1 className="sr-only">Dart Birnie — software engineer and developer</h1>
-        {CARDS.map((c, i) => (
+        {cards.map((c, i) => (
           <Credit key={i} role={c.role} names={c.names} note={c.note} />
         ))}
+        {popup}
       </div>
     )
   }
@@ -57,7 +105,7 @@ export default function Hero({ still = false }: { still?: boolean }) {
   return (
     <div className="h-full">
       <h1 className="sr-only">Dart Birnie — software engineer and developer</h1>
-      {CARDS.map((c, i) => (
+      {cards.map((c, i) => (
         <div key={i} data-card className="absolute inset-x-[6vw] top-[58%] -translate-y-1/2">
           <Credit role={c.role} names={c.names} note={c.note} />
         </div>
@@ -65,6 +113,7 @@ export default function Hero({ still = false }: { still?: boolean }) {
       <div data-hint className="scene-label absolute inset-x-0 bottom-8 text-center text-[10px] text-ink-faint">
         Scroll
       </div>
+      {popup}
     </div>
   )
 }

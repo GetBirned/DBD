@@ -8,8 +8,8 @@ const step = (rank: number) => STROKES.filter((o) => o.rank < rank).length
 
 /**
  * DART across the top of the frame, spaced the width of the screen the way ALIEN is. It's there
- * for the whole journey, empty as the page opens and gaining a stroke every few screens, so it's
- * only whole at the very end. With `still` (reduced motion) it's simply whole.
+ * for the whole journey: empty as the page opens, gaining strokes through the opening credits, and
+ * whole from the last of them on. With `still` (reduced motion) it's simply whole.
  */
 export default function Title({ still = false }: { still?: boolean }) {
   return (

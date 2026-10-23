@@ -146,6 +146,29 @@
     0 0 12px rgb(255 255 255 / 0.18);
 }
 
+/*
+ * A name on a card you can click or follow: a faint underline so it reads as one, and a soft glow
+ * when it's pointed at — as if the light behind the print came up a little.
+ */
+.credit-link {
+  text-decoration: underline;
+  text-decoration-color: rgb(241 239 233 / 0.22);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition:
+    text-shadow 0.3s ease,
+    text-decoration-color 0.3s ease;
+}
+
+.credit-link:hover,
+.credit-link:focus-visible {
+  text-decoration-color: rgb(241 239 233 / 0.55);
+  text-shadow:
+    0 0 1px rgb(255 255 255 / 0.7),
+    0 0 14px rgb(255 255 255 / 0.45),
+    0 0 30px rgb(255 214 150 / 0.3);
+}
+
 /* The title's letters: plain white, with the faint bloom of light through a print. */
 .title-glyph {
   filter: drop-shadow(0 0 7px rgb(190 210 255 / 0.3));

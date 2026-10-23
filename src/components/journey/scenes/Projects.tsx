@@ -33,8 +33,7 @@ function ProjectVideo({ src, armed, playing }: { src: string; armed: boolean; pl
 
 /**
  * One project, composed for the frame under the title: its media on the left in a thin frame cut
- * to the media's exact shape, and on the right its name, a line about it, what it's built with,
- * and the ways in beneath. Sized off the screen's height as well as its width, so the whole thing
+ * to the media's exact shape, and on the right its name, a line about it, and the ways in beneath. Sized off the screen's height as well as its width, so the whole thing
  * is always on screen. On phones the text sits under the media.
  */
 function Showcase({ p, i, still, active, onOpen }: { p: ProjectData; i: number; still: boolean; active: number; onOpen: () => void }) {
@@ -70,23 +69,20 @@ function Showcase({ p, i, still, active, onOpen }: { p: ProjectData; i: number; 
       </div>
 
       <div className="text-center sm:col-span-5">
-        <div className="font-mono text-[10px] tracking-[0.16em] text-ink-faint uppercase sm:text-[11px]">
-          {String(i + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')} — {p.tag}
-        </div>
-        <div className="mt-[2vh] flex justify-center">
+        <div className="flex justify-center">
           {title ? (
             <img src={title} alt={p.name} className="h-auto max-h-[min(clamp(36px,5vw,96px),11vh)] w-auto max-w-full object-contain" />
           ) : (
             <h3 className="display text-[min(clamp(30px,3.6vw,64px),8vh)]">{p.name}</h3>
           )}
         </div>
-        <p className="mx-auto mt-[2vh] max-w-[36ch] text-[clamp(15px,min(1.3vw,2.2vh),20px)] leading-snug text-ink-dim">{p.pitch}</p>
-        <p className="mt-[1.6vh] font-mono text-[10px] tracking-[0.08em] text-ink-faint sm:text-[11px]">{p.stack}</p>
+        {/* In the credits' type and color, like the opening cards. */}
+        <p className="credit mx-auto mt-[2.4vh] max-w-[30ch] text-[clamp(16px,min(1.45vw,2.5vh),24px)] leading-[1.3]">{p.pitch}</p>
         <div className="mt-[2.4vh] flex flex-wrap items-center justify-center gap-2">
           <button
             type="button"
             onClick={onOpen}
-            className="inline-flex items-center gap-2 bg-ink px-4 py-3 font-mono text-[11px] tracking-[0.12em] text-paper uppercase transition-colors hover:bg-white"
+            className="inline-flex h-[42px] items-center gap-2 bg-ink px-4 font-mono text-[11px] tracking-[0.12em] text-paper uppercase transition-colors hover:bg-white"
           >
             Case study <ArrowUpRight />
           </button>
@@ -95,7 +91,7 @@ function Showcase({ p, i, still, active, onOpen }: { p: ProjectData; i: number; 
               href={p.url}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 border border-line px-4 py-3 font-mono text-[11px] tracking-[0.12em] uppercase transition-colors hover:border-ink"
+              className="inline-flex h-[42px] items-center gap-2 border border-line px-4 font-mono text-[11px] tracking-[0.12em] uppercase transition-colors hover:border-ink"
             >
               Live <ArrowUpRight />
             </a>
@@ -105,9 +101,10 @@ function Showcase({ p, i, still, active, onOpen }: { p: ProjectData; i: number; 
             target="_blank"
             rel="noreferrer"
             aria-label={`${p.name} source on GitHub`}
-            className="inline-flex items-center gap-2 border border-line px-4 py-3 font-mono text-[11px] tracking-[0.12em] uppercase transition-colors hover:border-ink"
+            title="Source on GitHub"
+            className="flex h-[42px] w-[42px] items-center justify-center border border-line transition-colors hover:border-ink"
           >
-            <GitHubIcon size={13} /> Source
+            <GitHubIcon size={15} />
           </a>
         </div>
       </div>

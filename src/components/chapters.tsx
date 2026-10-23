@@ -1,16 +1,16 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 
-export type ChapterId = 'top' | 'about' | 'experience' | 'clients' | 'projects' | 'skills' | 'life' | 'contact'
+export type ChapterId = 'top' | 'words' | 'clients' | 'projects' | 'skills' | 'life' | 'contact'
 
 export const CHAPTER_LINKS: { id: ChapterId; label: string }[] = [
-  { id: 'about', label: 'About' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'clients', label: 'Clients' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'life', label: 'Off the clock' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'top', label: 'credits' },
+  { id: 'words', label: 'in their words' },
+  { id: 'clients', label: 'clients' },
+  { id: 'projects', label: 'projects' },
+  { id: 'skills', label: 'skills' },
+  { id: 'life', label: 'off the clock' },
+  { id: 'contact', label: 'contact' },
 ]
 
 const ChapterContext = createContext<{ current: ChapterId; setCurrent: (id: ChapterId) => void }>({

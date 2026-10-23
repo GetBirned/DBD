@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import MediaFrame from '@/components/MediaFrame'
 import { clientCases, isVideo, type CaseItem } from '@/lib/cases'
-import { pass, vw, type Timeline } from '../motion'
+import { pass, type Timeline } from '../motion'
 
 /**
  * A client site in a browser window. Shows a screenshot until hovered, then fades into the site's
  * scrolling walkthrough video — which isn't fetched at all until the first hover.
  */
-function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOpen: () => void }) {
+function SiteCard({ item, onOpen }: { item: CaseItem; onOpen: () => void }) {
   const [hover, setHover] = useState(false)
   const [armed, setArmed] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -30,12 +30,9 @@ function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOp
         setArmed(true)
       }}
       onMouseLeave={() => setHover(false)}
-      className="group w-[74vw] shrink-0 snap-center text-left sm:w-[min(27vw,calc((100svh-330px)*1.6))]"
+      className="group w-[74vw] shrink-0 snap-center text-left sm:w-[min(24vw,calc((100svh-360px)*1.6))]"
       aria-label={`${item.name} — open case study`}
     >
-      <div className="mb-3 truncate border-b border-line pb-2 text-center font-mono text-[10px] tracking-[0.12em] text-ink-faint uppercase sm:text-[11px]">
-        {String(index + 1).padStart(2, '0')} — {item.tag}
-      </div>
       <div className="transition-[transform,filter] duration-500 ease-out group-hover:-translate-y-1 group-hover:brightness-110">
         <MediaFrame chrome domain={item.domain}>
           <div className="relative aspect-[16/10] overflow-hidden bg-bg-soft">
@@ -53,11 +50,9 @@ function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOp
           </div>
         </MediaFrame>
       </div>
-      <div className="mt-4 text-center">
-        <div className="truncate text-[clamp(18px,1.6vw,28px)] text-ink group-hover:underline group-hover:decoration-ink/30 group-hover:underline-offset-4">
-          {item.name}
-        </div>
-        <div className="mt-1 truncate font-mono text-[10px] tracking-[0.1em] text-ink-faint uppercase sm:text-[11px]">{item.meta}</div>
+      {/* The name in the credits' type, glowing a little when the site is pointed at. */}
+      <div className="credit mt-4 truncate text-center text-[clamp(18px,1.6vw,28px)] transition-[text-shadow] duration-300 group-hover:[text-shadow:0_0_1px_rgb(255_255_255/0.7),0_0_14px_rgb(255_255_255/0.45),0_0_30px_rgb(255_214_150/0.3)]">
+        {item.name}
       </div>
     </button>
   )
@@ -68,25 +63,28 @@ export const CLIENTS_PER = 0.3
 export const CLIENT_COUNT = clientCases.length
 
 /**
- * Client work as a row of sites that travels right to left across the frame with the planet,
- * the way the rest of the journey moves. With reduced motion it's a row you swipe yourself.
+ * Client work as a credit: "i've done sites for" on the left of the axis, and the sites themselves
+ * on the right, a row that travels right to left past it with the planet. With reduced motion it's
+ * a row you swipe yourself.
  */
 export default function Clients({ still = false, onOpen }: { still?: boolean; onOpen: (i: number) => void }) {
   return (
-    <div className={still ? 'py-[8vh]' : 'flex h-full flex-col justify-center pt-[16vh]'}>
-      <div data-heading className="px-[8vw] text-center">
-        <h2 className="scene-heading">Client work</h2>
-        <p className="mx-auto mt-3 max-w-[34em] text-[clamp(13px,1vw,16px)] leading-relaxed text-ink-dim">
-          Designs By Dart — websites for small businesses, designed and built from scratch since 2022.
-        </p>
-      </div>
-      <div
-        data-track
-        className={`flex gap-[5vw] sm:gap-[2.6vw] ${still ? 'mt-10 snap-x snap-mandatory overflow-x-auto px-[8vw] pb-6 [scrollbar-width:none]' : 'mt-[5vh] w-max'}`}
+    <div className={`flex flex-col items-center justify-center gap-[4vh] sm:flex-row sm:gap-0 ${still ? 'py-[8vh]' : 'h-full pt-[14vh] sm:pt-[10vh]'}`}>
+      <h2
+        data-heading
+        className="credit shrink-0 px-[6vw] text-center text-[clamp(20px,2.6vw,46px)] leading-[1.18] text-ink/75 sm:w-[30vw] sm:px-0 sm:pr-[2.6vw] sm:text-right"
       >
-        {clientCases.map((c, i) => (
-          <SiteCard key={c.key} item={c} index={i} onOpen={() => onOpen(i)} />
-        ))}
+        i've done sites for
+      </h2>
+      {/* The window the row passes through, its edges faded so sites drift in and out of view. */}
+      <div
+        className={`w-full sm:flex-1 ${still ? 'overflow-x-auto [scrollbar-width:none]' : 'overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]'}`}
+      >
+        <div data-track className={`flex w-max gap-[5vw] sm:gap-[2.6vw] ${still ? 'snap-x snap-mandatory px-[6vw] pb-6' : ''}`}>
+          {clientCases.map((c, i) => (
+            <SiteCard key={c.key} item={c} onOpen={() => onOpen(i)} />
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -95,12 +93,13 @@ export default function Clients({ still = false, onOpen }: { still?: boolean; on
 export function buildClients(tl: Timeline, root: Element, start: number, len: number) {
   const track = root.querySelector<HTMLElement>('[data-track]')
   if (!track) return
+  const frame = track.parentElement!
   pass(tl, root.querySelector('[data-heading]'), start, len, { drift: 0.02, enter: 0.08, exit: 0.07 })
-  // The row's first site enters at the right edge and its last leaves past the left.
+  // The row's first site enters at the window's right edge and its last leaves past the left.
   tl.fromTo(
     track,
-    { x: vw(0.9) },
-    { x: () => -(track.scrollWidth - window.innerWidth * 0.1), duration: len, ease: 'none', immediateRender: false },
+    { x: () => frame.clientWidth * 0.95 },
+    { x: () => -(track.scrollWidth - frame.clientWidth * 0.05), duration: len, ease: 'none', immediateRender: false },
     start,
   )
   tl.fromTo(track, { autoAlpha: 0 }, { autoAlpha: 1, duration: len * 0.06 }, start)

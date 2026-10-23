@@ -8,11 +8,9 @@ import { useMotionOK } from '@/lib/motion'
 import type { Timeline } from './motion'
 import { requestRedraw, setPlayhead, sky } from './store'
 import Title, { buildTitle } from './Title'
-import About, { buildAbout } from './scenes/About'
 import Clients, { buildClients, CLIENT_COUNT, CLIENTS_PER } from './scenes/Clients'
 import Contact, { buildContact } from './scenes/Contact'
-import Experience, { buildExperience, ENTRIES, EXPERIENCE_PER } from './scenes/Experience'
-import Hero, { buildHero, OPENING_LEN } from './scenes/Hero'
+import Hero, { buildHero, OPENING_LEN, TITLE_DONE } from './scenes/Hero'
 import Life, { buildLife } from './scenes/Life'
 import Projects, { buildProjects, PROJECTS_LEAD, PROJECTS_PER } from './scenes/Projects'
 import Skills, { buildSkills } from './scenes/Skills'
@@ -42,24 +40,14 @@ interface Scene {
 const START = 0.26
 
 /**
- * The whole journey. Left limb crosses the frame through the opening and About; the surface fills
- * it for experience and client work; the far horizon arrives with the projects; open space again
- * for skills and contact.
+ * The whole journey. The left limb crosses the frame through the opening credits; the surface
+ * fills it for what people say and the client work; the far horizon arrives with the projects;
+ * open space again for skills and contact.
  */
 const SCENES: Scene[] = [
-  { id: 'hero', chapter: 'top', len: OPENING_LEN, planet: 0.5, land: 0, build: buildHero },
-  { id: 'about', chapter: 'about', len: 2.2, planet: 0.85, land: 0.9, build: buildAbout },
-  {
-    id: 'experience',
-    chapter: 'experience',
-    len: 0.25 + ENTRIES.length * EXPERIENCE_PER,
-    planet: 1.4,
-    land: 0.1 + EXPERIENCE_PER * 0.5,
-    build: buildExperience,
-  },
-  { id: 'coworkers', chapter: 'experience', len: 1.8, planet: 1.55, land: 0.8, build: buildWords },
-  { id: 'clients', chapter: 'clients', len: 0.6 + CLIENT_COUNT * CLIENTS_PER, planet: 1.85, land: 0.9, build: buildClients },
-  { id: 'client-words', chapter: 'clients', len: 1.6, planet: 2.02, land: 0.7, build: buildWords },
+  { id: 'hero', chapter: 'top', len: OPENING_LEN, planet: 0.85, land: 0, build: buildHero },
+  { id: 'words', chapter: 'words', len: 1.8, planet: 1.2, land: 0.8, build: buildWords },
+  { id: 'clients', chapter: 'clients', len: 0.6 + CLIENT_COUNT * CLIENTS_PER, planet: 2.0, land: 0.9, build: buildClients },
   {
     id: 'projects',
     chapter: 'projects',
@@ -81,16 +69,10 @@ function content(id: string, still: boolean, open: (kind: 'client' | 'project', 
   switch (id) {
     case 'hero':
       return <Hero still={still} />
-    case 'about':
-      return <About still={still} />
-    case 'experience':
-      return <Experience still={still} />
-    case 'coworkers':
-      return <Words set="coworkers" still={still} />
+    case 'words':
+      return <Words still={still} />
     case 'clients':
       return <Clients still={still} onOpen={(i) => open('client', i)} />
-    case 'client-words':
-      return <Words set="clients" still={still} />
     case 'projects':
       return <Projects still={still} start={startOf('projects')} onOpen={(i) => open('project', i)} />
     case 'skills':
@@ -155,8 +137,8 @@ function Cinematic({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number)
         s.build(tl, root, STARTS[i], s.len)
         pos = s.planet
       })
-      // The title fills in across the whole journey and is whole just as the contact scene arrives.
-      buildTitle(tl, stage.current!.querySelector('[data-title-layer]')!, 0.35, startOf('contact') + 0.4)
+      // The title fills in across the opening credits, is whole as the last card arrives, and stays.
+      buildTitle(tl, stage.current!.querySelector('[data-title-layer]')!, 0.35, TITLE_DONE)
       // Pad to exactly TOTAL screens, so timeline time maps 1:1 onto screens of scroll.
       tl.set({}, {}, TOTAL)
 

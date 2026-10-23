@@ -51,7 +51,7 @@ export default function FloatingNav() {
                   type="button"
                   onClick={() => jump(c.id)}
                   aria-current={current === c.id ? 'true' : undefined}
-                  className={`relative px-3 py-2 font-mono text-[12px] tracking-[0.1em] uppercase transition-colors ${current === c.id ? 'text-ink' : 'text-ink-faint hover:text-ink'}`}
+                  className={`credit relative px-3 py-2 text-[15px] transition-colors [text-shadow:none] ${current === c.id ? 'text-ink' : 'text-ink/55 hover:text-ink'}`}
                 >
                   {c.label}
                   {current === c.id && (
@@ -74,9 +74,9 @@ export default function FloatingNav() {
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -18, opacity: 0 }}
                   transition={{ duration: 0.3, ease: EASE }}
-                  className="absolute inset-0 flex items-center font-mono text-[11px] tracking-[0.12em] text-ink uppercase"
+                  className="credit absolute inset-0 flex items-center text-[15px] [text-shadow:none]"
                 >
-                  {currentLabel ?? 'Home'}
+                  {currentLabel ?? 'credits'}
                 </motion.span>
               </AnimatePresence>
             </div>
@@ -101,9 +101,9 @@ export default function FloatingNav() {
               <a
                 href="/resume.pdf"
                 download="Dartagnan_Birnie_Resume.pdf"
-                className="border border-line px-4 py-2.5 font-mono text-[11px] tracking-[0.1em] text-ink uppercase transition-colors hover:border-ink"
+                className="credit border border-line px-4 py-2 text-[14px] transition-colors [text-shadow:none] hover:border-ink"
               >
-                Résumé
+                résumé
               </a>
             </div>
           </div>
@@ -123,17 +123,17 @@ export default function FloatingNav() {
                       key={c.id}
                       type="button"
                       onClick={() => jump(c.id)}
-                      className={`scene-label block w-full py-3 text-left text-[14px] ${current === c.id ? 'text-ink' : 'text-ink-faint'}`}
+                      className={`credit block w-full py-2.5 text-left text-[22px] [text-shadow:none] ${current === c.id ? 'text-ink' : 'text-ink/55'}`}
                     >
                       {c.label}
                     </button>
                   ))}
-                  <div className="mt-3 flex gap-6 border-t border-line pt-4 pb-2 font-mono text-[11px] tracking-[0.1em] uppercase">
+                  <div className="credit mt-3 flex gap-6 border-t border-line pt-4 pb-2 text-[15px] [text-shadow:none]">
                     <a href={GITHUB} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
-                      <GitHubIcon size={14} /> GitHub
+                      <GitHubIcon size={14} /> github
                     </a>
                     <a href={LINKEDIN} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
-                      <LinkedInIcon size={13} /> LinkedIn
+                      <LinkedInIcon size={13} /> linkedin
                     </a>
                   </div>
                 </div>
