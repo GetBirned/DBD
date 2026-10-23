@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { experience, type ExperienceEntry } from '@/data/experience'
 import { Ascii } from '@/components/Monitor'
+import AltonMap from '../AltonMap'
 import Credit, { type CreditName } from '../Credit'
 import { pass, type Timeline } from '../motion'
 import Popup from '../Popup'
@@ -54,10 +55,11 @@ export const OPENING_LEN = OPEN + COUNT * CARD_LEN + OUT
 /**
  * The opening credits, centered under the title the way the film's sit under ALIEN: the page opens
  * on empty space, then each card dissolves in and out in its own stretch of the scroll. A company
- * name on a job's card opens what I did there.
+ * name on a job's card opens what I did there; the town on the last card opens a map of it.
  */
 export default function Hero({ still = false }: { still?: boolean }) {
   const [open, setOpen] = useState<number | null>(null)
+  const [map, setMap] = useState(false)
 
   const job = (i: number): Card => {
     const e = experience[i]
@@ -89,14 +91,19 @@ export default function Hero({ still = false }: { still?: boolean }) {
       role: 'approved web design contractor',
       names: [{ text: 'NH SBDC', href: 'https://www.nhsbdc.org/' }, { text: 'GRDC', href: 'https://graftonrdc.org/' }],
     },
-    { role: 'filmed in', names: ['Alton, NH'] },
+    { role: 'filmed in', names: [{ text: 'Alton, NH', onClick: () => setMap(true) }] },
   ]
 
   const details = open === null ? null : experience[open]
   const popup = (
-    <Popup open={!!details} onClose={() => setOpen(null)} title={details ? `personnel file · ${details.company.replace(' Inc.', '')}` : ''}>
-      {details && <RoleDetails e={details} />}
-    </Popup>
+    <>
+      <Popup open={!!details} onClose={() => setOpen(null)} title={details ? `personnel file · ${details.company.replace(' Inc.', '')}` : ''}>
+        {details && <RoleDetails e={details} />}
+      </Popup>
+      <Popup open={map} onClose={() => setMap(false)} title="survey map · alton bay, nh" hint="point to take a reading | esc: exit">
+        <AltonMap />
+      </Popup>
+    </>
   )
 
   if (still) {

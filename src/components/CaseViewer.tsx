@@ -158,97 +158,101 @@ export default function CaseViewer({
                   </>
                 }
               >
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.article
-                    key={item.key}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="grid min-h-full grid-cols-1 items-center gap-[3vh] lg:grid-cols-[auto_22rem] lg:justify-center lg:gap-[3vw]"
-                  >
-                    {/* Media: as wide as the screen allows beside the text, but never taller than
-                        it has room for under the title bar, above the thumbnails and the hints. */}
-                    <div
-                      onTouchStart={onTouchStart}
-                      onTouchEnd={onTouchEnd}
-                      className="mx-auto w-full min-w-0 lg:w-[min(calc(93vw-480px),calc((min(96svh,1100px)-300px)*1.6))]"
+                {/* Sized against the monitor, not the window: the monitor stops growing at its
+                    maximum width, and on a big screen the window keeps going. */}
+                <div className="min-h-full [container-type:inline-size]">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.article
+                      key={item.key}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="grid min-h-full grid-cols-1 items-center gap-[3vh] lg:grid-cols-[auto_22rem] lg:justify-center lg:gap-[3vw]"
                     >
-                      {item.media.length > 0 && (
-                        <div className="crt-box">
-                          <Media src={item.media[mediaIdx]} whole={item.kind === 'project'} onEnlarge={() => setLightbox(item.media[mediaIdx])} />
-                        </div>
-                      )}
-                      {item.media.length > 1 && (
-                        <div className="mt-3 flex gap-2 overflow-x-auto p-0.5 [scrollbar-width:none]">
-                          {item.media.map((m, i) => (
-                            <button
-                              key={m}
-                              type="button"
-                              onClick={() => {
-                                terminal.select()
-                                setMediaIdx(i)
-                              }}
-                              aria-label={`Show ${isVideo(m) ? 'video' : 'screenshot'} ${i + 1}`}
-                              className={`crt-box crt-tint h-[clamp(36px,6vh,56px)] shrink-0 overflow-hidden bg-black transition-opacity [aspect-ratio:16/10] ${i === mediaIdx ? '' : 'opacity-45 hover:opacity-90'}`}
-                            >
-                              {isVideo(m) ? (
-                                <>
-                                  <video src={m} muted playsInline preload="metadata" className="h-full w-full object-cover object-top" />
-                                  <span className="absolute inset-0 flex items-center justify-center text-[14px] uppercase">
-                                    <span className="bg-black/70 px-1">▶ vid</span>
-                                  </span>
-                                </>
-                              ) : (
-                                <img src={m} alt="" loading="lazy" className="h-full w-full object-cover object-top" />
-                              )}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="min-w-0">
-                      {item.titleAscii ? (
-                        <>
-                          <h2 className="sr-only">{item.name}</h2>
-                          <Ascii art={item.titleAscii} />
-                        </>
-                      ) : item.titleImage ? (
-                        <>
-                          <h2 className="sr-only">{item.name}</h2>
-                          <span className="crt-tint inline-block max-w-full">
-                            <img src={item.titleImage} alt="" className="block h-auto max-h-[clamp(40px,5vw,84px)] w-auto max-w-full object-contain object-left" />
-                          </span>
-                        </>
-                      ) : (
-                        <h2 className="text-[clamp(34px,3vw,52px)] leading-none font-normal uppercase">{item.name}</h2>
-                      )}
-
-                      <p className="mt-[3vh]">{item.desc}</p>
-
-                      {item.quote && (
-                        <div className="crt-box mt-[3vh] p-4">
-                          <div className="crt-dim uppercase">transmission{item.attr ? ` from ${item.attr}` : ''}</div>
-                          <blockquote className="mt-2">“{item.quote}”</blockquote>
-                        </div>
-                      )}
-
-                      <div className="mt-[3vh] flex flex-col items-start gap-1 uppercase">
-                        {item.url && (
-                          <a href={item.url} target="_blank" rel="noreferrer" className="crt-link px-1">
-                            &gt; visit site
-                          </a>
+                      {/* Media: as wide as the monitor allows beside the text, but never taller than
+                          it has room for under the title bar, above the thumbnails and the hints. */}
+                      <div
+                        onTouchStart={onTouchStart}
+                        onTouchEnd={onTouchEnd}
+                        className="mx-auto w-full min-w-0 lg:w-[min(calc(100cqw-22rem-3vw-4px),calc((min(96svh,1100px)-300px)*1.6))]"
+                      >
+                        {item.media.length > 0 && (
+                          <div className="crt-box">
+                            <Media src={item.media[mediaIdx]} whole={item.kind === 'project'} onEnlarge={() => setLightbox(item.media[mediaIdx])} />
+                          </div>
                         )}
-                        {item.repo && (
-                          <a href={item.repo} target="_blank" rel="noreferrer" className="crt-link px-1">
-                            &gt; source code
-                          </a>
+                        {item.media.length > 1 && (
+                          <div className="mt-3 flex gap-2 overflow-x-auto p-0.5 [scrollbar-width:none]">
+                            {item.media.map((m, i) => (
+                              <button
+                                key={m}
+                                type="button"
+                                onClick={() => {
+                                  terminal.select()
+                                  setMediaIdx(i)
+                                }}
+                                aria-label={`Show ${isVideo(m) ? 'video' : 'screenshot'} ${i + 1}`}
+                                className={`crt-box crt-tint h-[clamp(36px,6vh,56px)] shrink-0 overflow-hidden bg-black transition-opacity [aspect-ratio:16/10] ${i === mediaIdx ? '' : 'opacity-45 hover:opacity-90'}`}
+                              >
+                                {isVideo(m) ? (
+                                  <>
+                                    <video src={m} muted playsInline preload="metadata" className="h-full w-full object-cover object-top" />
+                                    <span className="absolute inset-0 flex items-center justify-center text-[14px] uppercase">
+                                      <span className="bg-black/70 px-1">▶ vid</span>
+                                    </span>
+                                  </>
+                                ) : (
+                                  <img src={m} alt="" loading="lazy" className="h-full w-full object-cover object-top" />
+                                )}
+                              </button>
+                            ))}
+                          </div>
                         )}
                       </div>
-                    </div>
-                  </motion.article>
-                </AnimatePresence>
+
+                      <div className="min-w-0">
+                        {item.titleAscii ? (
+                          <>
+                            <h2 className="sr-only">{item.name}</h2>
+                            <Ascii art={item.titleAscii} />
+                          </>
+                        ) : item.titleImage ? (
+                          <>
+                            <h2 className="sr-only">{item.name}</h2>
+                            <span className="crt-tint inline-block max-w-full">
+                              <img src={item.titleImage} alt="" className="block h-auto max-h-[clamp(40px,5vw,84px)] w-auto max-w-full object-contain object-left" />
+                            </span>
+                          </>
+                        ) : (
+                          <h2 className="text-[clamp(34px,3vw,52px)] leading-none font-normal uppercase">{item.name}</h2>
+                        )}
+
+                        <p className="mt-[3vh]">{item.desc}</p>
+
+                        {item.quote && (
+                          <div className="crt-box mt-[3vh] p-4">
+                            <div className="crt-dim uppercase">transmission{item.attr ? ` from ${item.attr}` : ''}</div>
+                            <blockquote className="mt-2">“{item.quote}”</blockquote>
+                          </div>
+                        )}
+
+                        <div className="mt-[3vh] flex flex-col items-start gap-1 uppercase">
+                          {item.url && (
+                            <a href={item.url} target="_blank" rel="noreferrer" className="crt-link px-1">
+                              &gt; visit site
+                            </a>
+                          )}
+                          {item.repo && (
+                            <a href={item.repo} target="_blank" rel="noreferrer" className="crt-link px-1">
+                              &gt; source code
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </motion.article>
+                  </AnimatePresence>
+                </div>
               </Monitor>
             </motion.div>
           </motion.div>

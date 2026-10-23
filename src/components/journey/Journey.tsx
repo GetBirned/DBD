@@ -231,9 +231,9 @@ function Cinematic({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number)
               {content(s.id, false, onOpen)}
             </div>
           ))}
-          <div data-title-layer>
-            <Title />
-          </div>
+        </div>
+        <div data-title-layer className="film-title absolute inset-x-0 top-0">
+          <Title />
         </div>
       </div>
     </div>
@@ -254,8 +254,10 @@ function Still({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number) => 
           <Sky />
         </Suspense>
       </div>
-      <div className="film relative">
+      <div className="film-title relative">
         <Title still />
+      </div>
+      <div className="film relative">
         {chapters.map((c) => (
           <Chapter key={c} id={c}>
             {SCENES.filter((s) => s.chapter === c).map((s) => (

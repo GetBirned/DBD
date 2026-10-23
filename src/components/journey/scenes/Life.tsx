@@ -1,7 +1,9 @@
-import { useState } from 'react'
-import { Readout, ReadoutLabel } from '@/components/Monitor'
+import { useEffect, useState } from 'react'
+import { Ascii, Readout, ReadoutLabel } from '@/components/Monitor'
+import { POSTERS } from '@/data/posters'
 import { useSpotifyData, type NowPlayingData, type RecentTrack, type TopItemsData } from '@/hooks/useSpotifyData'
 import { useSteamData, type SteamStatusData, type TopGame } from '@/hooks/useSteamData'
+import { terminal } from '@/lib/sound'
 import Credit from '../Credit'
 import { pass, type Timeline } from '../motion'
 import Popup from '../Popup'
@@ -99,22 +101,60 @@ function Music({ now, recent, top }: { now: NowPlayingData | null; recent: Recen
   )
 }
 
+/** The four favorite films, one poster at a time in ASCII, stepped through like pages. */
 function Movies() {
+  const [i, setI] = useState(0)
+  const show = (n: number) => {
+    terminal.page()
+    setI((n + FILMS.length) % FILMS.length)
+  }
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+      terminal.page()
+      setI((n) => (n + (e.key === 'ArrowRight' ? 1 : -1) + FILMS.length) % FILMS.length)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  const f = FILMS[i]
+  const count = (n: number) => String(n).padStart(2, '0')
   return (
-    <div>
-      <ReadoutLabel>four favorites</ReadoutLabel>
-      <div className="space-y-5">
-        {FILMS.map((f, i) => (
-          <div key={f.title} className="flex gap-4 uppercase">
-            <span className="crt-dim">{String(i + 1).padStart(2, '0')}</span>
-            <div className="min-w-0">
-              <div className="text-[clamp(26px,2.5vw,38px)] leading-[1.05]">{f.title}</div>
-              <div className="crt-dim mt-1">
-                {f.year} · dir. {f.by}
-              </div>
-            </div>
-          </div>
-        ))}
+    <div className="grid items-center gap-6 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8">
+      <div className="mx-auto w-[min(34svh,100%)] sm:w-[34svh]">
+        <Ascii art={POSTERS[f.title]} />
+      </div>
+      <div className="min-w-0">
+        <ReadoutLabel>
+          four favorites · {count(i + 1)} / {count(FILMS.length)}
+        </ReadoutLabel>
+        <div className="text-[clamp(26px,2.5vw,38px)] leading-[1.05] uppercase">{f.title}</div>
+        <div className="crt-dim mt-1 uppercase">
+          {f.year} · dir. {f.by}
+        </div>
+        <div className="mt-6 space-y-1">
+          {FILMS.map((g, k) => (
+            <button
+              key={g.title}
+              type="button"
+              onClick={() => show(k)}
+              aria-current={k === i ? 'true' : undefined}
+              className={`crt-link block w-full px-1 text-left uppercase ${k === i ? 'bg-[#8dffbf] text-[#03241a] [text-shadow:none]' : ''}`}
+            >
+              {count(k + 1)} {g.title}
+            </button>
+          ))}
+        </div>
+        <div className="mt-6 flex justify-between uppercase">
+          <button type="button" onClick={() => show(i - 1)} className="crt-link px-1">
+            &lt; prev
+          </button>
+          <button type="button" onClick={() => show(i + 1)} className="crt-link px-1">
+            next &gt;
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -146,7 +186,12 @@ export default function Life({ still = false }: { still?: boolean }) {
           ]}
         />
       </div>
-      <Popup open={!!open} onClose={() => setOpen(null)} title={open ? `recreation log · ${open}` : ''}>
+      <Popup
+        open={!!open}
+        onClose={() => setOpen(null)}
+        title={open ? `recreation log · ${open}` : ''}
+        hint={open === 'movies' ? 'left, right: browse | esc: exit' : undefined}
+      >
         {open === 'games' && <Games status={steam} top={steamTop} />}
         {open === 'music' && <Music now={now} recent={recent} top={top} />}
         {open === 'movies' && <Movies />}

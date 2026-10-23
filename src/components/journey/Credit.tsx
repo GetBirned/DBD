@@ -32,7 +32,7 @@ export default function Credit({
   return (
     <div className={`credit text-center leading-[1.18] ${size}`}>
       <div className={`grid justify-center gap-y-1 ${role ? 'sm:grid-cols-[auto_auto] sm:gap-x-[0.34em]' : ''}`}>
-        {role && <div className="text-ink/75 sm:text-right">{role}</div>}
+        {role && <div className="text-ink/85 sm:text-right">{role}</div>}
         <div className={role ? 'sm:text-left' : ''}>
           {names.map((n, i) => {
             const name: CreditName = typeof n === 'string' ? { text: n } : n
@@ -61,7 +61,7 @@ export default function Credit({
           })}
         </div>
       </div>
-      {note && <div className="mt-[0.35em] text-[0.58em] text-ink/70">{note}</div>}
+      {note && <div className="mt-[0.35em] text-[0.58em] text-ink/80">{note}</div>}
     </div>
   )
 }

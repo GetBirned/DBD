@@ -1,10 +1,40 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { useMotionOK } from '@/lib/motion'
 import { terminal } from '@/lib/sound'
+
+/**
+ * Every few seconds, at random, the screen glitches for a moment — true while it does. Off with
+ * reduced motion.
+ */
+function useGlitch() {
+  const motionOK = useMotionOK()
+  const [glitching, setGlitching] = useState(false)
+  useEffect(() => {
+    if (!motionOK) return
+    let timer = 0
+    const next = () => {
+      timer = window.setTimeout(
+        () => {
+          setGlitching(true)
+          timer = window.setTimeout(() => {
+            setGlitching(false)
+            next()
+          }, 260)
+        },
+        3500 + Math.random() * 6000,
+      )
+    }
+    next()
+    return () => clearTimeout(timer)
+  }, [motionOK])
+  return glitching
+}
 
 /**
  * One of the ship's screens from Alien: a curved green-phosphor CRT in a plastic bezel, with a
  * cyan title bar across the top (`controls` sit at its right end), the content in the middle, and
- * a line of key hints at the bottom. The content scrolls inside the screen if it runs long.
+ * a line of key hints at the bottom. The content scrolls inside the screen if it runs long. Every
+ * so often the picture glitches.
  */
 export default function Monitor({
   title,
@@ -19,20 +49,27 @@ export default function Monitor({
   className?: string
   children: ReactNode
 }) {
+  const glitching = useGlitch()
   return (
     // Following a link on the screen blips; buttons make their own sounds.
-    <div className={`crt-bezel film flex flex-col ${className}`} onClickCapture={(e) => (e.target as Element).closest('a') && terminal.select()}>
+    <div
+      className={`crt-bezel film flex flex-col ${glitching ? 'crt-glitching' : ''} ${className}`}
+      onClickCapture={(e) => (e.target as Element).closest('a') && terminal.select()}
+    >
       <div className="crt-screen flex min-h-0 flex-1 flex-col">
-        <div className="crt-bar relative z-[1] mx-[clamp(10px,2vw,28px)] mt-[clamp(10px,2vw,24px)] flex items-center justify-between gap-4 px-3 text-[clamp(18px,1.6vw,24px)] leading-[1.5] uppercase">
-          <span className="min-w-0 truncate">{title}</span>
-          {controls && <span className="flex shrink-0 items-center gap-1">{controls}</span>}
+        <div aria-hidden className="crt-band" />
+        <div className="crt-content flex min-h-0 flex-1 flex-col">
+          <div className="crt-bar relative z-[1] mx-[clamp(10px,2vw,28px)] mt-[clamp(10px,2vw,24px)] flex items-center justify-between gap-4 px-3 text-[clamp(18px,1.6vw,24px)] leading-[1.5] uppercase">
+            <span className="min-w-0 truncate">{title}</span>
+            {controls && <span className="flex shrink-0 items-center gap-1">{controls}</span>}
+          </div>
+          <div className="relative z-[1] min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-[clamp(14px,3vw,40px)] py-[clamp(14px,3vh,30px)] text-[clamp(18px,1.45vw,22px)] leading-[1.35]">
+            {children}
+          </div>
+          {hint && (
+            <div className="crt-dim relative z-[1] px-[clamp(14px,3vw,40px)] pb-[clamp(10px,2vh,20px)] text-[clamp(15px,1.25vw,19px)] uppercase">{hint}</div>
+          )}
         </div>
-        <div className="relative z-[1] min-h-0 flex-1 overflow-y-auto px-[clamp(14px,3vw,40px)] py-[clamp(14px,3vh,30px)] text-[clamp(18px,1.45vw,22px)] leading-[1.35]">
-          {children}
-        </div>
-        {hint && (
-          <div className="crt-dim relative z-[1] px-[clamp(14px,3vw,40px)] pb-[clamp(10px,2vh,20px)] text-[clamp(15px,1.25vw,19px)] uppercase">{hint}</div>
-        )}
       </div>
     </div>
   )
