@@ -78,22 +78,14 @@ function Showcase({ p, i, still, active, onOpen }: { p: ProjectData; i: number; 
         </div>
         {/* In the credits' type and color, like the opening cards. */}
         <p className="credit mx-auto mt-[2.4vh] max-w-[30ch] text-[clamp(16px,min(1.45vw,2.5vh),24px)] leading-[1.3]">{p.pitch}</p>
-        <div className="mt-[2.4vh] flex flex-wrap items-center justify-center gap-2">
-          <button
-            type="button"
-            onClick={onOpen}
-            className="inline-flex h-[42px] items-center gap-2 bg-ink px-4 font-mono text-[11px] tracking-[0.12em] text-paper uppercase transition-colors hover:bg-white"
-          >
-            Case study <ArrowUpRight />
+        {/* The ways in, as glowing text like the names on the cards rather than buttons. */}
+        <div className="credit mt-[2.6vh] flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[clamp(17px,1.4vw,22px)]">
+          <button type="button" onClick={onOpen} className="credit-link">
+            case study
           </button>
           {p.url && (
-            <a
-              href={p.url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-[42px] items-center gap-2 border border-line px-4 font-mono text-[11px] tracking-[0.12em] uppercase transition-colors hover:border-ink"
-            >
-              Live <ArrowUpRight />
+            <a href={p.url} target="_blank" rel="noreferrer" className="credit-link inline-flex items-center gap-1.5">
+              live <ArrowUpRight size={12} />
             </a>
           )}
           <a
@@ -102,7 +94,7 @@ function Showcase({ p, i, still, active, onOpen }: { p: ProjectData; i: number; 
             rel="noreferrer"
             aria-label={`${p.name} source on GitHub`}
             title="Source on GitHub"
-            className="flex h-[42px] w-[42px] items-center justify-center text-ink/80 transition-colors hover:text-ink"
+            className="flex items-center text-ink/80 transition-colors hover:text-ink"
           >
             <GitHubIcon size={26} />
           </a>
