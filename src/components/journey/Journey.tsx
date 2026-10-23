@@ -3,16 +3,15 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Chapter, setChapterJump, useChapter, type ChapterId } from '@/components/chapters'
-import { projects } from '@/data/projects'
 import { useMotionOK } from '@/lib/motion'
 import type { Timeline } from './motion'
-import { requestRedraw, setPlayhead, sky } from './store'
+import { requestRedraw, sky } from './store'
 import Title, { buildTitle } from './Title'
 import Clients, { buildClients } from './scenes/Clients'
 import Contact, { buildContact } from './scenes/Contact'
 import Hero, { buildHero, OPENING_LEN } from './scenes/Hero'
 import Life, { buildLife } from './scenes/Life'
-import Projects, { buildProjects, PROJECTS_LEAD, PROJECTS_PER } from './scenes/Projects'
+import Projects, { buildProjects } from './scenes/Projects'
 import Skills, { buildSkills } from './scenes/Skills'
 import Words, { buildWords } from './scenes/Words'
 
@@ -29,7 +28,7 @@ interface Scene {
   chapter: ChapterId
   /** Screens of scroll the scene gets — set by how much there is to read, not by any clock. */
   len: number
-  /** Where the planet is (see `sky.pos`) when the scene ends. Long scenes move it slowly. */
+  /** Where the planet is (see `sky.pos`) when the scene ends. */
   planet: number
   /** How far into the scene, in screens, the nav lands — once its content has arrived. */
   land: number
@@ -45,35 +44,78 @@ const START = 0.26
  * open space again for skills and contact.
  */
 const SCENES: Scene[] = [
-  { id: 'hero', chapter: 'top', len: OPENING_LEN, planet: 0.85, land: 0, build: buildHero },
-  { id: 'words', chapter: 'words', len: 1.8, planet: 1.2, land: 0.8, build: buildWords },
-  { id: 'clients', chapter: 'clients', len: 1.8, planet: 2.0, land: 0.8, build: buildClients },
-  {
-    id: 'projects',
-    chapter: 'projects',
-    len: PROJECTS_LEAD + 0.05 + projects.length * PROJECTS_PER,
-    planet: 2.55,
-    land: PROJECTS_LEAD + PROJECTS_PER * 0.5,
-    build: buildProjects,
-  },
-  { id: 'skills', chapter: 'skills', len: 2.6, planet: 2.84, land: 1.1, build: buildSkills },
-  { id: 'life', chapter: 'life', len: 1.7, planet: 2.93, land: 0.8, build: buildLife },
+  { id: 'hero', chapter: 'top', len: OPENING_LEN, planet: 0.95, land: 0, build: buildHero },
+  { id: 'words', chapter: 'words', len: 1.8, planet: 1.3, land: 0.8, build: buildWords },
+  { id: 'clients', chapter: 'clients', len: 1.8, planet: 1.75, land: 0.8, build: buildClients },
+  { id: 'projects', chapter: 'projects', len: 1.8, planet: 2.25, land: 0.8, build: buildProjects },
+  { id: 'skills', chapter: 'skills', len: 2.6, planet: 2.65, land: 1.1, build: buildSkills },
+  { id: 'life', chapter: 'life', len: 1.7, planet: 2.9, land: 0.8, build: buildLife },
   { id: 'contact', chapter: 'contact', len: 1.8, planet: 2.985, land: 1.8, build: buildContact },
 ]
 
 const STARTS = SCENES.map((_, i) => SCENES.slice(0, i).reduce((t, s) => t + s.len, 0))
 const TOTAL = SCENES.reduce((t, s) => t + s.len, 0)
-const startOf = (id: string) => STARTS[SCENES.findIndex((s) => s.id === id)]
 
-/** The point in the journey (in screens) at which the planet reaches `pos` — see `sky.pos`. */
+/** The planet's position at each scene boundary: where it starts, then where each scene leaves it. */
+const KEYS_T = [0, ...SCENES.map((s, i) => STARTS[i] + s.len)]
+const KEYS_P = [START, ...SCENES.map((s) => s.planet)]
+
+/**
+ * Tangents for a monotone cubic through the keys (Fritsch–Carlson): the curve passes through every
+ * key, never runs backwards, and never overshoots one.
+ */
+const TANGENTS = (() => {
+  const n = KEYS_T.length
+  const d = KEYS_T.slice(1).map((t, k) => (KEYS_P[k + 1] - KEYS_P[k]) / (t - KEYS_T[k]))
+  const m = KEYS_T.map((_, k) => (k === 0 ? d[0] : k === n - 1 ? d[n - 2] : d[k - 1] * d[k] <= 0 ? 0 : (d[k - 1] + d[k]) / 2))
+  d.forEach((dk, k) => {
+    if (dk === 0) {
+      m[k] = m[k + 1] = 0
+      return
+    }
+    const a = m[k] / dk
+    const b = m[k + 1] / dk
+    const h = Math.hypot(a, b)
+    if (h > 3) {
+      m[k] = (3 / h) * a * dk
+      m[k + 1] = (3 / h) * b * dk
+    }
+  })
+  return m
+})()
+
+/**
+ * Where the planet is `t` screens into the journey. A smooth curve through the scene boundaries
+ * rather than a straight line between each pair, so its speed eases from one scene's pace to the
+ * next instead of jumping at every boundary.
+ */
+function planetAt(t: number) {
+  if (t <= 0) return KEYS_P[0]
+  if (t >= TOTAL) return KEYS_P[KEYS_P.length - 1]
+  let k = 0
+  while (k < KEYS_T.length - 2 && t > KEYS_T[k + 1]) k++
+  const h = KEYS_T[k + 1] - KEYS_T[k]
+  const u = (t - KEYS_T[k]) / h
+  const u2 = u * u
+  const u3 = u2 * u
+  return (
+    (2 * u3 - 3 * u2 + 1) * KEYS_P[k] +
+    (u3 - 2 * u2 + u) * h * TANGENTS[k] +
+    (-2 * u3 + 3 * u2) * KEYS_P[k + 1] +
+    (u3 - u2) * h * TANGENTS[k + 1]
+  )
+}
+
+/** The point in the journey (in screens) at which the planet reaches `pos`, found by halving. */
 function timeAtPlanet(pos: number) {
-  let from = START
-  for (let i = 0; i < SCENES.length; i++) {
-    const to = SCENES[i].planet
-    if (pos <= to) return STARTS[i] + (SCENES[i].len * (pos - from)) / (to - from)
-    from = to
+  let lo = 0
+  let hi = TOTAL
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2
+    if (planetAt(mid) < pos) lo = mid
+    else hi = mid
   }
-  return TOTAL
+  return hi
 }
 
 /**
@@ -91,7 +133,7 @@ function content(id: string, still: boolean, open: (kind: 'client' | 'project', 
     case 'clients':
       return <Clients still={still} onOpen={(i) => open('client', i)} />
     case 'projects':
-      return <Projects still={still} start={startOf('projects')} onOpen={(i) => open('project', i)} />
+      return <Projects still={still} onOpen={(i) => open('project', i)} />
     case 'skills':
       return <Skills still={still} />
     case 'life':
@@ -134,7 +176,8 @@ function Cinematic({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number)
         },
         onUpdate: () => {
           const t = tl.time()
-          setPlayhead(t)
+          // The planet follows the playhead along its curve; the sky repaints to match.
+          sky.pos = planetAt(t)
           requestRedraw()
           let i = 0
           while (i < SCENES.length - 1 && t >= STARTS[i + 1]) i++
@@ -145,14 +188,11 @@ function Cinematic({ onOpen }: { onOpen: (kind: 'client' | 'project', i: number)
         },
       })
 
-      let pos = START
       sky.pos = START
       SCENES.forEach((s, i) => {
         const root = stage.current!.querySelector(`[data-scene="${s.id}"]`)!
         tl.addLabel(s.id, STARTS[i])
-        tl.fromTo(sky, { pos }, { pos: s.planet, duration: s.len, immediateRender: false }, STARTS[i])
         s.build(tl, root, STARTS[i], s.len)
-        pos = s.planet
       })
       // The title fills in across the journey and is whole as the planet's far edge leaves the frame.
       buildTitle(tl, stage.current!.querySelector('[data-title-layer]')!, 0.35, TITLE_DONE)

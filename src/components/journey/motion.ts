@@ -27,21 +27,3 @@ export function pass(
   })
   if (!stay) tl.to(els, { autoAlpha: 0, x: vw(-drift), duration: len * exit, ease: 'sine.in' }, start + len * (1 - exit))
 }
-
-/**
- * Items that take turns in one spot: each passes through in its own slice of `len`, overlapping
- * the next by `overlap` (a fraction of a slice), so one is receding while the next arrives.
- */
-export function beats(tl: Timeline, items: Element[], start: number, len: number, { drift = 0.16, overlap: share = 0.14 } = {}) {
-  const per = len / items.length
-  const overlap = per * share
-  items.forEach((el, i) => {
-    const s = start + i * per - (i > 0 ? overlap : 0)
-    const e = start + (i + 1) * per + (i < items.length - 1 ? overlap : 0)
-    pass(tl, el, s, e - s, { drift, enter: 0.3, exit: 0.3 })
-  })
-}
-
-/** Which beat is up at time `t`, for a scene laid out by `beats`. */
-export const beatAt = (t: number, start: number, len: number, count: number) =>
-  Math.min(count - 1, Math.max(0, Math.floor(((t - start) / len) * count)))

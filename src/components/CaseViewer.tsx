@@ -209,7 +209,23 @@ export default function CaseViewer({
                     </div>
 
                     <div className="min-w-0">
-                      {item.titleImage ? (
+                      {item.titleAscii ? (
+                        <>
+                          <h2 className="sr-only">{item.name}</h2>
+                          {/* Sized to the column: the widest line, in VT323's 0.4em-wide characters,
+                              spans it (with a hair to spare for rounding). `pre` would otherwise
+                              take the browser's own monospace, which is far wider. */}
+                          <div className="[container-type:inline-size]">
+                            <pre
+                              aria-hidden
+                              className="overflow-hidden leading-[0.8] whitespace-pre [font-family:inherit]"
+                              style={{ fontSize: `calc(100cqw / ${0.41 * Math.max(...item.titleAscii.split('\n').map((l) => l.length))})` }}
+                            >
+                              {item.titleAscii}
+                            </pre>
+                          </div>
+                        </>
+                      ) : item.titleImage ? (
                         <>
                           <h2 className="sr-only">{item.name}</h2>
                           <span className="crt-tint inline-block max-w-full">

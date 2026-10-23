@@ -10,6 +10,8 @@ export interface CaseItem {
   /** A wordmark that stands in for the name heading, when the brand has one drawn for a dark
    *  ground. */
   titleImage?: string
+  /** Failing a wordmark, the logo traced in ASCII for the green screen. */
+  titleAscii?: string
   desc: string
   quote?: string
   attr?: string
@@ -43,6 +45,7 @@ export const projectCases: CaseItem[] = projects.map((p) => {
     name: p.name,
     // The viewer is dark, so only a wordmark drawn for a dark ground; otherwise the name is set.
     titleImage: p.nameLogo ?? p.logoDark,
+    titleAscii: p.ascii,
     desc: p.desc,
     url: p.url,
     repo: p.repo,

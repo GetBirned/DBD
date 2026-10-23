@@ -42,15 +42,15 @@ export default function Title({ still = false }: { still?: boolean }) {
 const FADE = 1.4
 
 /**
- * Spreads the strokes from just after the page opens so the last is fully in at `end`, a little
- * closer together as it goes. Each one fades in slowly from a faint cold blue to white, as the
- * film's pieces come up; scrolling back fades them out again.
+ * Spreads the strokes evenly from just after the page opens so the last is fully in at `end`.
+ * Each one fades in slowly from a faint cold blue to white, as the film's pieces come up;
+ * scrolling back fades them out again.
  */
 export function buildTitle(tl: Timeline, root: Element, start: number, end: number) {
   const last = STROKES.length - 1
   root.querySelectorAll<SVGPathElement>('path[data-step]').forEach((p) => {
     const k = Number(p.dataset.step)
-    const t = start + Math.pow(k / last, 0.9) * (end - FADE - start)
+    const t = start + (k / last) * (end - FADE - start)
     tl.fromTo(p, { opacity: 0, fill: '#7ea2ff' }, { opacity: 1, fill: '#f4f6ff', duration: FADE, ease: 'sine.inOut' }, t)
   })
 }

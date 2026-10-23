@@ -45,7 +45,29 @@ export interface ProjectData {
   cardScrim?: number
   /** A light-colored variant of `logo`, used instead when `cardDark` is set. */
   logoDark?: string
+  /** The logo traced in ASCII, for the ship's green screens when there's no wordmark drawn for a
+   *  dark ground. Set in VT323, whose characters are 0.4em wide. */
+  ascii?: string
 }
+
+/** DartERP's mark traced at 72 columns: its strokes as characters, its bowls left open. */
+const DARTERP_ASCII = `
+                                                     .+#%%%#*-
+*#######**+-.                                       =@@@%#%@@@#.
+%@@%****#%@@@#-                                    :@@%.    +@@#
+%@@+      .=%@@*                                   =@@+      @@@
+%@@+        :@@@=                                  =@@+      @@@
+%@@+         *@@%++++++++++++++++++++++++++++++++++#@@%******@@@********
+%@@+         *@@@%%%%%@@@@@@@@@@@@@@@@@@@@@####%@@@@@@@@@@@@@@@@@@@@@@@%
+%@@+         %@@*     #@@-.....%@@:....=@@%     .#@@*
+%@@+        *@@@:     #@@-     %@@.    =@@%      +@@%
+%@@*::::-=*%@@#:      #@@-     %@@.    =@@%....:=@@@-
+%@@@@@@@@@@#+:        #@@-     %@@.    =@@@@@@@@@%*:
+:::::::::.            *##:     -==     =@@%:::#@@#
+                                       =@@%   .#@@#
+                                       =@@%    .#@@#.
+                                       =%%#     .#%%#.
+`.slice(1, -1)
 
 export const projects: ProjectData[] = [
   {
@@ -73,6 +95,7 @@ export const projects: ProjectData[] = [
   },
   {
     name: 'DartERP',
+    ascii: DARTERP_ASCII,
     mediaRatio: 1280 / 844,
     glyph: 'DE',
     logo: '/logos/project_logos/dartERP_logo.png',
