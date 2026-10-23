@@ -1,9 +1,6 @@
-import { useState } from 'react'
-import { motion, type Variants } from 'framer-motion'
-import { ChevronLeft, ChevronRight } from '@/components/icons'
+import { useEffect, useState } from 'react'
 import { clients } from '@/data/clients'
 import { experience, type ExperienceEntry } from '@/data/experience'
-import { EASE, useMotionOK } from '@/lib/motion'
 import Credit from '../Credit'
 import { pass, type Timeline } from '../motion'
 import Popup from '../Popup'
@@ -42,56 +39,45 @@ const SETS = {
 }
 type SetName = keyof typeof SETS
 
-// Short quotes set bigger and long ones smaller, so a two-liner doesn't look lost and a paragraph
-// doesn't take over the card.
-const size = (q: string) =>
-  q.length <= 80 ? 'text-[clamp(19px,2.2vw,36px)]' : q.length <= 170 ? 'text-[clamp(18px,1.8vw,30px)]' : 'text-[clamp(16px,1.5vw,25px)]'
-
-const swap: Variants = {
-  shown: { opacity: 1, transition: { duration: 0.6, ease: EASE, delay: 0.15 } },
-  hidden: { opacity: 0, transition: { duration: 0.2, ease: EASE } },
-}
-
 /**
- * One set of quotes, one at a time. They never advance on their own: a row of thin segments and
- * arrows step through them.
+ * One set of quotes on the ship's screen, as incoming transmissions, one at a time. They never
+ * advance on their own: the arrows (on screen or on the keyboard) and a row of blocks, one per
+ * message, step through them.
  */
 function Reel({ set }: { set: SetName }) {
-  const { label, noun, items } = SETS[set]
-  const motionOK = useMotionOK()
+  const { noun, items } = SETS[set]
   const [active, setActive] = useState(0)
   const go = (d: number) => setActive((a) => (a + d + items.length) % items.length)
 
-  return (
-    <div className="credit text-center">
-      <div className="text-[clamp(18px,2vw,32px)] text-ink/75">in my {label}' words</div>
-      {/* Every quote stacked in one grid cell: the cell sizes to the tallest, so nothing shifts as
-          they change. Only the active one is visible. */}
-      <div className="mt-[4vh] grid">
-        {items.map((q, i) => {
-          const on = i === active
-          return (
-            <motion.figure
-              key={i}
-              aria-hidden={!on}
-              initial={false}
-              animate={on ? 'shown' : 'hidden'}
-              variants={motionOK ? swap : undefined}
-              style={motionOK ? undefined : { opacity: on ? 1 : 0 }}
-              className={`col-start-1 row-start-1 ${on ? '' : 'pointer-events-none'}`}
-            >
-              <blockquote className={`${size(q.quote)} mx-auto max-w-[27em] leading-[1.28]`}>“{q.quote}”</blockquote>
-              <figcaption className="mt-5 font-mono text-[10px] tracking-[0.16em] text-ink-faint uppercase [text-shadow:none] sm:text-[11px]">
-                {q.caption}
-              </figcaption>
-            </motion.figure>
-          )
-        })}
-      </div>
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') setActive((a) => (a + 1) % items.length)
+      else if (e.key === 'ArrowLeft') setActive((a) => (a - 1 + items.length) % items.length)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [items.length])
 
+  return (
+    <div>
+      <div className="crt-dim uppercase">
+        message {String(active + 1).padStart(2, '0')} of {String(items.length).padStart(2, '0')}
+      </div>
+      {/* Every message stacked in one cell, so the box keeps the height of the longest. */}
+      <div className="crt-box mt-3 grid p-4 sm:p-5">
+        {items.map((q, i) => (
+          <figure key={i} aria-hidden={i !== active} className={`col-start-1 row-start-1 ${i === active ? '' : 'invisible'}`}>
+            <blockquote className="text-[clamp(20px,1.7vw,26px)] leading-[1.3]">“{q.quote}”</blockquote>
+            <figcaption className="crt-dim mt-4 uppercase">from: {q.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
       {items.length > 1 && (
-        <div className="mx-auto mt-8 flex max-w-[34rem] items-center gap-5 [text-shadow:none]">
-          <div className="flex flex-1 items-center gap-1">
+        <div className="mt-4 flex items-center justify-between gap-4 uppercase">
+          <button type="button" onClick={() => go(-1)} aria-label={`Previous ${noun.toLowerCase()}`} className="crt-link shrink-0 px-1">
+            &lt; prev
+          </button>
+          <div className="flex flex-wrap justify-center gap-1">
             {items.map((_, i) => (
               <button
                 key={i}
@@ -99,25 +85,13 @@ function Reel({ set }: { set: SetName }) {
                 onClick={() => setActive(i)}
                 aria-label={`${noun} ${i + 1} of ${items.length}`}
                 aria-current={i === active ? 'true' : undefined}
-                className="group flex-1 py-3"
-              >
-                <span
-                  className={`block h-px transition-colors duration-300 ${i === active ? 'bg-ink' : i < active ? 'bg-ink/50' : 'bg-ink/15 group-hover:bg-ink/40'}`}
-                />
-              </button>
+                className={`h-3 w-3 border border-[#8dffbf]/60 transition-colors ${i === active ? 'bg-[#8dffbf] shadow-[0_0_8px_rgb(90_255_170/0.6)]' : 'hover:bg-[#8dffbf]/40'}`}
+              />
             ))}
           </div>
-          <div className="flex shrink-0 items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-ink-faint">
-            <button type="button" onClick={() => go(-1)} aria-label={`Previous ${noun.toLowerCase()}`} className="p-2 transition-colors hover:text-ink">
-              <ChevronLeft />
-            </button>
-            <span className="tabular-nums">
-              {String(active + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
-            </span>
-            <button type="button" onClick={() => go(1)} aria-label={`Next ${noun.toLowerCase()}`} className="p-2 transition-colors hover:text-ink">
-              <ChevronRight />
-            </button>
-          </div>
+          <button type="button" onClick={() => go(1)} aria-label={`Next ${noun.toLowerCase()}`} className="crt-link shrink-0 px-1">
+            next &gt;
+          </button>
         </div>
       )}
     </div>
@@ -141,7 +115,12 @@ export default function Words({ still = false }: { still?: boolean }) {
           ]}
         />
       </div>
-      <Popup open={!!open} onClose={() => setOpen(null)} label={open ? `In my ${SETS[open].label}' words` : ''}>
+      <Popup
+        open={!!open}
+        onClose={() => setOpen(null)}
+        title={open ? `incoming transmissions · ${SETS[open].label}` : ''}
+        hint="left, right: scroll | esc: exit"
+      >
         {open && <Reel set={open} />}
       </Popup>
     </div>

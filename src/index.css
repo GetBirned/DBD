@@ -156,7 +156,124 @@
  * Kept under half a pixel, so type stays easy to read.
  */
 .film {
-  filter: blur(0.4px);
+  filter: blur(0.7px);
+}
+
+/*
+ * The popups, as the ship's computer screens in Alien: green phosphor type on a dark, curved CRT
+ * set in a plastic bezel, with scanlines, a bright title bar, and a soft glow on everything.
+ */
+.crt-bezel {
+  border-radius: 28px;
+  padding: clamp(8px, 1.3vw, 18px);
+  background: linear-gradient(180deg, #1c1e21, #0e0f11);
+  box-shadow:
+    0 40px 90px rgb(0 0 0 / 0.7),
+    inset 0 1px 0 rgb(255 255 255 / 0.07),
+    inset 0 0 0 1px rgb(255 255 255 / 0.03);
+}
+
+.crt-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: radial-gradient(ellipse at 50% 45%, #0b2a1d 0%, #04140d 55%, #010604 100%);
+  color: #8dffbf;
+  font-family: "VT323", "IBM Plex Mono", monospace;
+  text-shadow:
+    0 0 1px rgb(160 255 205 / 0.65),
+    0 0 9px rgb(90 255 170 / 0.45);
+  box-shadow:
+    inset 0 0 70px rgb(0 0 0 / 0.85),
+    inset 0 0 6px rgb(120 255 190 / 0.25);
+}
+
+/* Scanlines over everything on the screen, type included. */
+.crt-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.3) 0 1px, transparent 1px 3px);
+}
+
+/* The curve of the tube: edges falling off into dark, and a faint glare up top. */
+.crt-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 58%, rgb(0 0 0 / 0.6) 100%),
+    radial-gradient(ellipse at 28% 12%, rgb(200 255 230 / 0.06), transparent 42%);
+}
+
+/* The title bar: inverse video in cyan, like the terminal's header. */
+.crt-bar {
+  background: #6ff3dc;
+  color: #03241a;
+  text-shadow: 0 0 6px rgb(120 255 220 / 0.5);
+  box-shadow: 0 0 16px rgb(100 250 220 / 0.45);
+}
+
+.crt-box {
+  border: 1px solid rgb(130 255 195 / 0.55);
+  box-shadow:
+    0 0 8px rgb(90 255 170 / 0.25),
+    inset 0 0 10px rgb(90 255 170 / 0.12);
+}
+
+.crt-dim {
+  color: rgb(141 255 191 / 0.58);
+}
+
+/* Something you can select: it flips to inverse video when pointed at, as a terminal cursor would. */
+.crt-link {
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.crt-link:hover,
+.crt-link:focus-visible {
+  background: #8dffbf;
+  color: #03241a;
+  text-shadow: none;
+  outline: none;
+}
+
+/* Dotted leaders between a name and its figure, like the ship's readouts. */
+.crt-leader {
+  min-width: 1.5em;
+  border-bottom: 2px dotted rgb(141 255 191 / 0.35);
+  transform: translateY(-0.3em);
+}
+
+/*
+ * Pictures on the screen take on its phosphor green, whatever their own colors (a color-blend
+ * wash keeps their light and dark but swaps their hue), and come up in true color when pointed at.
+ */
+.crt-tint {
+  position: relative;
+  isolation: isolate;
+}
+
+.crt-tint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: #3dff9c;
+  mix-blend-mode: color;
+  opacity: 0.6;
+  transition: opacity 0.4s;
+}
+
+.crt-tint:hover::after {
+  opacity: 0;
 }
 
 /*

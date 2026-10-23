@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from 'react'
-import { ArrowUpRight } from '@/components/icons'
+import { useState } from 'react'
+import { Readout, ReadoutLabel } from '@/components/Monitor'
 import { useSpotifyData, type NowPlayingData, type RecentTrack, type TopItemsData } from '@/hooks/useSpotifyData'
 import { useSteamData, type SteamStatusData, type TopGame } from '@/hooks/useSteamData'
 import Credit from '../Credit'
@@ -18,65 +18,42 @@ const FILMS = [
 
 type Kind = 'games' | 'music' | 'movies'
 
-/** The heading at the top of each card, and a small label over each part of it. */
-const Heading = ({ children }: { children: ReactNode }) => <div className="text-[clamp(18px,2vw,32px)] text-ink/75">{children}</div>
-const Label = ({ children }: { children: ReactNode }) => (
-  <div className="mt-[5vh] mb-4 font-mono text-[10px] tracking-[0.16em] text-ink-faint uppercase [text-shadow:none] sm:text-[11px]">{children}</div>
-)
-
-/** One track, game or album as a small row: picture, then the name and a line under it. */
-function Row({ image, name, sub, url, wide = false }: { image?: string | null; name: string; sub?: string | null; url?: string | null; wide?: boolean }) {
-  return (
-    <a href={url ?? undefined} target="_blank" rel="noreferrer" className="group flex min-w-0 items-center gap-3 text-left">
-      <span className={`shrink-0 overflow-hidden border border-line bg-bg-soft ${wide ? 'h-10 w-[86px]' : 'h-11 w-11'}`}>
-        {image && <img src={image} alt="" loading="lazy" className="h-full w-full object-cover" />}
-      </span>
-      <span className="min-w-0">
-        <span className="block truncate text-[15px] text-ink group-hover:underline">{name}</span>
-        {sub && <span className="block truncate font-mono text-[11px] text-ink-faint [text-shadow:none]">{sub}</span>}
-      </span>
-    </a>
-  )
-}
-
-/** What's on now (or last), large: the artwork, then what it is. */
+/** What's on now (or last): its picture, then what it is, in large type. */
 function Feature({ image, wide, kind, name, sub, url }: { image?: string | null; wide?: boolean; kind: string; name: string; sub?: string | null; url?: string | null }) {
   return (
-    <a href={url ?? undefined} target="_blank" rel="noreferrer" className="group mt-[4vh] block">
+    <div className={`grid items-center gap-5 ${wide ? 'sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)]' : 'grid-cols-[auto_minmax(0,1fr)]'}`}>
       {image && (
-        <img src={image} alt="" className={`mx-auto border border-line object-cover ${wide ? 'aspect-[460/215] w-[min(100%,360px)]' : 'h-[clamp(96px,12vw,150px)] w-[clamp(96px,12vw,150px)]'}`} />
+        <a href={url ?? undefined} target="_blank" rel="noreferrer" className={`crt-tint crt-box block ${wide ? 'w-full' : 'w-fit'}`}>
+          <img src={image} alt="" className={`block object-cover ${wide ? 'aspect-[460/215] w-full' : 'h-[clamp(84px,9vw,120px)] w-[clamp(84px,9vw,120px)]'}`} />
+        </a>
       )}
-      <div className="mt-4 font-mono text-[10px] tracking-[0.16em] text-ink-faint uppercase [text-shadow:none]">{kind}</div>
-      <div className="mt-1 text-[clamp(20px,2.2vw,34px)] group-hover:underline">{name}</div>
-      {sub && <div className="text-[15px] text-ink/70">{sub}</div>}
-    </a>
+      <div className="min-w-0 uppercase">
+        <div className="crt-dim">{kind}</div>
+        <div className="mt-1 text-[clamp(26px,2.5vw,38px)] leading-[1.05]">{name}</div>
+        {sub && <div className="crt-dim mt-1">{sub}</div>}
+      </div>
+    </div>
   )
 }
 
 function Games({ status, top }: { status: SteamStatusData | null; top: TopGame[] | null }) {
   return (
-    <div className="credit text-center">
-      <Heading>games</Heading>
+    <div>
       {status?.title && (
-        <Feature wide image={status.image} kind={status.isPlaying ? 'Steam · playing now' : 'Steam · last played'} name={status.title} sub={status.subtitle} url={status.url} />
+        <Feature wide image={status.image} kind={`steam · ${status.isPlaying ? 'now playing' : 'last session'}`} name={status.title} sub={status.subtitle} url={status.url} />
       )}
       {!!top?.length && (
         <>
-          <Label>Most played, all time</Label>
-          <div className="mx-auto grid max-w-[40rem] gap-3 sm:grid-cols-2">
-            {top.map((g) => (
-              <Row key={g.appid} wide image={g.image} name={g.name} sub={g.hoursTotal} url={g.url} />
+          <ReadoutLabel>most played · all time</ReadoutLabel>
+          <div className="space-y-1">
+            {top.map((g, i) => (
+              <Readout key={g.appid} n={i + 1} name={g.name} value={g.hoursTotal} href={g.url} />
             ))}
           </div>
         </>
       )}
-      <a
-        href={STEAM_PROFILE}
-        target="_blank"
-        rel="noreferrer"
-        className="mt-[5vh] inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.14em] text-ink-faint uppercase transition-colors [text-shadow:none] hover:text-ink"
-      >
-        Steam profile <ArrowUpRight />
+      <a href={STEAM_PROFILE} target="_blank" rel="noreferrer" className="crt-link mt-7 inline-block px-1 uppercase">
+        &gt; open steam profile
       </a>
     </div>
   )
@@ -84,40 +61,36 @@ function Games({ status, top }: { status: SteamStatusData | null; top: TopGame[]
 
 function Music({ now, recent, top }: { now: NowPlayingData | null; recent: RecentTrack[] | null; top: TopItemsData | null }) {
   return (
-    <div className="credit text-center">
-      <Heading>music</Heading>
-      {now?.title && <Feature image={now.albumArt} kind={now.isPlaying ? 'Spotify · listening now' : 'Spotify · last played'} name={now.title} sub={now.artist} url={now.url} />}
-      <div className="mx-auto grid max-w-[44rem] gap-x-10 sm:grid-cols-2">
-        {!!recent?.length && (
-          <div className="min-w-0">
-            <Label>Recently played</Label>
-            <div className="mx-auto grid max-w-[20rem] grid-cols-1 gap-3">
-              {recent.map((t, i) => (
-                <Row key={i} image={t.albumArt} name={t.name} sub={t.artist} url={t.url} />
-              ))}
-            </div>
+    <div>
+      {now?.title && (
+        <Feature image={now.albumArt} kind={`spotify · ${now.isPlaying ? 'now playing' : 'last played'}`} name={now.title} sub={now.artist} url={now.url} />
+      )}
+      {!!recent?.length && (
+        <>
+          <ReadoutLabel>recently played</ReadoutLabel>
+          <div className="space-y-1">
+            {recent.map((t, i) => (
+              <Readout key={i} n={i + 1} name={t.name} value={t.artist} href={t.url} />
+            ))}
           </div>
-        )}
-        {!!top?.tracks.length && (
-          <div className="min-w-0">
-            <Label>Favorite tracks</Label>
-            <div className="mx-auto grid max-w-[20rem] grid-cols-1 gap-3">
-              {top.tracks.map((t, i) => (
-                <Row key={i} image={t.albumArt} name={t.name} sub={t.artist} url={t.url} />
-              ))}
-            </div>
+        </>
+      )}
+      {!!top?.tracks.length && (
+        <>
+          <ReadoutLabel>favorite tracks</ReadoutLabel>
+          <div className="space-y-1">
+            {top.tracks.map((t, i) => (
+              <Readout key={i} n={i + 1} name={t.name} value={t.artist} href={t.url} />
+            ))}
           </div>
-        )}
-      </div>
+        </>
+      )}
       {!!top?.albums.length && (
         <>
-          <Label>Favorite albums</Label>
-          <div className="flex flex-wrap justify-center gap-4">
+          <ReadoutLabel>favorite albums</ReadoutLabel>
+          <div className="space-y-1">
             {top.albums.map((a, i) => (
-              <a key={i} href={a.url ?? undefined} target="_blank" rel="noreferrer" title={`${a.name} — ${a.artist}`} className="group w-[clamp(72px,9vw,104px)]">
-                {a.image && <img src={a.image} alt="" loading="lazy" className="aspect-square w-full border border-line object-cover" />}
-                <span className="mt-2 block truncate text-[13px] text-ink/80 group-hover:underline">{a.name}</span>
-              </a>
+              <Readout key={i} n={i + 1} name={a.name} value={a.artist} href={a.url} />
             ))}
           </div>
         </>
@@ -128,15 +101,17 @@ function Music({ now, recent, top }: { now: NowPlayingData | null; recent: Recen
 
 function Movies() {
   return (
-    <div className="credit text-center">
-      <Heading>movies</Heading>
-      <Label>Four favorites</Label>
-      <div className="mx-auto grid max-w-[44rem] gap-[5vh] sm:grid-cols-2">
-        {FILMS.map((f) => (
-          <div key={f.title}>
-            <div className="text-[clamp(20px,2.2vw,34px)] leading-[1.15]">{f.title}</div>
-            <div className="mt-1.5 text-[15px] text-ink/65">
-              {f.year} · {f.by}
+    <div>
+      <ReadoutLabel>four favorites</ReadoutLabel>
+      <div className="space-y-5">
+        {FILMS.map((f, i) => (
+          <div key={f.title} className="flex gap-4 uppercase">
+            <span className="crt-dim">{String(i + 1).padStart(2, '0')}</span>
+            <div className="min-w-0">
+              <div className="text-[clamp(26px,2.5vw,38px)] leading-[1.05]">{f.title}</div>
+              <div className="crt-dim mt-1">
+                {f.year} · dir. {f.by}
+              </div>
             </div>
           </div>
         ))}
@@ -171,7 +146,7 @@ export default function Life({ still = false }: { still?: boolean }) {
           ]}
         />
       </div>
-      <Popup open={!!open} onClose={() => setOpen(null)} label={open ?? ''}>
+      <Popup open={!!open} onClose={() => setOpen(null)} title={open ? `recreation log · ${open}` : ''}>
         {open === 'games' && <Games status={steam} top={steamTop} />}
         {open === 'music' && <Music now={now} recent={recent} top={top} />}
         {open === 'movies' && <Movies />}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { experience, type ExperienceEntry } from '@/data/experience'
 import Credit, { type CreditName } from '../Credit'
 import { pass, type Timeline } from '../motion'
@@ -10,23 +10,26 @@ interface Card {
   note?: string
 }
 
-/** What I did in one role, as it opens from its card. */
+/** What I did in one role, as it opens from its card: a personnel file on the ship's screen. */
 function RoleDetails({ e }: { e: ExperienceEntry }) {
+  const rows: [string, string][] = [
+    ['role', e.role],
+    ['employer', e.company.replace(' Inc.', '')],
+    ['dates', e.dateRange],
+    ['location', e.location],
+  ]
   return (
-    <div className="text-center">
-      {e.logoDark && <img src={e.logoDark} alt="" className="mx-auto h-6 w-auto opacity-85" />}
-      <div className="mt-6">
-        <Credit
-          role={e.role.toLowerCase()}
-          names={[e.company.replace(' Inc.', '')]}
-          note={`${e.dateRange} · ${e.location}`}
-          size="text-[clamp(20px,2.3vw,38px)]"
-        />
-      </div>
-      <p className="mx-auto mt-[4vh] max-w-[40em] border-t border-line pt-[4vh] text-[clamp(15px,1.15vw,18px)] leading-relaxed text-ink-dim">
-        {e.desc}
-      </p>
-      {e.badge && <p className="mt-5 font-mono text-[11px] tracking-[0.08em] text-accent">{e.badge}</p>}
+    <div>
+      <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-1 uppercase">
+        {rows.map(([k, v]) => (
+          <Fragment key={k}>
+            <dt className="crt-dim">{k}</dt>
+            <dd>{v}</dd>
+          </Fragment>
+        ))}
+      </dl>
+      <div className="crt-box mt-6 p-4 sm:p-5">{e.desc}</div>
+      {e.badge && <p className="mt-5 uppercase">&gt; {e.badge}</p>}
     </div>
   )
 }
@@ -82,7 +85,7 @@ export default function Hero({ still = false }: { still?: boolean }) {
 
   const details = open === null ? null : experience[open]
   const popup = (
-    <Popup open={!!details} onClose={() => setOpen(null)} label={details ? `${details.role}, ${details.company}` : ''}>
+    <Popup open={!!details} onClose={() => setOpen(null)} title={details ? `personnel file · ${details.company.replace(' Inc.', '')}` : ''}>
       {details && <RoleDetails e={details} />}
     </Popup>
   )
