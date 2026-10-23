@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { clients } from '@/data/clients'
 import { experience, type ExperienceEntry } from '@/data/experience'
 import Credit from '../Credit'
+import { terminal } from '@/lib/sound'
 import { pass, type Timeline } from '../motion'
 import Popup from '../Popup'
 
@@ -47,12 +48,18 @@ type SetName = keyof typeof SETS
 function Reel({ set }: { set: SetName }) {
   const { noun, items } = SETS[set]
   const [active, setActive] = useState(0)
-  const go = (d: number) => setActive((a) => (a + d + items.length) % items.length)
+  // Every step to another message sounds the screen's "bip-bip".
+  const show = (i: number) => {
+    terminal.page()
+    setActive(i)
+  }
+  const go = (d: number) => show((active + d + items.length) % items.length)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') setActive((a) => (a + 1) % items.length)
-      else if (e.key === 'ArrowLeft') setActive((a) => (a - 1 + items.length) % items.length)
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+      terminal.page()
+      setActive((a) => (a + (e.key === 'ArrowRight' ? 1 : -1) + items.length) % items.length)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -82,7 +89,7 @@ function Reel({ set }: { set: SetName }) {
               <button
                 key={i}
                 type="button"
-                onClick={() => setActive(i)}
+                onClick={() => show(i)}
                 aria-label={`${noun} ${i + 1} of ${items.length}`}
                 aria-current={i === active ? 'true' : undefined}
                 className={`h-3 w-3 border border-[#8dffbf]/60 transition-colors ${i === active ? 'bg-[#8dffbf] shadow-[0_0_8px_rgb(90_255_170/0.6)]' : 'hover:bg-[#8dffbf]/40'}`}

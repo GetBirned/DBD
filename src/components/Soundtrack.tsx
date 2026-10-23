@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { SpeakerIcon } from './icons'
+import { setMuted } from '@/lib/sound'
 
 const SRC = '/audio/alien-main-title.mp3'
 /** The track as mastered — no turning it down. */
@@ -86,6 +87,7 @@ export default function Soundtrack() {
   }
 
   useEffect(() => {
+    setMuted(!wanted.current)
     if (wanted.current) start()
 
     // Start as soon as the visitor does anything: the first scroll, click, tap or key press.
@@ -121,6 +123,8 @@ export default function Soundtrack() {
   const toggle = () => {
     wanted.current = !playing
     remember(wanted.current)
+    // The sound effects follow the same switch.
+    setMuted(!wanted.current)
     if (playing) stop()
     else start(true)
   }

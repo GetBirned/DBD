@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import Monitor, { BarButton } from '@/components/Monitor'
 import { EASE } from '@/lib/motion'
+import { terminal } from '@/lib/sound'
 
 /**
  * A screen that opens over the journey — a role's details, the testimonials, what I'm into — set
@@ -31,6 +32,14 @@ export default function Popup({
   useEffect(() => {
     close.current = onClose
   })
+
+  // The screen's sounds: switching on as it opens, off as it closes.
+  const wasOpen = useRef(false)
+  useEffect(() => {
+    if (open && !wasOpen.current) terminal.on()
+    if (!open && wasOpen.current) terminal.off()
+    wasOpen.current = open
+  }, [open])
 
   useEffect(() => {
     if (!open) return

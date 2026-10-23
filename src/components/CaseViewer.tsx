@@ -6,6 +6,7 @@ import Monitor, { BarButton } from './Monitor'
 import { ExpandIcon } from './icons'
 import { isVideo, type CaseItem } from '@/lib/cases'
 import { EASE } from '@/lib/motion'
+import { terminal } from '@/lib/sound'
 
 /**
  * The piece of media on show, with the screen's phosphor cast until it's pointed at. Client sites
@@ -56,8 +57,17 @@ export default function CaseViewer({
 
   const go = (delta: number) => {
     if (index === null) return
+    terminal.page()
     onIndex((index + delta + items.length) % items.length)
   }
+
+  // The screen's sounds: switching on as it opens, off as it closes.
+  const wasOpen = useRef(false)
+  useEffect(() => {
+    if (open && !wasOpen.current) terminal.on()
+    if (!open && wasOpen.current) terminal.off()
+    wasOpen.current = open
+  }, [open])
 
   // New item → back to its first piece of media.
   useEffect(() => {
@@ -175,7 +185,10 @@ export default function CaseViewer({
                             <button
                               key={m}
                               type="button"
-                              onClick={() => setMediaIdx(i)}
+                              onClick={() => {
+                                terminal.select()
+                                setMediaIdx(i)
+                              }}
                               aria-label={`Show ${isVideo(m) ? 'video' : 'screenshot'} ${i + 1}`}
                               className={`crt-box crt-tint h-[clamp(36px,6vh,56px)] shrink-0 overflow-hidden bg-black transition-opacity [aspect-ratio:16/10] ${i === mediaIdx ? '' : 'opacity-45 hover:opacity-90'}`}
                             >

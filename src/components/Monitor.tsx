@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { terminal } from '@/lib/sound'
 
 /**
  * One of the ship's screens from Alien: a curved green-phosphor CRT in a plastic bezel, with a
@@ -19,7 +20,8 @@ export default function Monitor({
   children: ReactNode
 }) {
   return (
-    <div className={`crt-bezel film flex flex-col ${className}`}>
+    // Following a link on the screen blips; buttons make their own sounds.
+    <div className={`crt-bezel film flex flex-col ${className}`} onClickCapture={(e) => (e.target as Element).closest('a') && terminal.select()}>
       <div className="crt-screen flex min-h-0 flex-1 flex-col">
         <div className="crt-bar relative z-[1] mx-[clamp(10px,2vw,28px)] mt-[clamp(10px,2vw,24px)] flex items-center justify-between gap-4 px-3 text-[clamp(18px,1.6vw,24px)] leading-[1.5] uppercase">
           <span className="min-w-0 truncate">{title}</span>
