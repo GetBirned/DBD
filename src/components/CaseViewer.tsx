@@ -138,10 +138,11 @@ export default function CaseViewer({
               animate={{ scaleY: 1, opacity: 1 }}
               exit={{ scaleY: 0.02, opacity: 0 }}
               transition={{ duration: 0.35, ease: EASE }}
-              className="h-[min(96svh,1100px)] w-full max-w-[1600px]"
+              className="w-full max-w-[1600px]"
             >
+              {/* As tall as what's on it, up to nearly the full window. */}
               <Monitor
-                className="h-full"
+                className="max-h-[min(96svh,1100px)]"
                 title={`${kindLabel} ${count(index! + 1)} / ${count(items.length)} · ${item.domain ?? item.name}`}
                 hint="left, right: browse | esc: exit"
                 controls={
@@ -160,7 +161,7 @@ export default function CaseViewer({
               >
                 {/* Sized against the monitor, not the window: the monitor stops growing at its
                     maximum width, and on a big screen the window keeps going. */}
-                <div className="min-h-full [container-type:inline-size]">
+                <div className="[container-type:inline-size]">
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.article
                       key={item.key}
@@ -168,7 +169,7 @@ export default function CaseViewer({
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="grid min-h-full grid-cols-1 items-center gap-[3vh] lg:grid-cols-[auto_22rem] lg:justify-center lg:gap-[3vw]"
+                      className="grid grid-cols-1 items-center gap-[3vh] lg:grid-cols-[auto_22rem] lg:justify-center lg:gap-[3vw]"
                     >
                       {/* Media: as wide as the monitor allows beside the text, but never taller than
                           it has room for under the title bar, above the thumbnails and the hints. */}
