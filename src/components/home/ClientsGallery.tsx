@@ -11,7 +11,8 @@ import { useMotionOK } from '@/lib/motion'
 
 /**
  * A client site in a browser window. Shows a screenshot until hovered, then fades into the site's
- * scrolling walkthrough video — which isn't fetched at all until the first hover.
+ * scrolling walkthrough video — which isn't fetched at all until the first hover. On hover the
+ * card lifts off the page onto a hard ink shadow.
  */
 function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOpen: () => void }) {
   const [hover, setHover] = useState(false)
@@ -36,23 +37,23 @@ function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOp
         setArmed(true)
       }}
       onMouseLeave={() => setHover(false)}
-      className="group w-[82vw] max-w-[680px] shrink-0 snap-center text-left md:w-[min(52vw,68vh*1.6,680px)]"
+      className="group w-[86vw] shrink-0 snap-center text-left md:w-[min(62vw,calc((100svh-250px)*1.6),1150px)]"
       aria-label={`${item.name} — open case study`}
     >
-      <div className="mb-4 flex items-baseline justify-between font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase">
+      <div className="mb-3 flex items-baseline justify-between border-b border-ink pb-2 font-mono text-[11px] tracking-[0.1em] text-ink uppercase">
         <span>{String(index + 1).padStart(2, '0')}</span>
-        <span>{item.tag}</span>
+        <span className="text-ink-dim">{item.tag}</span>
       </div>
-      <div className="transition-transform duration-500 ease-out group-hover:-translate-y-1.5">
+      <div className="transition-[transform,box-shadow] duration-300 ease-out group-hover:-translate-x-1.5 group-hover:-translate-y-1.5 group-hover:shadow-[8px_8px_0_0_var(--color-ink)]">
         <MediaFrame chrome domain={item.domain}>
-          <div className="relative aspect-[16/10] overflow-hidden bg-black">
+          <div className="relative aspect-[16/10] overflow-hidden bg-bg-soft">
             {poster && (
               <img
                 src={poster}
                 alt=""
                 loading="lazy"
                 decoding="async"
-                className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                className="absolute inset-0 h-full w-full object-cover object-top"
               />
             )}
             {armed && video && (
@@ -68,19 +69,12 @@ function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOp
           </div>
         </MediaFrame>
       </div>
-      <div className="mt-5 flex items-center gap-3.5">
-        {item.logo ? (
-          <img src={item.logo} alt="" loading="lazy" className="h-11 w-11 shrink-0 rounded-full bg-white object-contain p-1" />
-        ) : (
-          <span className="brand-gradient flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-display text-sm font-bold text-white">
-            {item.name[0]}
-          </span>
-        )}
-        <div className="min-w-0 flex-1">
-          <div className="truncate font-display text-[19px] font-bold text-ink">{item.name}</div>
-          <div className="truncate text-[13px] text-ink-faint">{item.meta}</div>
+      <div className="mt-4 flex items-end justify-between gap-4">
+        <div className="min-w-0">
+          <div className="display truncate text-[clamp(30px,3.2vw,52px)] text-ink">{item.name}</div>
+          <div className="mt-1 truncate font-mono text-[11px] tracking-[0.06em] text-ink-dim uppercase">{item.meta}</div>
         </div>
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-dim ring-1 ring-line transition-all group-hover:bg-white group-hover:text-black">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-ink text-ink transition-colors group-hover:bg-ink group-hover:text-paper">
           <ArrowUpRight />
         </span>
       </div>
@@ -90,15 +84,16 @@ function SiteCard({ item, index, onOpen }: { item: CaseItem; index: number; onOp
 
 function Intro({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
   return (
-    <div className="w-full shrink-0 md:w-[min(40vw,520px)]">
-      <div className="mb-8 hidden md:block">
-        <Logo3D variant="dbd" width={240} height={240 / LOGO_ASPECT.dbd} interactionRef={stageRef} shadow={false} />
+    <div className="w-full shrink-0 md:w-[min(44vw,820px)]">
+      <div className="mb-[3vw] hidden md:block">
+        <Logo3D variant="dbd" width={260} height={260 / LOGO_ASPECT.dbd} interactionRef={stageRef} shadow={false} />
       </div>
       <ChapterHeading
         title="People I've put *online.*"
-        className="mb-8"
+        className="mb-6"
+        size="text-[clamp(52px,13.5vw,250px)] md:text-[clamp(52px,8.4vw,170px)]"
       />
-      <div className="hidden items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-ink-faint uppercase md:flex">
+      <div className="hidden items-center gap-3 font-mono text-[12px] tracking-[0.1em] text-ink-dim uppercase md:flex">
         Keep scrolling
         <motion.span animate={{ x: [0, 8, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}>
           →
@@ -110,31 +105,31 @@ function Intro({ stageRef }: { stageRef: RefObject<HTMLElement | null> }) {
 
 function Outro() {
   return (
-    <div className="flex w-[82vw] max-w-[440px] shrink-0 snap-center flex-col justify-center gap-7 md:w-[min(34vw,440px)]">
+    <div className="flex w-[86vw] max-w-[520px] shrink-0 snap-center flex-col justify-center gap-8 border-l border-ink pl-[4vw] md:w-[min(36vw,520px)]">
       <div>
-        <div className="mb-4 font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase">Approved contractor</div>
+        <div className="mb-4 font-mono text-[11px] tracking-[0.1em] text-ink-dim uppercase">Approved contractor</div>
         <div className="flex flex-wrap items-center gap-3">
           {[
             { src: '/logos/sbdc.svg', alt: "America's SBDC New Hampshire", href: 'https://www.nhsbdc.org/' },
             { src: '/logos/grdc.webp', alt: 'Grafton Regional Development Corporation', href: 'https://graftonrdc.org/' },
           ].map((c) => (
-            <a key={c.src} href={c.href} target="_blank" rel="noreferrer" title={c.alt} className="rounded-2xl bg-white px-4 py-3 transition-transform hover:-translate-y-0.5">
+            <a key={c.src} href={c.href} target="_blank" rel="noreferrer" title={c.alt} className="border border-ink bg-white px-4 py-3 transition-transform hover:-translate-y-0.5">
               <img src={c.src} alt={c.alt} loading="lazy" className="h-10 w-auto" />
             </a>
           ))}
         </div>
       </div>
       <div>
-        <div className="mb-4 font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase">Built on whatever fits</div>
+        <div className="mb-4 font-mono text-[11px] tracking-[0.1em] text-ink-dim uppercase">Built on whatever fits</div>
         <div className="flex items-center gap-5">
           {platforms.map((p) => (
-            <img key={p.name} src={p.logo} alt={p.name} title={p.name} loading="lazy" className="h-7 w-auto opacity-70 invert" />
+            <img key={p.name} src={p.logo} alt={p.name} title={p.name} loading="lazy" className="h-7 w-auto opacity-80" />
           ))}
         </div>
       </div>
       <a
         href="mailto:dartbirnie@gmail.com?subject=Website%20project"
-        className="brand-gradient inline-flex w-fit items-center gap-2 rounded-full px-6 py-3.5 font-mono text-xs tracking-wide text-white uppercase transition-transform hover:-translate-y-0.5"
+        className="inline-flex w-fit items-center gap-2 bg-ink px-6 py-4 font-mono text-xs tracking-[0.1em] text-paper uppercase transition-colors hover:bg-accent"
       >
         Start a site with me <ArrowUpRight />
       </a>
@@ -179,10 +174,10 @@ export default function ClientsGallery({ onOpen }: { onOpen: (i: number) => void
   if (!pinned) {
     return (
       <section ref={sectionRef} className="py-[12vh]">
-        <div className="px-6 sm:px-12">
+        <div className="px-[4vw]">
           <Intro stageRef={sectionRef} />
         </div>
-        <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pt-2 pb-8 [scrollbar-width:none] sm:px-12">
+        <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-[4vw] pt-6 pb-8 [scrollbar-width:none]">
           {cards}
           <Outro />
         </div>
@@ -196,7 +191,7 @@ export default function ClientsGallery({ onOpen }: { onOpen: (i: number) => void
         <motion.div
           ref={trackRef}
           style={{ x }}
-          className="flex w-max items-center gap-[4vw] pr-[8vw] pl-[max(6vw,calc((100vw-1120px)/2+48px))]"
+          className="flex w-max items-center gap-[4vw] pr-[6vw] pl-[4vw]"
         >
           <Intro stageRef={sectionRef} />
           {cards}

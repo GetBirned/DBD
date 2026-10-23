@@ -1,25 +1,26 @@
 @import "tailwindcss";
 
 /*
- * Dark-first palette. Token names are unchanged from the light theme so every utility
- * (text-ink, border-line, bg-panel…) flips with them: "ink" is now the light text color.
+ * Editorial palette: warm paper, ink, one flat cobalt accent. The only gradient on the page is
+ * the DB mark's own (grad-a → grad-b, used by Logo3D). Dark stretches of the page use the
+ * `paper`/`ink` pair inverted rather than separate tokens.
  */
 @theme {
-  --color-bg: oklch(0.135 0.02 282);
-  --color-bg-soft: oklch(0.17 0.024 282);
-  --color-panel: oklch(1 0 0 / 0.045);
-  --color-ink: oklch(0.97 0.006 282);
-  --color-ink-dim: oklch(0.8 0.014 282);
-  --color-ink-faint: oklch(0.62 0.02 282);
-  --color-line: oklch(1 0 0 / 0.11);
-  --color-grad-a: oklch(0.7 0.15 252);
-  --color-grad-b: oklch(0.64 0.2 298);
-  --color-grad-c: oklch(0.7 0.19 338);
+  --color-bg: #eeebe4;
+  --color-paper: #eeebe4;
+  --color-bg-soft: #e5e1d8;
+  --color-panel: #f7f5f0;
+  --color-ink: #141413;
+  --color-ink-dim: #4a4843;
+  --color-ink-faint: #7d7970;
+  --color-line: rgb(20 20 19 / 0.16);
+  --color-accent: #2244f2;
+  --color-grad-a: oklch(0.62 0.17 255);
+  --color-grad-b: oklch(0.55 0.21 300);
 
-  --font-display: "Sora", "Segoe UI", sans-serif;
-  --font-body: "Manrope", "Segoe UI", sans-serif;
+  --font-display: "Archivo", "Arial Narrow", sans-serif;
+  --font-body: "Archivo", "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "Consolas", monospace;
-  --font-serif: "Instrument Serif", Georgia, serif;
 }
 
 /*
@@ -33,11 +34,11 @@
   body {
     margin: 0;
     background: var(--color-bg);
-    color-scheme: dark;
   }
 
   body {
     font-family: var(--font-body);
+    font-stretch: 100%;
     color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
   }
@@ -46,7 +47,7 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 800;
     margin: 0;
   }
 
@@ -64,34 +65,29 @@
   }
 
   ::selection {
-    background: oklch(0.64 0.2 298 / 0.45);
+    background: var(--color-accent);
     color: white;
   }
 }
 
-.grad-text {
-  background: linear-gradient(120deg, var(--color-grad-a), var(--color-grad-b) 55%, var(--color-grad-c));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.brand-gradient {
-  background: linear-gradient(135deg, var(--color-grad-a), var(--color-grad-b));
-}
-
-/* The editorial accent: a word or two per headline set in italic serif. */
-.accent {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
+/*
+ * Poster type: Archivo squeezed to its narrowest width at a heavy weight, set in caps. This is
+ * what lets a headline run edge to edge at a size that fills the screen without wrapping into
+ * a tower of one-word lines.
+ */
+.display {
+  font-family: var(--font-display);
+  font-stretch: 62%;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.86;
   letter-spacing: -0.01em;
 }
 
 /* Hollow display type, for the kinetic skill rows. */
 .outline-text {
   color: transparent;
-  -webkit-text-stroke: 1.5px oklch(1 0 0 / 0.38);
+  -webkit-text-stroke: 1.5px var(--color-ink);
 }
 
 @keyframes bounce {
@@ -100,7 +96,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
 }
 
@@ -123,47 +119,19 @@
 }
 
 .marquee-mask {
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
 
-/* Slow, independent wander for each backdrop glow, so the background never sits still. */
-@keyframes drift-a {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(6vw, 4vh, 0) scale(1.12);
-  }
-}
-
-@keyframes drift-b {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1.05);
-  }
-  50% {
-    transform: translate3d(-7vw, -5vh, 0) scale(0.94);
-  }
-}
-
-.drift-a {
-  animation: drift-a 26s ease-in-out infinite;
-}
-
-.drift-b {
-  animation: drift-b 32s ease-in-out infinite;
-}
-
+/* Paper tooth: a faint noise multiplied into everything, so flat fills don't read as screen-flat. */
 .grain-overlay {
   position: fixed;
   inset: 0;
   z-index: 999;
   pointer-events: none;
-  opacity: 0.06;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.07;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 @keyframes vinyl-spin {
@@ -199,9 +167,7 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-float,
   .scroll-bounce,
-  .vinyl-spin,
-  .drift-a,
-  .drift-b {
+  .vinyl-spin {
     animation: none;
   }
 

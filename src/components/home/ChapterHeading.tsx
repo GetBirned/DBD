@@ -2,16 +2,23 @@ import { motion } from 'framer-motion'
 import { EASE, useMotionOK } from '@/lib/motion'
 
 /**
- * Section opener: a large title whose words rise out of a clip mask as it scrolls in. Wrap a word
- * in asterisks — "Things I've *built*." — to set it in the italic serif accent. Chapter names
- * live only in the nav (see CHAPTER_LINKS); there's deliberately no visible label above the title.
+ * Section opener: a poster-sized title in condensed caps, sized off the viewport width so it runs
+ * edge to edge on any screen. Its words rise out of a clip mask as it scrolls in. Wrap a word in
+ * asterisks — "Things I've *built*." — to set it in the accent color. Chapter names live only in
+ * the nav (see CHAPTER_LINKS); there's deliberately no visible label above the title.
  */
 export default function ChapterHeading({
   title,
-  className = 'mb-12 sm:mb-16',
+  className = 'mb-[7vw] sm:mb-[5vw]',
+  tone = 'ink',
+  size = 'text-[clamp(52px,13.5vw,250px)] sm:text-[clamp(52px,11.5vw,250px)]',
 }: {
   title: string
   className?: string
+  /** `paper` for titles set on an ink band. */
+  tone?: 'ink' | 'paper'
+  /** Font-size classes. Defaults to full-width poster size; narrower columns pass their own. */
+  size?: string
 }) {
   const motionOK = useMotionOK()
   const words = title.split(' ')
@@ -23,17 +30,19 @@ export default function ChapterHeading({
       viewport={{ once: true, margin: '-12% 0px' }}
       className={className}
     >
-      <h2 className="font-display text-[clamp(42px,7.2vw,104px)] leading-[0.98] font-extrabold tracking-[-0.045em] text-ink">
+      <h2
+        className={`display ${size} ${tone === 'paper' ? 'text-paper' : 'text-ink'}`}
+      >
         {words.map((raw, i) => {
           const accent = /^\*.+\*[.,!?]?$/.test(raw)
           const word = accent ? raw.replace(/\*/g, '') : raw
           return (
             // Each word sits in its own clip so it can slide up from below its baseline.
-            <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-bottom">
+            <span key={i} className="inline-block overflow-hidden pt-[0.04em] align-bottom">
               <motion.span
-                className={`inline-block ${accent ? 'accent grad-text pr-[0.06em] text-[1.08em]' : ''}`}
-                variants={{ hidden: { y: '110%' }, shown: { y: '0%' } }}
-                transition={{ duration: 0.85, ease: EASE, delay: 0.08 + i * 0.07 }}
+                className={`inline-block ${accent ? 'text-accent' : ''}`}
+                variants={{ hidden: { y: '105%' }, shown: { y: '0%' } }}
+                transition={{ duration: 0.85, ease: EASE, delay: 0.06 + i * 0.06 }}
               >
                 {word}
               </motion.span>

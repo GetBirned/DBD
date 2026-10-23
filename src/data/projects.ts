@@ -20,6 +20,9 @@ export interface ProjectData {
   screenshots?: string[]
   /** A real screen-recording — takes over the main showcase area from screenshots[0]. */
   video?: string
+  /** Width ÷ height of `video` (or of screenshots[0] when there's no video), so the project card
+   *  can frame it exactly instead of letterboxing it. */
+  mediaRatio: number
   /** A wordmark image that replaces the plain-text name heading, when the brand has one. */
   nameLogo?: string
   /** Overrides the default height classes for `nameLogo`. */
@@ -47,6 +50,7 @@ export interface ProjectData {
 export const projects: ProjectData[] = [
   {
     name: 'DeadLotto',
+    mediaRatio: 1280 / 852,
     glyph: 'DL',
     logo: '/logos/project_logos/deadLotto_logo.png',
     nameLogo: '/logos/project_logos/deadLottoWordmark.png',
@@ -69,6 +73,7 @@ export const projects: ProjectData[] = [
   },
   {
     name: 'DartERP',
+    mediaRatio: 1280 / 844,
     glyph: 'DE',
     logo: '/logos/project_logos/dartERP_logo.png',
     tag: 'Desktop ERP',
@@ -92,6 +97,7 @@ export const projects: ProjectData[] = [
   },
   {
     name: 'FortLotto',
+    mediaRatio: 1280 / 720,
     glyph: 'FL',
     logo: '/logos/project_logos/FortLottoBlack.png',
     logoDark: '/logos/project_logos/FortLottoWhite.png',
@@ -116,6 +122,7 @@ export const projects: ProjectData[] = [
   },
   {
     name: 'Die Or Die',
+    mediaRatio: 1280 / 720,
     glyph: 'DD',
     logo: '/logos/project_logos/dieordie.png',
     nameLogo: '/logos/project_logos/dieOrDieWordmark.png',
@@ -139,6 +146,7 @@ export const projects: ProjectData[] = [
   },
   {
     name: 'PiRail',
+    mediaRatio: 1600 / 1000,
     glyph: 'PR',
     logo: '/logos/project_logos/pirailBlack.png',
     logoDark: '/logos/project_logos/pirailLight.png',

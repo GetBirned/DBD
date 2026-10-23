@@ -52,34 +52,32 @@ function Testimonials() {
             style={motionOK ? undefined : { opacity: n === i ? 1 : 0 }}
             className={`col-start-1 row-start-1 ${n === i ? '' : 'pointer-events-none'}`}
           >
-            <blockquote className="accent text-[clamp(28px,3.6vw,48px)] leading-[1.18] text-ink">
-              <span className="grad-text">“</span>
+            <blockquote className="max-w-[24em] text-[clamp(28px,3.6vw,60px)] leading-[1.1] font-medium tracking-[-0.02em] text-ink">
               {q.quote}
-              <span className="grad-text">”</span>
             </blockquote>
-            <figcaption className="mt-7 flex items-center gap-3">
-              {q.logo && <img src={q.logo} alt="" className="h-10 w-10 rounded-full bg-white object-contain p-1" />}
-              <span className="font-mono text-xs text-ink-dim">{q.attr}</span>
+            <figcaption className="mt-8 flex items-center gap-4">
+              {q.logo && <img src={q.logo} alt="" className="h-11 w-11 border border-ink bg-white object-contain p-1" />}
+              <span className="font-mono text-[12px] tracking-[0.06em] text-ink-dim uppercase">{q.attr}</span>
             </figcaption>
           </motion.figure>
         ))}
       </div>
 
       {QUOTES.length > 1 && (
-        <div className="mt-8 flex gap-2.5">
+        <div className="mt-10 flex gap-2">
           {QUOTES.map((c, n) => (
             <button
               key={c.name}
               type="button"
               onClick={() => setI(n)}
               aria-label={`Testimonial from ${c.name}`}
-              className="relative h-1.5 w-12 overflow-hidden rounded-full bg-white/15"
+              className="relative h-[3px] w-14 overflow-hidden bg-ink/15"
             >
               {/* The active pill fills over the auto-advance interval, so it doubles as a timer. */}
               {n === i && (
                 <motion.span
                   key={`${i}-${running}`}
-                  className="brand-gradient absolute inset-y-0 left-0"
+                  className="absolute inset-y-0 left-0 bg-accent"
                   initial={{ width: running ? '0%' : '100%' }}
                   animate={{ width: '100%' }}
                   transition={{ duration: running ? INTERVAL : 0, ease: 'linear' }}
@@ -97,11 +95,16 @@ function Testimonials() {
 export default function ClientsProof() {
   return (
     <section className="pt-[10vh] pb-[14vh]">
-      <div className="mx-auto max-w-[1000px] px-6 sm:px-12">
-        <Testimonials />
+      <div className="grid gap-x-[3vw] px-[4vw] lg:grid-cols-12">
+        <div aria-hidden className="display text-[clamp(120px,16vw,260px)] leading-[0.7] text-accent select-none lg:col-span-3">
+          “
+        </div>
+        <div className="mt-6 lg:col-span-9 lg:mt-0">
+          <Testimonials />
+        </div>
       </div>
       <div className="mt-[12vh]">
-        <div className="mx-auto mb-6 max-w-[1120px] px-6 font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase sm:px-12">
+        <div className="mb-5 border-t border-ink px-[4vw] pt-3 font-mono text-[12px] tracking-[0.1em] text-ink uppercase">
           Everyone I've built for
         </div>
         <div className="space-y-4">

@@ -10,13 +10,13 @@ import { playClick } from '@/lib/sound'
 
 function Media({ src, onEnlarge }: { src: string; onEnlarge: () => void }) {
   return (
-    <button type="button" onClick={onEnlarge} aria-label="Enlarge" className="group relative block aspect-[16/10] w-full overflow-hidden bg-black">
+    <button type="button" onClick={onEnlarge} aria-label="Enlarge" className="group relative block aspect-[16/10] w-full overflow-hidden bg-bg-soft">
       {isVideo(src) ? (
         <video key={src} src={src} autoPlay loop muted playsInline className="h-full w-full object-cover object-top" />
       ) : (
         <img key={src} src={src} alt="" className="h-full w-full object-cover object-top" />
       )}
-      <span className="absolute right-3 bottom-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/55 text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+      <span className="absolute right-3 bottom-3 flex h-10 w-10 items-center justify-center bg-ink text-paper opacity-0 transition-opacity group-hover:opacity-100">
         <ExpandIcon size={16} />
       </span>
     </button>
@@ -114,18 +114,12 @@ export default function CaseViewer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[995] overflow-y-auto overscroll-contain bg-[oklch(0.11_0.02_282)] outline-none"
+            className={`fixed inset-0 z-[995] overflow-y-auto overscroll-contain outline-none transition-[background] duration-500 ${item.dark ? 'text-paper' : 'text-ink'}`}
+            style={{ background: item.ground ?? 'var(--color-paper)' }}
           >
-            {/* The item's own color, glowing behind the case study. */}
-            <div
-              aria-hidden
-              className="pointer-events-none fixed inset-0 transition-[background] duration-700"
-              style={{ background: `radial-gradient(ellipse 60% 55% at 25% 35%, color-mix(in oklch, ${item.tint} 32%, transparent), transparent 70%)` }}
-            />
-
-            <div className="relative mx-auto flex min-h-full max-w-[1400px] flex-col px-4 py-4 sm:px-8 sm:py-6">
+            <div className="relative flex min-h-full flex-col px-[4vw] py-4 sm:py-6">
               <div className="flex items-center justify-between gap-4">
-                <div className="font-mono text-[11px] tracking-[0.18em] text-white/50 uppercase">
+                <div className="font-mono text-[12px] tracking-[0.1em] uppercase opacity-70">
                   {kindLabel} · {String(index! + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
                 </div>
                 <div className="flex items-center gap-2">
@@ -138,7 +132,7 @@ export default function CaseViewer({
                       type="button"
                       onClick={b.on}
                       aria-label={b.label}
-                      className="flex h-10 w-10 items-center justify-center rounded-full text-white/75 ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-white"
+                      className="flex h-11 w-11 items-center justify-center border border-current opacity-80 transition-opacity hover:opacity-100"
                     >
                       {b.icon}
                     </button>
@@ -147,7 +141,7 @@ export default function CaseViewer({
                     type="button"
                     onClick={onClose}
                     aria-label="Close"
-                    className="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-white text-black transition-transform hover:scale-105"
+                    className={`ml-2 flex h-11 w-11 items-center justify-center transition-colors ${item.dark ? 'bg-paper text-ink' : 'bg-ink text-paper hover:bg-accent'}`}
                   >
                     <CloseIcon size={18} />
                   </button>
@@ -179,13 +173,13 @@ export default function CaseViewer({
                               type="button"
                               onClick={() => setMediaIdx(i)}
                               aria-label={`Show ${isVideo(m) ? 'video' : 'screenshot'} ${i + 1}`}
-                              className={`relative aspect-[16/10] overflow-hidden rounded-xl bg-black ring-2 transition-all ${i === mediaIdx ? 'ring-white' : 'opacity-55 ring-transparent hover:opacity-90'}`}
+                              className={`relative aspect-[16/10] overflow-hidden border bg-bg-soft transition-opacity ${i === mediaIdx ? 'border-current outline-2 outline-offset-2 outline-current' : 'border-current/30 opacity-55 hover:opacity-90'}`}
                             >
                               {isVideo(m) ? (
                                 <>
                                   <video src={m} muted playsInline preload="metadata" className="h-full w-full object-cover object-top" />
                                   <span className="absolute inset-0 flex items-center justify-center">
-                                    <span className="rounded-full bg-black/60 px-2 py-0.5 font-mono text-[9px] tracking-wide text-white uppercase">
+                                    <span className="bg-ink px-2 py-0.5 font-mono text-[9px] tracking-wide text-paper uppercase">
                                       ▶ Video
                                     </span>
                                   </span>
@@ -199,39 +193,39 @@ export default function CaseViewer({
                       )}
                     </div>
 
-                    <div className="text-white">
+                    <div>
                       {item.titleImage ? (
                         <>
                           <h2 className="sr-only">{item.name}</h2>
                           <img
                             src={item.titleImage}
                             alt=""
-                            className={`h-auto max-h-16 w-auto max-w-full object-contain ${item.titleInvert ? 'invert' : ''}`}
+                            className="h-auto max-h-[clamp(56px,7vw,120px)] w-auto max-w-full object-contain object-left"
                           />
                         </>
                       ) : (
                         <div className="flex items-center gap-4">
                           {item.logo && (
-                            <img src={item.logo} alt="" className="h-14 w-14 shrink-0 rounded-full bg-white object-contain p-1.5" />
+                            <img src={item.logo} alt="" className="h-14 w-14 shrink-0 border border-ink bg-white object-contain p-1.5" />
                           )}
-                          <h2 className="text-[clamp(28px,3vw,40px)] leading-[1.05] tracking-[-0.03em]">{item.name}</h2>
+                          <h2 className="display text-[clamp(44px,4.6vw,84px)]">{item.name}</h2>
                         </div>
                       )}
 
                       <div className="mt-5 flex flex-wrap gap-2">
                         {[item.tag, item.meta].map((t) => (
-                          <span key={t} className="rounded-full px-3 py-1 font-mono text-[11px] text-white/70 ring-1 ring-white/15">
+                          <span key={t} className="border border-current/30 px-3 py-1 font-mono text-[11px] tracking-[0.04em] uppercase opacity-80">
                             {t}
                           </span>
                         ))}
                       </div>
 
-                      <p className="mt-6 text-[16px] leading-[1.75] text-white/80">{item.desc}</p>
+                      <p className="mt-6 text-[17px] leading-[1.65] opacity-85">{item.desc}</p>
 
                       {item.quote && (
-                        <figure className="mt-7 border-l-2 border-white/25 pl-5">
-                          <blockquote className="accent text-[22px] leading-snug text-white">“{item.quote}”</blockquote>
-                          {item.attr && <figcaption className="mt-3 font-mono text-[11px] text-white/50">{item.attr}</figcaption>}
+                        <figure className="mt-8 border-l-4 border-accent pl-5">
+                          <blockquote className="text-[22px] leading-snug font-medium tracking-[-0.01em]">“{item.quote}”</blockquote>
+                          {item.attr && <figcaption className="mt-3 font-mono text-[11px] tracking-[0.04em] uppercase opacity-60">{item.attr}</figcaption>}
                         </figure>
                       )}
 
@@ -241,7 +235,7 @@ export default function CaseViewer({
                             href={item.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 font-mono text-xs tracking-wide text-black uppercase transition-transform hover:-translate-y-0.5"
+                            className={`inline-flex items-center gap-2 px-5 py-3.5 font-mono text-xs tracking-[0.1em] uppercase transition-colors ${item.dark ? 'bg-paper text-ink' : 'bg-ink text-paper hover:bg-accent'}`}
                           >
                             Visit site <ArrowUpRight />
                           </a>
@@ -251,7 +245,7 @@ export default function CaseViewer({
                             href={item.repo}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 rounded-full px-5 py-3 font-mono text-xs tracking-wide text-white uppercase ring-1 ring-white/25 transition-colors hover:bg-white/10"
+                            className="inline-flex items-center gap-2 border border-current/40 px-5 py-3.5 font-mono text-xs tracking-[0.1em] uppercase transition-colors hover:border-current"
                           >
                             <GitHubIcon size={14} /> View code
                           </a>

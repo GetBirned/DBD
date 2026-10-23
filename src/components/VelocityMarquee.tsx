@@ -80,13 +80,13 @@ export interface MarqueeItem {
 
 function Tile({ item }: { item: MarqueeItem }) {
   return (
-    <div className="shrink-0 pr-4 sm:pr-5">
+    <div className="shrink-0 pr-3 sm:pr-4">
       <div
         title={item.name}
-        className="flex h-24 w-40 items-center justify-center rounded-2xl bg-white px-5 transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.04] sm:h-28 sm:w-48"
+        className="flex h-28 w-44 items-center justify-center border border-ink bg-white px-5 transition-transform duration-300 hover:-translate-y-1 sm:h-36 sm:w-60"
       >
         {item.logo ? (
-          <img src={item.logo} alt={item.name} loading="lazy" decoding="async" className="max-h-14 w-auto max-w-full object-contain sm:max-h-16" />
+          <img src={item.logo} alt={item.name} loading="lazy" decoding="async" className="max-h-16 w-auto max-w-full object-contain sm:max-h-20" />
         ) : (
           <span className="text-center font-display text-sm font-bold text-black/70">{item.name}</span>
         )}

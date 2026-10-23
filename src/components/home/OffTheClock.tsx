@@ -26,7 +26,7 @@ function LiveDot() {
 }
 
 const Eyebrow = ({ children }: { children: ReactNode }) => (
-  <div className="mb-5 font-mono text-[11px] tracking-[0.18em] text-white/45 uppercase">{children}</div>
+  <div className="mb-5 border-b border-white/20 pb-2 font-mono text-[12px] tracking-[0.1em] text-white/60 uppercase">{children}</div>
 )
 
 /* ───────────────────────────── Music ───────────────────────────── */
@@ -48,7 +48,7 @@ function Vinyl() {
   return (
     <div ref={ref}>
       {/* Right padding reserves the room the disc slides into. */}
-      <div className="relative w-full max-w-[460px] pr-[40%]">
+      <div className="relative w-full max-w-[640px] pr-[40%]">
         <div className="relative aspect-square">
           <motion.div style={{ x: motionOK ? slide : '46%' }} className="absolute inset-[4%]">
             <div
@@ -60,7 +60,7 @@ function Vinyl() {
               }}
             >
               <div className="absolute inset-[31%] overflow-hidden rounded-full ring-4 ring-black/60">
-                {art ? <img src={art} alt="" className="h-full w-full object-cover" /> : <div className="brand-gradient h-full w-full" />}
+                {art ? <img src={art} alt="" className="h-full w-full object-cover" /> : <div className="h-full w-full bg-accent" />}
               </div>
               <div className="absolute inset-[48.5%] rounded-full bg-[#0c0c0e]" />
             </div>
@@ -74,20 +74,20 @@ function Vinyl() {
             />
           </motion.div>
 
-          <div className="absolute inset-0 overflow-hidden rounded-xl bg-white/5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
+          <div className="absolute inset-0 overflow-hidden bg-white/5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.9)]">
             {loading ? (
               <div className="h-full w-full animate-pulse bg-white/5" />
             ) : art ? (
               <img src={art} alt={`${data?.album ?? data?.title} cover`} className="h-full w-full object-cover" />
             ) : (
-              <div className="brand-gradient h-full w-full" />
+              <div className="h-full w-full bg-accent" />
             )}
           </div>
         </div>
       </div>
 
       {data?.title && (
-        <a href={data.url ?? undefined} target="_blank" rel="noreferrer" className="group mt-7 block max-w-[460px]">
+        <a href={data.url ?? undefined} target="_blank" rel="noreferrer" className="group mt-7 block max-w-[640px]">
           <div className="flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] text-white/50 uppercase">
             {data.isPlaying ? (
               <>
@@ -97,7 +97,7 @@ function Vinyl() {
               'Last played'
             )}
           </div>
-          <div className="mt-2 truncate font-display text-[28px] leading-tight font-bold text-white group-hover:underline">
+          <div className="display mt-2 truncate text-[clamp(40px,4vw,64px)] text-white group-hover:underline">
             {data.title}
           </div>
           <div className="truncate text-white/60">{data.artist}</div>
@@ -125,7 +125,7 @@ function PlaylistFan() {
       <Eyebrow>Playlists I've made</Eyebrow>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {loading
-          ? [0, 1, 2, 3].map((i) => <div key={i} className="aspect-square animate-pulse rounded-2xl bg-white/5" />)
+          ? [0, 1, 2, 3].map((i) => <div key={i} className="aspect-square animate-pulse bg-white/5" />)
           : list.map((pl, i) => (
               <FanCard key={pl.id} playlist={pl} index={i} cols={cols} deal={deal} motionOK={motionOK} />
             ))}
@@ -163,7 +163,7 @@ function FanCard({
       style={motionOK ? { x, rotate, y, zIndex: 10 - Math.abs(col - center) * 2 } : undefined}
       className="group relative block"
     >
-      <div className="aspect-square overflow-hidden rounded-2xl bg-white/5 shadow-[0_24px_40px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
+      <div className="aspect-square overflow-hidden bg-white/5 shadow-[0_24px_40px_-20px_rgba(0,0,0,0.9)]">
         {pl.image && (
           <img src={pl.image} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         )}
@@ -189,7 +189,7 @@ function TopFive() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 font-mono text-[11px] tracking-[0.14em] text-white/75 uppercase transition-colors hover:border-white hover:text-white"
+        className="inline-flex items-center gap-2 border border-white/30 px-4 py-2.5 font-mono text-[11px] tracking-[0.1em] text-white/80 uppercase transition-colors hover:border-white hover:text-white"
       >
         My top 5 right now
         <ChevronDown size={14} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
@@ -213,9 +213,9 @@ function TopFive() {
                         <a href={it.url ?? undefined} target="_blank" rel="noreferrer" className="group flex items-center gap-3">
                           <span className="w-4 font-mono text-xs text-white/35">{i + 1}</span>
                           {it.image ? (
-                            <img src={it.image} alt="" loading="lazy" className="h-11 w-11 rounded-lg object-cover" />
+                            <img src={it.image} alt="" loading="lazy" className="h-11 w-11 object-cover" />
                           ) : (
-                            <span className="h-11 w-11 rounded-lg bg-white/5" />
+                            <span className="h-11 w-11 bg-white/5" />
                           )}
                           <span className="min-w-0">
                             <span className="block truncate text-sm font-semibold text-white group-hover:underline">{it.name}</span>
@@ -248,7 +248,7 @@ function PlatformStatus({
   status: (SteamStatusData & { platinum?: boolean }) | PsnStatusData | null
   loading: boolean
 }) {
-  if (loading) return <div className="h-[132px] animate-pulse rounded-3xl bg-white/5" />
+  if (loading) return <div className="h-[150px] animate-pulse bg-white/5" />
   if (!status?.title) return null
   const sub = 'subtitle' in status ? status.subtitle : null
 
@@ -257,7 +257,7 @@ function PlatformStatus({
       href={status.url ?? profile}
       target="_blank"
       rel="noreferrer"
-      className="group relative flex h-[132px] items-end overflow-hidden rounded-3xl ring-1 ring-white/10"
+      className="group relative flex h-[150px] items-end overflow-hidden border border-white/15"
     >
       {status.image && (
         <img
@@ -272,7 +272,7 @@ function PlatformStatus({
           {status.isPlaying && <LiveDot />}
           {platform} · {status.isPlaying ? 'Playing now' : 'Last played'}
         </div>
-        <div className="mt-1 font-display text-2xl leading-tight font-bold text-white">{status.title}</div>
+        <div className="display mt-1 text-[clamp(32px,3vw,48px)] text-white">{status.title}</div>
         {(sub || typeof status.platinum === 'boolean') && (
           <div className="mt-0.5 font-mono text-[11px] text-white/55">
             {sub ?? (status.platinum ? 'Platinum Earned' : 'No Platinum')}
@@ -304,24 +304,24 @@ function GameMosaic({ tiles, loading }: { tiles: MosaicTile[]; loading: boolean 
         className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
       >
         {loading
-          ? Array.from({ length: 8 }, (_, i) => <div key={i} className="aspect-video animate-pulse rounded-2xl bg-white/5" />)
+          ? Array.from({ length: 8 }, (_, i) => <div key={i} className="aspect-video animate-pulse bg-white/5" />)
           : tiles.map((t) => (
               <a
                 key={t.key}
                 href={t.url ?? undefined}
                 target="_blank"
                 rel="noreferrer"
-                className="group relative block aspect-video overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10"
+                className="group relative block aspect-video overflow-hidden bg-white/5"
               >
                 {t.image && (
                   <img src={t.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
-                <span className="absolute top-2 left-2 rounded-full bg-black/55 px-2 py-0.5 font-mono text-[9px] tracking-wide text-white/80 uppercase backdrop-blur-sm">
+                <span className="absolute top-2 left-2 bg-black/70 px-2 py-0.5 font-mono text-[9px] tracking-wide text-white/85 uppercase">
                   {t.platform}
                 </span>
                 {t.badge && (
-                  <span className="brand-gradient absolute top-2 right-2 rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-white uppercase">
+                  <span className="absolute top-2 right-2 bg-accent px-2 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-white uppercase">
                     {t.badge}
                   </span>
                 )}
@@ -389,9 +389,10 @@ function Games() {
 
 export default function OffTheClock() {
   return (
-    <section className="px-6 pt-[16vh] pb-[24vh] sm:px-12">
-      <div className="mx-auto max-w-[1120px]">
+    <section className="bg-ink px-[4vw] pt-[16vh] pb-[18vh] text-paper">
+      <div>
         <ChapterHeading
+          tone="paper"
           title="What I'm *into.*"
         />
 

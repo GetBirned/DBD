@@ -3,15 +3,9 @@ import { useInView } from 'framer-motion'
 import { useGitHubData, type ContributionsData, type ContributionDay } from '@/hooks/useGitHubData'
 import { ArrowUpRight } from './icons'
 
-// Site palette rather than GitHub's green, so the board reads as part of the page instead of
+// The page's cobalt rather than GitHub's green, so the board reads as part of the page instead of
 // a pasted-in widget. Index = GitHub's own 0–4 intensity bucket.
-const LEVEL_COLORS = [
-  'oklch(1 0 0 / 0.06)',
-  'oklch(0.45 0.13 285)',
-  'oklch(0.55 0.17 292)',
-  'oklch(0.65 0.2 305)',
-  'oklch(0.76 0.17 330)',
-]
+const LEVEL_COLORS = ['rgb(20 20 19 / 0.08)', '#bcc6fb', '#8193f8', '#4d66f5', '#2244f2']
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -52,13 +46,11 @@ export default function GitHubActivity() {
   })
 
   return (
-    <div ref={ref} className={`rounded-[28px] bg-white/[0.035] p-6 ring-1 ring-line sm:p-8 ${inView ? 'gh-in' : ''}`}>
+    <div ref={ref} className={`border border-ink bg-panel p-5 sm:p-8 ${inView ? 'gh-in' : ''}`}>
       <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
         <div>
-          <div className="font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase">GitHub, last 12 months</div>
-          <div className="mt-1.5 font-display text-2xl font-bold text-ink">
-            {data.total.toLocaleString()} <span className="text-ink-dim">contributions</span>
-          </div>
+          <div className="font-mono text-[12px] tracking-[0.1em] text-ink-dim uppercase">GitHub, last 12 months</div>
+          <div className="display mt-2 text-[clamp(36px,4vw,64px)] text-ink">{data.total.toLocaleString()} contributions</div>
         </div>
         <a
           href={data.profileUrl}
@@ -70,24 +62,27 @@ export default function GitHubActivity() {
         </a>
       </div>
 
-      {/* Wide content scrolls inside its own container so the page body never scrolls sideways. */}
+      {/* The weeks share the full width — cells grow with the screen instead of sitting at a fixed
+          12px and leaving half the frame empty. Below ~720px the cells would get too small to
+          read, so there it holds that width and scrolls inside its own container instead (the
+          page body never scrolls sideways). */}
       <div className="overflow-x-auto pb-1 [scrollbar-width:thin]">
-        <div className="inline-block min-w-full">
-          <div className="mb-1 flex gap-[3px]">
+        <div className="min-w-[720px]">
+          <div className="mb-1.5 grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` }}>
             {monthLabels.map((label, i) => (
-              <div key={i} className="w-[12px] shrink-0 font-mono text-[9px] text-ink-faint">
+              <div key={i} className="font-mono text-[10px] whitespace-nowrap text-ink-faint">
                 {label}
               </div>
             ))}
           </div>
-          <div className="flex gap-[3px]">
+          <div className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` }}>
             {weeks.map((week, wi) => (
-              <div key={wi} className="flex shrink-0 flex-col gap-[3px]">
+              <div key={wi} className="flex flex-col gap-[3px]">
                 {week.map((day, di) => (
                   <div
                     key={di}
                     title={day ? `${day.count} contribution${day.count === 1 ? '' : 's'} on ${day.date}` : undefined}
-                    className="gh-cell h-[12px] w-[12px] rounded-[3px]"
+                    className="gh-cell aspect-square w-full"
                     style={{
                       background: day ? (LEVEL_COLORS[day.level] ?? LEVEL_COLORS[0]) : 'transparent',
                       transitionDelay: `${wi * 14 + di * 8}ms`,
@@ -103,7 +98,7 @@ export default function GitHubActivity() {
       <div className="mt-4 flex items-center justify-end gap-1.5 font-mono text-[10px] text-ink-faint">
         <span>Less</span>
         {LEVEL_COLORS.map((c) => (
-          <span key={c} className="h-[12px] w-[12px] rounded-[3px]" style={{ background: c }} />
+          <span key={c} className="h-[12px] w-[12px]" style={{ background: c }} />
         ))}
         <span>More</span>
       </div>

@@ -21,7 +21,7 @@ export default function Lightbox({ src, onClose }: { src: string | null; onClose
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm"
+          className="fixed inset-0 z-[1000] flex items-center justify-center bg-ink/95 p-6"
           onClick={onClose}
         >
           {src.endsWith('.webm') ? (
@@ -36,7 +36,7 @@ export default function Lightbox({ src, onClose }: { src: string | null; onClose
               loop
               muted
               playsInline
-              className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
+              className="max-h-[90vh] max-w-[90vw] object-contain"
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
@@ -47,7 +47,7 @@ export default function Lightbox({ src, onClose }: { src: string | null; onClose
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               src={src}
               alt=""
-              className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
+              className="max-h-[90vh] max-w-[90vw] object-contain"
               onClick={(e) => e.stopPropagation()}
             />
           )}
@@ -55,7 +55,7 @@ export default function Lightbox({ src, onClose }: { src: string | null; onClose
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="absolute top-6 right-6 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-lg transition-colors hover:bg-white/20"
+            className="absolute top-6 right-6 flex h-11 w-11 items-center justify-center bg-paper text-ink transition-colors hover:bg-white"
           >
             <CloseIcon />
           </button>

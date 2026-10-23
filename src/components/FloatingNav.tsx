@@ -8,22 +8,10 @@ import { EASE } from '@/lib/motion'
 const GITHUB = 'https://github.com/GetBirned'
 const LINKEDIN = 'https://www.linkedin.com/in/dartagnan-birnie/'
 
-function ResumeButton() {
-  return (
-    <a
-      href="/resume.pdf"
-      download="Dartagnan_Birnie_Resume.pdf"
-      className="brand-gradient rounded-full px-4 py-2.5 font-mono text-[11px] tracking-wide text-white uppercase transition-transform hover:-translate-y-px"
-    >
-      Résumé
-    </a>
-  )
-}
-
 /**
- * Floating site nav, shown once the hero's own icon row has gone. Desktop: every chapter, with a
- * highlight that slides to whichever one you're reading. Phones: the current chapter's name, and
- * a menu sheet for the rest. A scroll-progress line runs along the top edge.
+ * Site nav: a slim bar across the top once the hero's own links have scrolled away. Desktop lists
+ * every chapter, underlining whichever one you're reading; phones show that chapter's name and a
+ * menu for the rest. Its bottom edge doubles as a scroll-progress line.
  */
 export default function FloatingNav() {
   const { current } = useChapter()
@@ -33,8 +21,7 @@ export default function FloatingNav() {
   const bar = useSpring(scrollYProgress, { stiffness: 220, damping: 40 })
 
   useMotionValueEvent(scrollY, 'change', (y) => {
-    // The hero fades its own icon row out over this first stretch of scroll.
-    const show = y > window.innerHeight * 0.12
+    const show = y > window.innerHeight * 0.35
     setShown(show)
     if (!show) setMenu(false)
   })
@@ -47,123 +34,122 @@ export default function FloatingNav() {
   const currentLabel = CHAPTER_LINKS.find((c) => c.id === current)?.label
 
   return (
-    <>
-      <motion.div
-        aria-hidden
-        style={{ scaleX: bar }}
-        className="fixed inset-x-0 top-0 z-[990] h-[3px] origin-left bg-gradient-to-r from-grad-a via-grad-b to-grad-c"
-      />
-      <AnimatePresence>
-        {shown && (
-          <motion.nav
-            aria-label="Site"
-            initial={{ y: -80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -80, opacity: 0 }}
-            transition={{ duration: 0.45, ease: EASE }}
-            className="fixed inset-x-3 top-3 z-[990] mx-auto w-auto max-w-fit sm:top-4"
-          >
-            <div className="flex items-center gap-1 rounded-full bg-[oklch(0.17_0.02_282/0.72)] p-1.5 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.8)] ring-1 ring-white/10 backdrop-blur-xl">
-              <button
-                type="button"
-                onClick={() => jump('top')}
-                aria-label="Back to top"
-                className="flex h-9 items-center rounded-full px-3 transition-colors hover:bg-white/10"
-              >
-                <LogoIcon variant="db" height={16} className="invert" />
-              </button>
+    <AnimatePresence>
+      {shown && (
+        <motion.nav
+          aria-label="Site"
+          initial={{ y: '-100%' }}
+          animate={{ y: 0 }}
+          exit={{ y: '-100%' }}
+          transition={{ duration: 0.4, ease: EASE }}
+          className="fixed inset-x-0 top-0 z-[990] border-b border-ink bg-paper"
+        >
+          <div className="flex h-14 items-center gap-4 px-[4vw]">
+            <button type="button" onClick={() => jump('top')} aria-label="Back to top" className="flex h-10 items-center">
+              <LogoIcon variant="db" height={18} />
+            </button>
 
-              {/* Desktop: every chapter. */}
-              <div className="hidden items-center lg:flex">
-                {CHAPTER_LINKS.map((c) => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={() => jump(c.id)}
-                    aria-current={current === c.id ? 'true' : undefined}
-                    className={`relative rounded-full px-3.5 py-2 text-[13px] font-semibold transition-colors ${current === c.id ? 'text-white' : 'text-white/55 hover:text-white'}`}
-                  >
-                    {current === c.id && (
-                      <motion.span
-                        layoutId="nav-active"
-                        transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-                        className="absolute inset-0 rounded-full bg-white/[0.12] ring-1 ring-white/15"
-                      />
-                    )}
-                    <span className="relative">{c.label}</span>
-                  </button>
-                ))}
-                <span className="mx-1.5 h-5 w-px bg-white/15" />
-                <a href={GITHUB} target="_blank" rel="noreferrer" aria-label="GitHub" className="flex h-9 w-9 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/10 hover:text-white">
-                  <GitHubIcon size={17} />
-                </a>
-                <a href={LINKEDIN} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="mr-1 flex h-9 w-9 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/10 hover:text-white">
-                  <LinkedInIcon size={16} />
-                </a>
-              </div>
+            {/* Desktop: every chapter. */}
+            <div className="ml-6 hidden flex-1 items-center gap-1 lg:flex">
+              {CHAPTER_LINKS.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => jump(c.id)}
+                  aria-current={current === c.id ? 'true' : undefined}
+                  className={`relative px-3 py-2 font-mono text-[12px] tracking-[0.1em] uppercase transition-colors ${current === c.id ? 'text-ink' : 'text-ink-faint hover:text-ink'}`}
+                >
+                  {c.label}
+                  {current === c.id && (
+                    <motion.span
+                      layoutId="nav-underline"
+                      transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+                      className="absolute inset-x-3 -bottom-px h-[2px] bg-accent"
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
 
-              {/* Phones: the chapter you're in, swapping as you scroll. */}
-              <div className="relative h-9 w-[124px] overflow-hidden lg:hidden">
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.span
-                    key={currentLabel ?? 'home'}
-                    initial={{ y: 18, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -18, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: EASE }}
-                    className="absolute inset-0 flex items-center justify-center font-mono text-[11px] tracking-[0.14em] text-white/75 uppercase"
-                  >
-                    {currentLabel ?? 'Home'}
-                  </motion.span>
-                </AnimatePresence>
-              </div>
+            {/* Phones: the chapter you're in, swapping as you scroll. */}
+            <div className="relative h-10 flex-1 overflow-hidden lg:hidden">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={currentLabel ?? 'home'}
+                  initial={{ y: 18, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -18, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: EASE }}
+                  className="absolute inset-0 flex items-center font-mono text-[11px] tracking-[0.12em] text-ink uppercase"
+                >
+                  {currentLabel ?? 'Home'}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <a href={GITHUB} target="_blank" rel="noreferrer" aria-label="GitHub" className="hidden h-10 w-10 items-center justify-center text-ink-dim transition-colors hover:text-ink lg:flex">
+                <GitHubIcon size={17} />
+              </a>
+              <a href={LINKEDIN} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="mr-2 hidden h-10 w-10 items-center justify-center text-ink-dim transition-colors hover:text-ink lg:flex">
+                <LinkedInIcon size={16} />
+              </a>
               <button
                 type="button"
                 onClick={() => setMenu((m) => !m)}
                 aria-expanded={menu}
                 aria-label={menu ? 'Close menu' : 'Open menu'}
-                className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] rounded-full transition-colors hover:bg-white/10 lg:hidden"
+                className="mr-1 flex h-10 w-10 flex-col items-center justify-center gap-[5px] lg:hidden"
               >
-                <span className={`h-[1.5px] w-4 bg-white transition-transform duration-300 ${menu ? 'translate-y-[3.25px] rotate-45' : ''}`} />
-                <span className={`h-[1.5px] w-4 bg-white transition-transform duration-300 ${menu ? '-translate-y-[3.25px] -rotate-45' : ''}`} />
+                <span className={`h-[2px] w-5 bg-ink transition-transform duration-300 ${menu ? 'translate-y-[3.5px] rotate-45' : ''}`} />
+                <span className={`h-[2px] w-5 bg-ink transition-transform duration-300 ${menu ? '-translate-y-[3.5px] -rotate-45' : ''}`} />
               </button>
-
-              <ResumeButton />
+              <a
+                href="/resume.pdf"
+                download="Dartagnan_Birnie_Resume.pdf"
+                className="bg-ink px-4 py-2.5 font-mono text-[11px] tracking-[0.1em] text-paper uppercase transition-colors hover:bg-accent"
+              >
+                Résumé
+              </a>
             </div>
+          </div>
 
-            <AnimatePresence>
-              {menu && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                  transition={{ duration: 0.25, ease: EASE }}
-                  className="mt-2 origin-top rounded-3xl bg-[oklch(0.17_0.02_282/0.94)] p-3 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/10 backdrop-blur-xl lg:hidden"
-                >
+          <motion.div aria-hidden style={{ scaleX: bar }} className="absolute inset-x-0 -bottom-px h-[2px] origin-left bg-accent" />
+
+          <AnimatePresence>
+            {menu && (
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: 'auto' }}
+                exit={{ height: 0 }}
+                transition={{ duration: 0.35, ease: EASE }}
+                className="overflow-hidden border-t border-ink lg:hidden"
+              >
+                <div className="px-[4vw] py-3">
                   {CHAPTER_LINKS.map((c) => (
                     <button
                       key={c.id}
                       type="button"
                       onClick={() => jump(c.id)}
-                      className={`flex w-full items-center rounded-2xl px-4 py-3.5 text-left font-display text-lg font-bold transition-colors ${current === c.id ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5'}`}
+                      className={`display block w-full py-2 text-left text-[44px] ${current === c.id ? 'text-accent' : 'text-ink'}`}
                     >
                       {c.label}
                     </button>
                   ))}
-                  <div className="mt-2 flex gap-2 border-t border-white/10 px-1 pt-3">
-                    <a href={GITHUB} target="_blank" rel="noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white/5 py-3 font-mono text-[11px] text-white/75 uppercase">
+                  <div className="mt-3 flex gap-6 border-t border-line pt-4 pb-2 font-mono text-[11px] tracking-[0.1em] uppercase">
+                    <a href={GITHUB} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
                       <GitHubIcon size={14} /> GitHub
                     </a>
-                    <a href={LINKEDIN} target="_blank" rel="noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white/5 py-3 font-mono text-[11px] text-white/75 uppercase">
+                    <a href={LINKEDIN} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
                       <LinkedInIcon size={13} /> LinkedIn
                     </a>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-    </>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.nav>
+      )}
+    </AnimatePresence>
   )
 }

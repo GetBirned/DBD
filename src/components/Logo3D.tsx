@@ -218,14 +218,18 @@ export default function Logo3D({
   height,
   interactionRef,
   shadow = true,
+  cssWidth,
 }: {
   variant: LogoVariant
   width: number
   height: number
   interactionRef: RefObject<HTMLElement | null>
-  /** The soft ground shadow beneath the mark. Off for the small chapter marks: on the dark page it
-   *  reads as a smudge, and it adds height below the mark that throws off centering it on a line. */
+  /** The soft ground shadow beneath the mark. Off for the small chapter marks: it adds height
+   *  below the mark that throws off centering it on a line of type. */
   shadow?: boolean
+  /** CSS width for the stage, overriding the default `min(80vw, {width}px)` — e.g. to also cap it
+   *  by the viewport height. `width`/`height` still set the aspect ratio. */
+  cssWidth?: string
 }) {
   const groupRef = useRef<HTMLDivElement>(null)
   useTilt3D(interactionRef, groupRef)
@@ -236,7 +240,7 @@ export default function Logo3D({
         <div
           className="relative"
           style={{
-            width: `min(80vw, ${width}px)`,
+            width: cssWidth ?? `min(80vw, ${width}px)`,
             aspectRatio: `${width} / ${height}`,
             perspective: 900,
           }}

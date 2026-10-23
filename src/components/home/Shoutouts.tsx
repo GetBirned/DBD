@@ -45,10 +45,10 @@ const INTERVAL = 8
 // paragraph doesn't take over the screen.
 const size = (q: string) =>
   q.length <= 80
-    ? 'text-[clamp(32px,4.4vw,58px)]'
+    ? 'text-[clamp(32px,4.4vw,76px)]'
     : q.length <= 170
-      ? 'text-[clamp(27px,3.5vw,46px)]'
-      : 'text-[clamp(23px,2.8vw,37px)]'
+      ? 'text-[clamp(27px,3.4vw,58px)]'
+      : 'text-[clamp(23px,2.7vw,46px)]'
 
 // Outgoing fades first, incoming follows — the same sequence as the client quotes.
 const swap: Variants = {
@@ -57,9 +57,9 @@ const swap: Variants = {
 }
 
 /**
- * Coworker shoutouts given the same stage as the client testimonials: one at a time, large, in
- * the serif accent, advancing on their own while on screen. A row of story-style segments shows
- * how many there are and how far along you are, and jumps to any of them.
+ * Coworker shoutouts given the same stage as the client testimonials: one at a time and large,
+ * advancing on their own while on screen. A row of story-style segments shows how many there are
+ * and how far along you are, and jumps to any of them. Styled for an ink band.
  */
 export default function Shoutouts({
   items,
@@ -89,23 +89,19 @@ export default function Shoutouts({
   return (
     <div
       ref={ref}
-      className="relative"
+      className="relative grid gap-x-[3vw] gap-y-8 lg:grid-cols-12"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* An oversized quote mark sitting behind the text. */}
-      <span
-        aria-hidden
-        className="accent grad-text pointer-events-none absolute -top-[0.42em] -left-[0.06em] text-[clamp(180px,24vw,340px)] leading-none opacity-[0.16] select-none"
-      >
-        “
-      </span>
-
-      <div className="relative">
-        <div className="mb-8 font-mono text-[11px] tracking-[0.18em] text-ink-faint uppercase">
-          In my coworkers' words · {items.length} shoutouts
+      <div className="lg:col-span-3">
+        <div className="font-mono text-[12px] tracking-[0.1em] text-paper/60 uppercase">In my coworkers' words</div>
+        {/* A flat cobalt quote mark, set as type rather than drawn. */}
+        <div aria-hidden className="display mt-2 text-[clamp(120px,16vw,260px)] leading-[0.7] text-accent select-none">
+          “
         </div>
+      </div>
 
+      <div className="lg:col-span-9">
         {/* Every quote stacked in one grid cell: the cell sizes to the tallest, so the section
             never jumps in height as they rotate. Only the active one is visible. */}
         <div className="grid">
@@ -121,16 +117,14 @@ export default function Shoutouts({
                 style={motionOK ? undefined : { opacity: on ? 1 : 0 }}
                 className={`col-start-1 row-start-1 ${on ? '' : 'pointer-events-none'}`}
               >
-                <blockquote className={`accent ${size(s.quote)} leading-[1.18] text-ink`}>
-                  <span className="grad-text">“</span>
+                <blockquote className={`${size(s.quote)} max-w-[24em] leading-[1.12] font-medium tracking-[-0.02em] text-paper`}>
                   {s.quote}
-                  <span className="grad-text">”</span>
                 </blockquote>
-                <figcaption className="mt-7 flex items-center gap-3.5">
-                  {s.logo && <img src={s.logo} alt="" className="h-10 w-10 rounded-full bg-white object-contain p-1.5" />}
+                <figcaption className="mt-8 flex items-center gap-4">
+                  {s.logo && <img src={s.logo} alt="" className="h-11 w-11 shrink-0 bg-white object-contain p-1.5" />}
                   <div>
-                    <div className="text-[15px] font-semibold text-ink">{s.name ?? `A ${s.company} coworker`}</div>
-                    <div className="font-mono text-[11px] text-ink-faint">
+                    <div className="text-[16px] font-semibold text-paper">{s.name ?? `A ${s.company} coworker`}</div>
+                    <div className="font-mono text-[11px] tracking-[0.06em] text-paper/55 uppercase">
                       {s.title ? `${s.title}, ` : ''}
                       {s.company}
                     </div>
@@ -141,7 +135,7 @@ export default function Shoutouts({
           })}
         </div>
 
-        <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
+        <div className="mt-12 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
           {/* One slim segment per shoutout, story-style: seen ones stay lit, the current one
               fills over its interval (so the bar doubles as the auto-advance timer), the rest
               wait dim. Each is a tall, invisible hit area around a 3px line. */}
@@ -158,12 +152,12 @@ export default function Shoutouts({
                   className="group flex-1 py-3"
                 >
                   <span
-                    className={`block h-[3px] overflow-hidden rounded-full transition-colors duration-300 ${i < active ? 'bg-white/45' : 'bg-white/[0.13] group-hover:bg-white/30'}`}
+                    className={`block h-[3px] overflow-hidden transition-colors duration-300 ${i < active ? 'bg-paper/70' : 'bg-paper/15 group-hover:bg-paper/40'}`}
                   >
                     {on && (
                       <motion.span
                         key={`${active}-${running}`}
-                        className="brand-gradient block h-full"
+                        className="block h-full bg-accent"
                         initial={{ width: running ? '0%' : '100%' }}
                         animate={{ width: '100%' }}
                         transition={{ duration: running ? INTERVAL : 0, ease: 'linear' }}
@@ -175,23 +169,23 @@ export default function Shoutouts({
             })}
           </div>
 
-          <div className="flex shrink-0 items-center justify-end gap-3">
+          <div className="flex shrink-0 items-center justify-end gap-2">
             <button
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous shoutout"
-              className="flex h-10 w-10 items-center justify-center rounded-full text-ink-dim ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-ink"
+              className="flex h-11 w-11 items-center justify-center border border-paper/30 text-paper transition-colors hover:border-paper hover:bg-paper hover:text-ink"
             >
               <ChevronLeft />
             </button>
-            <span className="min-w-[56px] text-center font-mono text-xs text-ink-faint tabular-nums">
+            <span className="min-w-[64px] text-center font-mono text-xs text-paper/60 tabular-nums">
               {String(active + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
             </span>
             <button
               type="button"
               onClick={() => go(1)}
               aria-label="Next shoutout"
-              className="flex h-10 w-10 items-center justify-center rounded-full text-ink-dim ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-ink"
+              className="flex h-11 w-11 items-center justify-center border border-paper/30 text-paper transition-colors hover:border-paper hover:bg-paper hover:text-ink"
             >
               <ChevronRight />
             </button>
