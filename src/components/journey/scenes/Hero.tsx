@@ -75,7 +75,7 @@ export default function Hero({ still = false }: { still?: boolean }) {
     { role: 'b.s. in computer science at', names: ['University of New Hampshire'] },
     {
       role: 'approved web design contractor',
-      names: [{ text: 'NH SBDC', href: 'https://www.nhsbdc.org/' }, 'and', { text: 'GRDC', href: 'https://graftonrdc.org/' }],
+      names: [{ text: 'NH SBDC', href: 'https://www.nhsbdc.org/' }, { text: 'GRDC', href: 'https://graftonrdc.org/' }],
     },
     { role: 'filmed in', names: ['Alton, NH'] },
   ]
