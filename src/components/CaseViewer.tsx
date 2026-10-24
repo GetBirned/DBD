@@ -144,7 +144,7 @@ export default function CaseViewer({
               <Monitor
                 className="max-h-[min(96svh,1100px)]"
                 title={`${kindLabel} ${count(index! + 1)} / ${count(items.length)} · ${item.domain ?? item.name}`}
-                hint="left, right: browse | esc: exit"
+                hint="left, right: browse | esc: exit | /: mu/th/ur"
                 controls={
                   <>
                     <BarButton label="Previous" onClick={() => go(-1)}>

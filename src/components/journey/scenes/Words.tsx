@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { clients } from '@/data/clients'
 import { experience, type ExperienceEntry } from '@/data/experience'
 import Credit from '../Credit'
+import { useScreens } from '@/lib/ship'
 import { terminal } from '@/lib/sound'
 import { pass, type Timeline } from '../motion'
 import Popup from '../Popup'
@@ -111,6 +112,8 @@ function Reel({ set }: { set: SetName }) {
  */
 export default function Words({ still = false }: { still?: boolean }) {
   const [open, setOpen] = useState<SetName | null>(null)
+  // The ship's computer can call up either set of transmissions.
+  useScreens((id) => id.startsWith('words:') && setOpen(id.slice('words:'.length) as SetName))
   return (
     <div className={`flex items-center justify-center px-[7vw] ${still ? 'py-[10vh]' : 'h-full pt-[12vh]'}`}>
       <div data-in>

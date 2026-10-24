@@ -3,6 +3,7 @@ import { Ascii, Readout, ReadoutLabel } from '@/components/Monitor'
 import { POSTERS } from '@/data/posters'
 import { useSpotifyData, type NowPlayingData, type RecentTrack, type TopItemsData } from '@/hooks/useSpotifyData'
 import { useSteamData, type SteamStatusData, type TopGame } from '@/hooks/useSteamData'
+import { useScreens } from '@/lib/ship'
 import { terminal } from '@/lib/sound'
 import Credit from '../Credit'
 import { pass, type Timeline } from '../motion'
@@ -168,6 +169,8 @@ function Movies() {
  */
 export default function Life({ still = false }: { still?: boolean }) {
   const [open, setOpen] = useState<Kind | null>(null)
+  // The ship's computer can call up a log.
+  useScreens((id) => id.startsWith('log:') && setOpen(id.slice('log:'.length) as Kind))
   const steam = useSteamData<SteamStatusData>('/api/steam/now-playing').data
   const steamTop = useSteamData<TopGame[]>('/api/steam/top').data
   const now = useSpotifyData<NowPlayingData>('/api/spotify/now-playing').data

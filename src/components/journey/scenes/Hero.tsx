@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { experience, type ExperienceEntry } from '@/data/experience'
 import { Ascii } from '@/components/Monitor'
+import { useScreens } from '@/lib/ship'
 import AltonMap from '../AltonMap'
 import Credit, { type CreditName } from '../Credit'
 import { pass, type Timeline } from '../motion'
@@ -60,6 +61,11 @@ export const OPENING_LEN = OPEN + COUNT * CARD_LEN + OUT
 export default function Hero({ still = false }: { still?: boolean }) {
   const [open, setOpen] = useState<number | null>(null)
   const [map, setMap] = useState(false)
+  // The ship's computer can call up a personnel file or the map.
+  useScreens((id) => {
+    if (id === 'map') setMap(true)
+    else if (id.startsWith('personnel:')) setOpen(Number(id.slice('personnel:'.length)))
+  })
 
   const job = (i: number): Card => {
     const e = experience[i]

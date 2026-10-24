@@ -11,6 +11,15 @@ const KEY = 'soundtrack'
 /** The events browsers count as the visitor's permission to play sound. */
 const PRESSES = new Set(['pointerdown', 'keydown', 'touchend'])
 
+/** The mounted soundtrack's switch, for `soundtrack` below. */
+let control: ((on: boolean) => void) | null = null
+
+/** Plays or stops the soundtrack from elsewhere, as its own speaker button would. */
+export const soundtrack = {
+  play: () => control?.(true),
+  stop: () => control?.(false),
+}
+
 const remembered = () => {
   try {
     return localStorage.getItem(KEY) !== 'off'
@@ -120,14 +129,24 @@ export default function Soundtrack() {
     // Runs once: start() only touches refs and a state setter, so it never goes stale.
   }, [])
 
-  const toggle = () => {
-    wanted.current = !playing
-    remember(wanted.current)
-    // The sound effects follow the same switch.
-    setMuted(!wanted.current)
-    if (playing) stop()
-    else start(true)
+  /** Turns it on or off, and remembers. The sound effects follow the same switch. */
+  const turn = (on: boolean) => {
+    wanted.current = on
+    remember(on)
+    setMuted(!on)
+    if (on) start(true)
+    else stop()
   }
+
+  const toggle = () => turn(!playing)
+
+  // The ship's computer can work the switch too ("play alien").
+  useEffect(() => {
+    control = turn
+    return () => {
+      control = null
+    }
+  })
 
   return (
     <button

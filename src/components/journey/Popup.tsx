@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import Monitor, { BarButton } from '@/components/Monitor'
 import { EASE } from '@/lib/motion'
+import { useCloseScreens } from '@/lib/ship'
 import { terminal } from '@/lib/sound'
 
 /**
@@ -18,6 +19,7 @@ export default function Popup({
   onClose,
   title,
   hint = 'esc: exit',
+  shortcut = true,
   children,
 }: {
   open: boolean
@@ -25,6 +27,8 @@ export default function Popup({
   /** The title bar's text, which also names the dialog. */
   title: string
   hint?: string
+  /** Whether the hints mention /, the way to MU/TH/UR from any screen (not on its own). */
+  shortcut?: boolean
   children: ReactNode
 }) {
   // Read through a ref, so a parent passing a fresh arrow each render doesn't re-run the effect.
@@ -32,6 +36,9 @@ export default function Popup({
   useEffect(() => {
     close.current = onClose
   })
+
+  // / from any screen switches it off on the way to MU/TH/UR.
+  useCloseScreens(() => open && close.current())
 
   // The screen's sounds: switching on as it opens, off as it closes.
   const wasOpen = useRef(false)
@@ -78,7 +85,7 @@ export default function Popup({
           >
             <Monitor
               title={title}
-              hint={hint}
+              hint={shortcut ? `${hint} | /: mu/th/ur` : hint}
               className="max-h-[88svh]"
               controls={
                 <BarButton label="Close" onClick={onClose}>

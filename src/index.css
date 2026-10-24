@@ -338,6 +338,20 @@
   }
 }
 
+/* The ship's computer's header printing in, a row at a time. */
+.mother-art {
+  animation: mother-print 0.55s steps(8, end) 0.1s both;
+}
+
+@keyframes mother-print {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 /* Dotted leaders between a name and its figure, like the ship's readouts. */
 .crt-leader {
   min-width: 1.5em;
