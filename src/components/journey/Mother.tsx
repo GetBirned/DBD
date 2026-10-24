@@ -372,7 +372,7 @@ export default function Mother({
               onClick={() => ask(value.trim() || r.label, r)}
               className={`crt-link flex w-full min-w-0 items-baseline gap-3 px-1 text-left uppercase ${i === hi ? INVERSE : ''}`}
             >
-              <span className={`w-[8ch] shrink-0 ${i === hi ? '' : 'crt-dim'}`}>{KIND_LABEL[r.kind]}</span>
+              <span className={`w-[8.5em] shrink-0 ${i === hi ? '' : 'crt-dim'}`}>{KIND_LABEL[r.kind]}</span>
               <span className="min-w-0 truncate">{r.label}</span>
               {r.sub && <span className={`ml-auto hidden shrink-0 truncate sm:block ${i === hi ? '' : 'crt-dim'}`}>{r.sub}</span>}
             </button>
