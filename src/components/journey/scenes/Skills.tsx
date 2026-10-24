@@ -1,52 +1,70 @@
-import { useState } from 'react'
-import { Readout, ReadoutLabel } from '@/components/Monitor'
+import { useCallback, useState } from 'react'
+import CaseViewer from '@/components/CaseViewer'
 import { skills, type SkillGroup } from '@/data/skills'
 import { useGitHubData, type ContributionsData } from '@/hooks/useGitHubData'
+import { clientCases, projectCases } from '@/lib/cases'
 import Credit from '../Credit'
+import Mother, { type RecordKind } from '../Mother'
 import { pass, type Timeline } from '../motion'
 import Popup from '../Popup'
 
-/** One group's lists on the ship's screen, as numbered readouts. */
-function Index({ group, github }: { group: SkillGroup; github: ContributionsData | null }) {
-  return (
-    <div>
-      {group.sections.map((s, si) => (
-        <div key={si} className="mt-5 first:mt-0">
-          {s.label && <ReadoutLabel>{s.label}</ReadoutLabel>}
-          <div className="grid gap-x-8 gap-y-1 sm:grid-cols-2">
-            {s.items.map((item, i) => (
-              <Readout key={item} n={i + 1} name={item} />
-            ))}
-          </div>
-        </div>
-      ))}
-      {/* The tools include where the code lives — with the last year's count, once it's in. */}
-      {group.label === 'Tools' && github && github.total > 0 && (
-        <>
-          <ReadoutLabel>activity</ReadoutLabel>
-          <Readout name={`github · @${github.user} · last year`} value={`${github.total.toLocaleString()} contributions`} href={github.profileUrl} />
-        </>
-      )}
-    </div>
-  )
-}
-
 /**
  * The stack as one title card — "i work with these | Languages / Integrations / Tools / Databases"
- * — where each name opens its list on the ship's screen.
+ * — where each name brings up MU/TH/UR on the ship's screen with that file open, ready for
+ * inquiries. A record it points to takes over the screen, and closing the record brings the
+ * computer back with its answer still up.
  */
 export default function Skills({ still = false }: { still?: boolean }) {
-  const [open, setOpen] = useState<SkillGroup | null>(null)
+  const [group, setGroup] = useState<SkillGroup | null>(null)
+  const [asked, setAsked] = useState<{ q: string; at: number } | null>(null)
+  const [record, setRecord] = useState<{ kind: RecordKind; index: number } | null>(null)
+  // Coming back from a record, the computer picks up where it was instead of booting again.
+  const [resume, setResume] = useState(false)
   const { data: github } = useGitHubData<ContributionsData>('/api/github/contributions')
+
+  const openRecord = useCallback((kind: RecordKind, index: number) => {
+    setResume(true)
+    setRecord({ kind, index })
+  }, [])
+
+  const close = () => {
+    setGroup(null)
+    setAsked(null)
+    setResume(false)
+  }
 
   return (
     <div className={`flex items-center justify-center px-[7vw] ${still ? 'py-[10vh]' : 'h-full pt-[12vh]'}`}>
       <div data-in>
-        <Credit role="i work with these" names={skills.map((g) => ({ text: g.label, onClick: () => setOpen(g) }))} />
+        <Credit role="i work with these" names={skills.map((g) => ({ text: g.label, onClick: () => setGroup(g) }))} />
       </div>
-      <Popup open={!!open} onClose={() => setOpen(null)} title={open ? `skill index · ${open.label}` : ''}>
-        {open && <Index group={open} github={github} />}
+      <Popup
+        open={!!group && !record}
+        onClose={close}
+        title={group ? `mu/th/ur 182 · ${group.label}` : ''}
+        hint="type or pick a skill | enter: ask | esc: exit"
+      >
+        {group && (
+          <Mother
+            group={group}
+            onGroup={setGroup}
+            asked={asked}
+            onAsk={(q) => {
+              setResume(false)
+              setAsked({ q, at: Date.now() })
+            }}
+            instant={resume}
+            github={github}
+            onOpenRecord={openRecord}
+          />
+        )}
       </Popup>
+      <CaseViewer
+        items={record?.kind === 'client' ? clientCases : projectCases}
+        index={record?.index ?? null}
+        onIndex={(index) => setRecord((r) => (r ? { ...r, index } : r))}
+        onClose={() => setRecord(null)}
+      />
     </div>
   )
 }

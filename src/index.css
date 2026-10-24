@@ -314,6 +314,30 @@
   outline: none;
 }
 
+/* The terminal's cursor: a solid phosphor block, blinking. */
+.crt-cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.95em;
+  margin-left: 0.08em;
+  vertical-align: -0.12em;
+  background: #8dffbf;
+  box-shadow: 0 0 8px rgb(90 255 170 / 0.6);
+  animation: crt-blink 1.06s steps(1) infinite;
+}
+
+@keyframes crt-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-cursor {
+    animation: none;
+  }
+}
+
 /* Dotted leaders between a name and its figure, like the ship's readouts. */
 .crt-leader {
   min-width: 1.5em;
@@ -356,6 +380,11 @@
     0 0 10px rgb(255 226 180 / 0.5),
     0 0 24px rgb(255 196 120 / 0.3);
   transition: text-shadow 0.3s ease;
+}
+
+/* Focus shows as the brighter glow, not the browser's box. */
+.credit-link:focus-visible {
+  outline: none;
 }
 
 .credit-link:hover,
