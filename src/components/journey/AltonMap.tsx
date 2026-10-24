@@ -91,7 +91,7 @@ export default function AltonMap() {
   const c = contact === null ? null : CONTACTS[contact]
 
   return (
-    <div className="grid items-start gap-x-8 gap-y-5 lg:grid-cols-[min(100%,54svh)_minmax(0,1fr)]">
+    <div className="grid items-start gap-x-8 gap-y-5 lg:grid-cols-[minmax(0,1fr)_22em]">
       <div
         ref={ref}
         onPointerMove={read}
@@ -127,7 +127,7 @@ export default function AltonMap() {
 
       <div className="min-w-0 uppercase">
         <div className="crt-dim">{c ? 'contact' : at ? 'reading' : 'map center'}</div>
-        <dl className="mt-1 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 tabular-nums">
+        <dl className="mt-1 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 whitespace-nowrap tabular-nums">
           <dt className="crt-dim">lat</dt>
           <dd>{lat.toFixed(5)}° n</dd>
           <dt className="crt-dim">lon</dt>
@@ -156,7 +156,7 @@ export default function AltonMap() {
               type="button"
               onClick={() => pick(i)}
               aria-pressed={i === contact}
-              className={`crt-link block truncate px-1 text-left uppercase ${i === contact ? 'crt-inverse' : ''}`}
+              className={`crt-link block px-1 text-left uppercase ${i === contact ? 'crt-inverse' : ''}`}
             >
               › {p.name}
             </button>
