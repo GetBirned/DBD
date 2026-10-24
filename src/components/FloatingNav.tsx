@@ -96,7 +96,7 @@ export default function FloatingNav() {
                 download="Dartagnan_Birnie_Resume.pdf"
                 className="credit px-2 py-2 text-[15px] text-ink/80 transition-[color,text-shadow] duration-300 [text-shadow:none] hover:text-ink hover:[text-shadow:0_0_1px_rgb(255_255_255/0.6),0_0_10px_rgb(255_226_180/0.5)]"
               >
-                résumé
+                resume
               </a>
             </div>
           </div>

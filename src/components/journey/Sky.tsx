@@ -1,6 +1,7 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
+import { useMotionOK } from '@/lib/motion'
 import { setRedraw, sky } from './store'
 
 /*
@@ -45,6 +46,7 @@ uniform vec2 uC;
 uniform float uR;
 uniform float uPos;
 uniform vec3 uLight;
+uniform float uTime;
 
 float hash12(vec2 p) {
   vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -88,12 +90,16 @@ float fbm(vec3 p, int octaves) {
 }
 
 // One layer of stars: some cells of a grid (cells "cell" CSS px across) hold one star, at a random
-// spot, size and brightness. Most are white; a few run warm or cool.
+// spot, size and brightness. Most are white; a few run warm or cool. Each floats: a slow wander a
+// few pixels round its spot, at its own pace, the bigger stars of the nearer layers the furthest.
 vec3 starLayer(vec2 px, float cell, float chance, vec2 radius, vec2 bright, float seed) {
   vec2 id = floor(px / cell);
   vec3 h = hash32(id + seed);
   if (h.x > chance) return vec3(0.0);
-  vec2 at = (id + 0.15 + 0.7 * h.yz) * cell;
+  float phase = 6.2832 * hash12(id + seed + 31.0);
+  float pace = 0.22 + 0.3 * hash12(id + seed + 37.0);
+  vec2 wander = vec2(sin(uTime * pace + phase), cos(uTime * pace * 0.77 + phase * 1.3));
+  vec2 at = (id + 0.15 + 0.7 * h.yz) * cell + min(0.06 * cell, 4.0) * wander;
   float d = length(px - at);
   float r = mix(radius.x, radius.y, hash12(id + seed + 7.0));
   float b = mix(bright.x, bright.y, pow(hash12(id + seed + 13.0), 2.0));
@@ -129,10 +135,10 @@ void main() {
   vec2 ndc = frag / uRes * 2.0 - 1.0;
   vec2 p = ndc * vec2(aspect, 1.0);
 
-  // Stars, nearly still: each layer slides a little as the journey goes, the nearest most.
-  vec3 col = starLayer(px + vec2(uPos * 14.0, 0.0), 12.0, 0.06, vec2(0.6, 0.8), vec2(0.1, 0.32), 0.0)
-           + starLayer(px + vec2(uPos * 32.0, 0.0), 31.0, 0.09, vec2(0.65, 0.95), vec2(0.25, 0.6), 50.0)
-           + starLayer(px + vec2(uPos * 60.0, 0.0), 89.0, 0.18, vec2(0.8, 1.3), vec2(0.5, 0.95), 100.0);
+  // Stars, nearly still: over the whole journey each layer slides only a few pixels, the nearest most.
+  vec3 col = starLayer(px + vec2(uPos * 2.5, 0.0), 12.0, 0.06, vec2(0.6, 0.8), vec2(0.1, 0.32), 0.0)
+           + starLayer(px + vec2(uPos * 5.0, 0.0), 31.0, 0.09, vec2(0.65, 0.95), vec2(0.25, 0.6), 50.0)
+           + starLayer(px + vec2(uPos * 9.0, 0.0), 89.0, 0.18, vec2(0.8, 1.3), vec2(0.5, 0.95), 100.0);
 
   // The planet. Facing us is +z.
   vec2 rel = (p - uC) / uR;
@@ -159,7 +165,7 @@ void main() {
     // atmosphere just off the limb.
     float b = belts(p);
     col += vec3(0.72, 0.5, 0.21) * b * 0.7;
-    col += starLayer(px + vec2(uPos * 40.0, 0.0), 7.0, 0.2, vec2(0.5, 0.7), vec2(0.25, 0.7), 150.0) * smoothstep(0.08, 0.55, b);
+    col += starLayer(px + vec2(uPos * 6.0, 0.0), 7.0, 0.2, vec2(0.5, 0.7), vec2(0.25, 0.7), 150.0) * smoothstep(0.08, 0.55, b);
     float x = dist - 1.0;
     float glow = 0.35 + 1.4 * b;
     col += vec3(0.95, 0.72, 0.4) * (exp(-x / 0.0016) * 0.32 + exp(-x / 0.014) * 0.05) * glow;
@@ -172,7 +178,7 @@ void main() {
 }
 `
 
-function Backdrop() {
+function Backdrop({ float }: { float: boolean }) {
   const { gl, size, invalidate } = useThree()
   const uniforms = useMemo(
     () => ({
@@ -182,37 +188,61 @@ function Backdrop() {
       uR: { value: RADIUS },
       uPos: { value: sky.pos },
       uLight: { value: new THREE.Vector3(0, 0.45, -1).normalize() },
+      uTime: { value: 0 },
     }),
     [],
   )
 
-  // Scroll is the only thing that moves the sky, so it repaints only when the timeline asks.
+  // The scroll moves the planet, so the sky repaints whenever the timeline asks.
   useEffect(() => {
     setRedraw(() => invalidate())
     return () => setRedraw(() => {})
   }, [invalidate])
 
+  // The stars float on their own, so it also repaints on a clock: 30 times a second is plenty for
+  // drift this slow. Paused with the tab, and off for visitors who'd rather nothing moved.
+  useEffect(() => {
+    if (!float) return
+    let raf = 0
+    let last = 0
+    const tick = (now: number) => {
+      raf = requestAnimationFrame(tick)
+      if (now - last < 1000 / 30) return
+      last = now
+      invalidate()
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [float, invalidate])
+
+  // R3F copies each uniform into the material rather than sharing it, so the frame writes go through
+  // the material's own: a number set on `uniforms` above would never reach the shader.
+  const material = useRef<THREE.ShaderMaterial>(null)
+
   useFrame(() => {
-    gl.getDrawingBufferSize(uniforms.uRes.value)
-    uniforms.uDpr.value = gl.getPixelRatio()
-    uniforms.uPos.value = sky.pos
-    uniforms.uC.value.set(planetX(sky.pos, size.width / size.height), CY)
+    const u = material.current!.uniforms
+    gl.getDrawingBufferSize(u.uRes.value)
+    u.uDpr.value = gl.getPixelRatio()
+    u.uPos.value = sky.pos
+    u.uTime.value = float ? performance.now() / 1000 : 0
+    u.uC.value.set(planetX(sky.pos, size.width / size.height), CY)
   })
 
   return (
     <mesh frustumCulled={false}>
       <planeGeometry args={[2, 2]} />
-      <shaderMaterial vertexShader={VERT} fragmentShader={FRAG} uniforms={uniforms} depthTest={false} depthWrite={false} />
+      <shaderMaterial ref={material} vertexShader={VERT} fragmentShader={FRAG} uniforms={uniforms} depthTest={false} depthWrite={false} />
     </mesh>
   )
 }
 
 /**
  * The space the whole site happens in, after the opening of Alien (1979): sparse stars, amber ring
- * belts, and an enormous dark planet whose position is set by the scroll timeline. Nothing here runs on a
- * clock — it draws a frame when the scroll moves it, and otherwise sits still.
+ * belts, and an enormous dark planet whose position is set by the scroll timeline. Only the stars
+ * move on their own, floating slowly in place.
  */
 export default function Sky() {
+  const float = useMotionOK()
   return (
     <Canvas
       // The sky is soft except for the stars, so it doesn't need a phone's full pixel density.
@@ -222,7 +252,7 @@ export default function Sky() {
       onCreated={({ gl }) => gl.setClearColor('#020203')}
       style={{ position: 'absolute', inset: 0 }}
     >
-      <Backdrop />
+      <Backdrop float={float} />
     </Canvas>
   )
 }
