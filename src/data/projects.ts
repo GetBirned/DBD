@@ -130,6 +130,45 @@ const PIRAIL_ASCII = `
                                                  =   ..::
 `.slice(1, -1)
 
+/** FieldLogger's mark (an F whose top bar runs into a backwards L) and wordmark, traced at 110 columns. */
+const FIELDLOGGER_ASCII = `
+*@@@@@@@@@@@@@%.
+%@*.........=@@:                            ..        ..
+%@+         -@@:     .%%%%%%%%:+@*          @@+      -@@.:%%=
+%@+         -@@:     .@@*::::: .=:    ..    @@+    . -@@.:@@=        ...      ..        ..       ...       ..
+%@@%%%%%%%. -@@:     .@@*====- *@# :*@%%@#: @@+ =%@@@%@@.:@@=     .+%@@@%+  +%@@@%@# -#@@@%@@: +%@%@%= =@@%@@=
+%@*.......  -@@:     .@@%***** *@#.@@*--*@% @@+-@@-..+@@.:@@=     %@#. :%@#+@%: .*@#:@@=. =@@:*@%=-=%@==@@: .
+%@+         -@@:     .@@+      *@#:@@*===+= @@+-@@:  =@@.:@@=     %@#  .#@#=@%-.:#@#.@@+..=@@:#@%===+=:=@@
+%@+         -@@:     .@@+      *@# -#@##%%. @@+ +%@%@%@@.:@@@@@@@*.*@@%@%*. =#%@%%@# :*%@%#@@:.*%%##@= =@@
+%@+  =++++++*@@:      ..       ...    .:.   ..    ... ..  ........   .:.    =-..-%@+ :+:.:+@%.   .:.    ..
+-=:  ==========                                                            .+#%@%#=  =#%@%#+.
+`.slice(1, -1)
+
+/** The B2W API hexagon traced at 72 columns: its edge, the inner outline, and the API lettering. */
+const B2WAPI_ASCII = `
+                              :-=++++++=-:
+                      .:-=+++===--------===++++-:.
+               .-=++++===-----:          .-----===++++=-:
+        .-=++++===-----.                        .:----===++++=-.
+ :-=++++===----:.                                      .:----===++++=-:
+@-=-----:.                                                    .:-----=-%
+@ =                                                                  = %
+@ =          -%@@@@@@@@@@@@@@@%=  @@@@@@@@@@@@@@@@@%: .@@@%          = %
+@ =          *@@@#*********#@@@%  @@@@#*********%@@@+ .@@@%          = %
+@ =          *@@@*=========+@@@%  @@@@+=========#@@@+ .@@@%          = %
+@ =          *@@@@@@@@@@@@@@@@@%  @@@@@@@@@@@@@@@@@@= .@@@%          = %
+@ =          *@@@+---------+@@@%  @@@@=------------.  .@@@%          = %
+@ =          *@@@:         :@@@%  @@@@.               .@@@%          = %
+@ =          *%%%:         :%%%#  %%%%.               .%%%#          = %
+@ =                                                                  = %
+@-------.                                                      .:----=:%
+.:-++++===-----:.                                       :-----===++++=:.
+        :-=+++===-----:.                         :-----===++++-:.
+              .:-=++++===----:.          .:-----===++++-:.
+                      .-=++++===--------===++++=-:
+                             .:-++++++++=:.
+`.slice(1, -1)
+
 export const projects: ProjectData[] = [
   {
     name: 'DeadLotto',
@@ -178,6 +217,49 @@ export const projects: ProjectData[] = [
       '/screenshots/darterp/01-dashboard.webp',
       '/screenshots/darterp/03-customers.webp',
       '/screenshots/darterp/04-inventory.webp',
+    ],
+  },
+  {
+    name: 'FieldLogger',
+    mediaRatio: 1280 / 800,
+    glyph: 'FL',
+    logo: '/logos/project_logos/fieldLogger.svg',
+    ascii: FIELDLOGGER_ASCII,
+    tag: 'Desktop App',
+    pitch: "A one-click activity logger for implementation consultants that turns the day's calls and walkthroughs into copy-ready notes.",
+    tint: 'hsl(24, 90%, 52%)',
+    stack: 'Electron · Preact · JavaScript · Google Calendar (iCal)',
+    desc: "A Windows desktop app for implementation consultants: log every call, email, and walkthrough in one click (or drag it out on the calendar), track each client's implementations against their milestones, and turn the day into copy-ready note lines for time entries. It suggests unlogged meetings from Google Calendar, keeps everything on your own computer with automatic backups, and updates itself from a shared team folder.",
+    vidLabel: 'Demo — FieldLogger',
+    repo: 'https://github.com/GetBirned/FieldLogger',
+    video: '/videos/fieldlogger.webm',
+    screenshots: [
+      '/screenshots/fieldlogger/01-log.webp',
+      '/screenshots/fieldlogger/02-client.webp',
+      '/screenshots/fieldlogger/03-notes.webp',
+      '/screenshots/fieldlogger/04-dark.webp',
+    ],
+  },
+  {
+    name: 'B2W API Help Guide',
+    mediaRatio: 1280 / 800,
+    glyph: 'API',
+    logo: '/logos/project_logos/b2wApi.png',
+    ascii: B2WAPI_ASCII,
+    tag: 'Developer Guide',
+    pitch: "The help guide for B2W's three cloud APIs, with an error decoder, a request builder, and a token inspector.",
+    tint: 'hsl(205, 100%, 32%)',
+    stack: 'HTML · CSS · JavaScript · Python · Postman',
+    desc: "The guide at b2w-api.com for B2W's three cloud APIs (Ops, Estimate, and Management Reporting), used by customers, partners, and B2W Support. Each guide answers questions like “How do I generate a Bearer Token?” with step-by-step walkthroughs and Postman, PowerShell, cURL, and raw HTTP examples. Its tools run entirely in the browser: an environment checker, an error decoder that names the likely cause, a request builder, and a token inspector.",
+    vidLabel: 'Demo — B2W API Help Guide',
+    repo: 'https://github.com/GetBirned/B2WAPIHelpPage',
+    url: 'https://www.b2w-api.com',
+    video: '/videos/b2w-api.webm',
+    screenshots: [
+      '/screenshots/b2w-api/01-guide.webp',
+      '/screenshots/b2w-api/02-decoder.webp',
+      '/screenshots/b2w-api/03-builder.webp',
+      '/screenshots/b2w-api/04-reporting.webp',
     ],
   },
   {
