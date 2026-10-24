@@ -5,14 +5,18 @@ import { pass, type Timeline } from '../motion'
 /** Where a project sits in the case viewer's list. */
 const at = (name: string) => Math.max(0, projects.findIndex((p) => p.name === name))
 
-/** The few named on the card, each opening its own case study. */
-const FEATURED = ['DeadLotto', 'DartERP', 'Die Or Die'].map((name) => ({ name, index: at(name) }))
+/** The few named on the card (some under a shorter name), each opening its own case study. */
+const FEATURED = [
+  { name: 'FieldLogger' },
+  { name: 'B2W API Help Guide', label: 'B2W API' },
+  { name: 'DartERP' },
+].map((f) => ({ ...f, index: at(f.name) }))
 
 /** More opens the first project the card doesn't name; the viewer's arrows go on from there. */
 const MORE = Math.max(0, projects.findIndex((p) => !FEATURED.some((f) => f.name === p.name)))
 
 /**
- * Personal projects as one title card: "making projects like | DeadLotto / DartERP / Die Or Die /
+ * Personal projects as one title card: "making projects like | FieldLogger / B2W API / DartERP /
  * More", each opening that project's case study on the ship's screen.
  */
 export default function Projects({ still = false, onOpen }: { still?: boolean; onOpen: (i: number) => void }) {
@@ -21,7 +25,7 @@ export default function Projects({ still = false, onOpen }: { still?: boolean; o
       <div data-in>
         <Credit
           role="making projects like"
-          names={[...FEATURED.map((f) => ({ text: f.name, onClick: () => onOpen(f.index) })), { text: 'More', onClick: () => onOpen(MORE) }]}
+          names={[...FEATURED.map((f) => ({ text: f.label ?? f.name, onClick: () => onOpen(f.index) })), { text: 'More', onClick: () => onOpen(MORE) }]}
         />
       </div>
     </div>
