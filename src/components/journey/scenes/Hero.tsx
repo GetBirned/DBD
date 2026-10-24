@@ -113,7 +113,7 @@ export default function Hero({ still = false }: { still?: boolean }) {
       <Popup open={!!details} onClose={() => setOpen(null)} title={details ? `personnel file · ${details.company.replace(' Inc.', '')}` : ''}>
         {details && <RoleDetails e={details} />}
       </Popup>
-      <Popup open={map} onClose={() => setMap(false)} title="survey map · alton bay, nh" hint="point to take a reading | esc: exit">
+      <Popup open={map} onClose={() => setMap(false)} title="survey map · alton bay, nh" hint="point to take a reading, or pick a contact | esc: exit">
         <AltonMap />
       </Popup>
     </>

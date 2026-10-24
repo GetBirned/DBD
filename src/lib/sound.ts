@@ -165,6 +165,13 @@ export const terminal = {
     thump(ctx, 0.05, 0.6, { level: 0.6, cutoff: 2400 })
     tone(ctx, 0, 1.8, 220, { type: 'sawtooth', level: 0.08, to: 28 })
   },
+  /** The survey sweep finding a contact: a soft sonar ping and its faint echo. */
+  ping() {
+    const ctx = getContext()
+    if (!ctx) return
+    tone(ctx, 0, 0.3, 1480, { type: 'sine', level: 0.03, to: 1400 })
+    tone(ctx, 0.24, 0.26, 1480, { type: 'sine', level: 0.01, to: 1400 })
+  },
   /** Choosing something on the screen: a single blip. */
   select() {
     const ctx = getContext()

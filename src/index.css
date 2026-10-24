@@ -535,3 +535,62 @@ html[data-alert="destruct"] {
     opacity: 0;
   }
 }
+
+/* The survey map's sweep: a phosphor arm going round from north, its trail fading behind it. */
+.radar-sweep {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 150%;
+  aspect-ratio: 1;
+  pointer-events: none;
+  background: conic-gradient(from 0deg, transparent 0deg 290deg, rgb(var(--crt) / 0.05) 310deg, rgb(var(--crt) / 0.2) 357deg, rgb(var(--crt) / 0.55) 360deg);
+  mix-blend-mode: screen;
+  animation: radar-spin linear infinite;
+}
+
+@keyframes radar-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* A contact on the map: flaring as the sweep passes, then dimming until it comes round again. */
+.radar-blip {
+  position: absolute;
+  width: 0.6em;
+  height: 0.6em;
+  pointer-events: none;
+  background: rgb(var(--crt-white));
+  box-shadow: 0 0 8px rgb(var(--crt-glow) / 0.9);
+  transform: translate(-50%, -50%);
+  animation: radar-blip linear infinite;
+}
+
+@keyframes radar-blip {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.7);
+  }
+  10% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  55%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+.radar-blip-still {
+  animation: none;
+  opacity: 0.9;
+}
+
+/* The contact the crosshair is on stays lit. */
+.radar-blip-on {
+  animation: none;
+  opacity: 1;
+}
