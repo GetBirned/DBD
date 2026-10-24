@@ -1,6 +1,8 @@
 // Synthesized UI sounds via the Web Audio API — no audio files to fetch or license,
 // just short oscillator blips and noise bursts generated on the fly.
 
+import { crtBurst } from './crt'
+
 let audioCtx: AudioContext | null = null
 /** Set by the speaker toggle: when the visitor turns sound off, the effects go quiet too. */
 let muted = false
@@ -84,6 +86,26 @@ function thump(ctx: AudioContext, at: number, dur: number, { level = 0.22, cutof
   src.start(t)
 }
 
+/** A sharp tick of filtered noise, centered on `freq` — a key snapping down. */
+function click(ctx: AudioContext, at: number, dur: number, freq: number, level: number) {
+  const t = ctx.currentTime + at
+  const buffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate)
+  const data = buffer.getChannelData(0)
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) ** 4
+  const src = ctx.createBufferSource()
+  src.buffer = buffer
+  const filter = ctx.createBiquadFilter()
+  filter.type = 'bandpass'
+  filter.frequency.value = freq
+  filter.Q.value = 1.4
+  const gain = ctx.createGain()
+  gain.gain.value = level * VOLUME
+  src.connect(filter)
+  filter.connect(gain)
+  gain.connect(ctx.destination)
+  src.start(t)
+}
+
 /** The computer thinking: a run of quick, random beeps, like its readouts printing. */
 function chatter(ctx: AudioContext, at: number, count: number) {
   const notes = [660, 880, 990, 1175, 1320, 1568, 1760, 2093]
@@ -112,11 +134,36 @@ export const terminal = {
   },
   /** Stepping to another page: a rising "bip-bip", then a little chatter as it draws. */
   page() {
+    // The screen floods with data noise while it draws the page, sound or no sound.
+    crtBurst(300)
     const ctx = getContext()
     if (!ctx) return
     tone(ctx, 0, 0.035, 1046, { level: 0.045 })
     tone(ctx, 0.05, 0.045, 1568, { level: 0.045 })
     chatter(ctx, 0.12, 4)
+  },
+  /** A key on the computer's keyboard: a snap and a dull knock, never quite the same twice. */
+  key() {
+    const ctx = getContext()
+    if (!ctx) return
+    const v = 0.75 + Math.random() * 0.5
+    click(ctx, 0, 0.02, 2200 + Math.random() * 1600, 0.55 * v)
+    thump(ctx, 0.003, 0.03, { level: 0.16 * v, cutoff: 700 + Math.random() * 500 })
+  },
+  /** The emergency destruct klaxon: one rising two-tone wail. */
+  alarm() {
+    const ctx = getContext()
+    if (!ctx) return
+    tone(ctx, 0, 0.42, 520, { type: 'sawtooth', level: 0.07, to: 780 })
+    tone(ctx, 0.48, 0.42, 520, { type: 'sawtooth', level: 0.07, to: 780 })
+  },
+  /** The ship going up: a long roar under a falling tone. */
+  blast() {
+    const ctx = getContext()
+    if (!ctx) return
+    thump(ctx, 0, 2.6, { level: 1.4, cutoff: 520 })
+    thump(ctx, 0.05, 0.6, { level: 0.6, cutoff: 2400 })
+    tone(ctx, 0, 1.8, 220, { type: 'sawtooth', level: 0.08, to: 28 })
   },
   /** Choosing something on the screen: a single blip. */
   select() {

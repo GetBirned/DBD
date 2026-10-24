@@ -36,10 +36,10 @@ export default function AltonMap() {
         <Ascii art={ALTON_MAP} />
         {at && (
           <div aria-hidden className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-y-0 w-px bg-[#8dffbf]/70 shadow-[0_0_6px_rgb(90_255_170/0.7)]" style={{ left: `${at.u * 100}%` }} />
-            <div className="absolute inset-x-0 h-px bg-[#8dffbf]/70 shadow-[0_0_6px_rgb(90_255_170/0.7)]" style={{ top: `${at.v * 100}%` }} />
+            <div className="absolute inset-y-0 w-px bg-[rgb(var(--crt)/0.7)] shadow-[0_0_6px_rgb(var(--crt-glow)/0.7)]" style={{ left: `${at.u * 100}%` }} />
+            <div className="absolute inset-x-0 h-px bg-[rgb(var(--crt)/0.7)] shadow-[0_0_6px_rgb(var(--crt-glow)/0.7)]" style={{ top: `${at.v * 100}%` }} />
             <div
-              className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 border border-[#8dffbf] shadow-[0_0_8px_rgb(90_255_170/0.7)]"
+              className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 border border-[rgb(var(--crt))] shadow-[0_0_8px_rgb(var(--crt-glow)/0.7)]"
               style={{ left: `${at.u * 100}%`, top: `${at.v * 100}%` }}
             />
           </div>

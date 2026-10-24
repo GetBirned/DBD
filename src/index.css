@@ -164,9 +164,28 @@
 }
 
 /*
- * The popups, as the ship's computer screens in Alien: green phosphor type on a dark, curved CRT
- * set in a plastic bezel, with scanlines, a bright title bar, and a soft glow on everything.
+ * The ship's screens' typeface: City Light, stretched wide the way the film's screens show it,
+ * rebuilt so browsers accept it. It has only basic ASCII; anything else falls back to Rokkitt.
  */
+@font-face {
+  font-family: "City Light Screen";
+  src: url("/fonts/city-light-screen.woff") format("woff");
+  font-display: swap;
+}
+
+/*
+ * The popups, as the ship's computer screens in Alien: phosphor-green type on a black, curved CRT
+ * set in a plastic bezel, with scanlines, a green title bar, and a soft glow on everything. The
+ * green is the film's own, sampled from its screens; the odd rule or block flares near-white.
+ */
+:root {
+  --crt: 120 232 174;
+  --crt-glow: 60 220 130;
+  --crt-white: 244 255 236;
+  /* Type set on the green: near black. */
+  --crt-ink: 0 8 4;
+}
+
 .crt-bezel {
   border-radius: 28px;
   padding: clamp(8px, 1.3vw, 18px);
@@ -181,15 +200,19 @@
   position: relative;
   overflow: hidden;
   border-radius: 20px;
-  background: radial-gradient(ellipse at 50% 45%, #0b2a1d 0%, #04140d 55%, #010604 100%);
-  color: #8dffbf;
-  font-family: "VT323", "IBM Plex Mono", monospace;
+  background: radial-gradient(ellipse at 50% 45%, #040a07 0%, #010302 60%, #000 100%);
+  color: rgb(var(--crt));
+  /* The film's own face (above), spaced the way the film spaces its type. VT323 stays for the
+   * ASCII art (see Ascii). */
+  font-family: "City Light Screen", "Rokkitt", "VT323", "IBM Plex Mono", monospace;
+  font-weight: 400;
+  letter-spacing: 0.08em;
   text-shadow:
-    0 0 1px rgb(160 255 205 / 0.65),
-    0 0 9px rgb(90 255 170 / 0.45);
+    0 0 1px rgb(var(--crt) / 0.7),
+    0 0 10px rgb(var(--crt-glow) / 0.5);
   box-shadow:
-    inset 0 0 70px rgb(0 0 0 / 0.85),
-    inset 0 0 6px rgb(120 255 190 / 0.25);
+    inset 0 0 70px rgb(0 0 0 / 0.9),
+    inset 0 0 6px rgb(var(--crt) / 0.18);
 }
 
 /* Scanlines over everything on the screen, type included. */
@@ -212,7 +235,7 @@
   border-radius: inherit;
   background:
     radial-gradient(ellipse at 50% 50%, transparent 58%, rgb(0 0 0 / 0.6) 100%),
-    radial-gradient(ellipse at 28% 12%, rgb(200 255 230 / 0.06), transparent 42%);
+    radial-gradient(ellipse at 28% 12%, rgb(220 255 235 / 0.04), transparent 42%);
 }
 
 /*
@@ -272,7 +295,7 @@
   z-index: 4;
   pointer-events: none;
   transform: translateY(-120%);
-  background: linear-gradient(transparent, rgb(160 255 210 / 0.2), transparent);
+  background: linear-gradient(transparent, rgb(var(--crt) / 0.18), transparent);
   mix-blend-mode: screen;
 }
 
@@ -280,23 +303,31 @@
   animation: crt-band 0.25s linear both;
 }
 
-/* The title bar: inverse video in cyan, like the terminal's header. */
+/* The title bar: inverse video, black on the green. */
 .crt-bar {
-  background: #6ff3dc;
-  color: #03241a;
-  text-shadow: 0 0 6px rgb(120 255 220 / 0.5);
-  box-shadow: 0 0 16px rgb(100 250 220 / 0.45);
+  letter-spacing: 0.12em;
+  background: rgb(var(--crt));
+  color: rgb(var(--crt-ink));
+  text-shadow: none;
+  box-shadow: 0 0 16px rgb(var(--crt-glow) / 0.45);
+}
+
+/* Inverse video for anything picked or current. */
+.crt-inverse {
+  background: rgb(var(--crt));
+  color: rgb(var(--crt-ink));
+  text-shadow: none;
 }
 
 .crt-box {
-  border: 1px solid rgb(130 255 195 / 0.55);
+  border: 1px solid rgb(var(--crt) / 0.55);
   box-shadow:
-    0 0 8px rgb(90 255 170 / 0.25),
-    inset 0 0 10px rgb(90 255 170 / 0.12);
+    0 0 8px rgb(var(--crt-glow) / 0.25),
+    inset 0 0 10px rgb(var(--crt-glow) / 0.12);
 }
 
 .crt-dim {
-  color: rgb(141 255 191 / 0.68);
+  color: rgb(var(--crt) / 0.62);
 }
 
 /* Something you can select: it flips to inverse video when pointed at, as a terminal cursor would. */
@@ -308,8 +339,8 @@
 
 .crt-link:hover,
 .crt-link:focus-visible {
-  background: #8dffbf;
-  color: #03241a;
+  background: rgb(var(--crt));
+  color: rgb(var(--crt-ink));
   text-shadow: none;
   outline: none;
 }
@@ -321,8 +352,8 @@
   height: 0.95em;
   margin-left: 0.08em;
   vertical-align: -0.12em;
-  background: #8dffbf;
-  box-shadow: 0 0 8px rgb(90 255 170 / 0.6);
+  background: rgb(var(--crt));
+  box-shadow: 0 0 8px rgb(var(--crt-glow) / 0.6);
   animation: crt-blink 1.06s steps(1) infinite;
 }
 
@@ -355,7 +386,7 @@
 /* Dotted leaders between a name and its figure, like the ship's readouts. */
 .crt-leader {
   min-width: 1.5em;
-  border-bottom: 2px dotted rgb(141 255 191 / 0.35);
+  border-bottom: 2px dotted rgb(var(--crt) / 0.35);
   transform: translateY(-0.3em);
 }
 
@@ -373,7 +404,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: #3dff9c;
+  background: rgb(var(--crt));
   mix-blend-mode: color;
   opacity: 0.6;
   transition: opacity 0.4s;
@@ -426,5 +457,81 @@
 @media (prefers-reduced-motion: reduce) {
   .sky-fade canvas {
     animation: none;
+  }
+}
+
+/* Data noise: the screen at work (see Monitor). Black underneath, so the page beneath drops out. */
+.crt-noise {
+  background: #000;
+}
+
+.crt-noise-green {
+  background: rgb(var(--crt));
+  box-shadow: 0 0 6px rgb(var(--crt-glow) / 0.6);
+}
+
+.crt-noise-white {
+  background: rgb(var(--crt-white));
+  box-shadow: 0 0 8px rgb(var(--crt-white) / 0.55);
+}
+
+/* The emergency destruct system (see Destruct): every screen turns amber while it's live. */
+html[data-alert="destruct"] {
+  --crt: 255 180 84;
+  --crt-glow: 255 130 18;
+  --crt-white: 255 238 212;
+}
+
+/* Warning light washing in from the edges of the page, slowly, never a strobe. */
+.destruct-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 990;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, rgb(255 120 0 / 0) 35%, rgb(255 110 0 / 0.3) 100%);
+  animation: destruct-pulse 2s ease-in-out infinite;
+}
+
+.destruct-glow-still {
+  animation: none;
+  opacity: 0.6;
+}
+
+@keyframes destruct-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* The blast: one white-out, fading to the wreck. */
+.destruct-flash {
+  background: #fff;
+  animation: destruct-flash 1.6s ease-out forwards;
+}
+
+@keyframes destruct-flash {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The ship waking again: the wreck fading off the opening credits. */
+.destruct-wake {
+  animation: destruct-wake 1.2s ease forwards;
+}
+
+@keyframes destruct-wake {
+  to {
+    opacity: 0;
   }
 }

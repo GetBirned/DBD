@@ -142,7 +142,7 @@ function Movies() {
               type="button"
               onClick={() => show(k)}
               aria-current={k === i ? 'true' : undefined}
-              className={`crt-link block w-full px-1 text-left uppercase ${k === i ? 'bg-[#8dffbf] text-[#03241a] [text-shadow:none]' : ''}`}
+              className={`crt-link block w-full px-1 text-left uppercase ${k === i ? 'crt-inverse' : ''}`}
             >
               {count(k + 1)} {g.title}
             </button>

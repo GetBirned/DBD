@@ -4,8 +4,8 @@ import { experience } from '@/data/experience'
 import { DOSSIERS, SITE } from '@/data/inquiry'
 import { projects } from '@/data/projects'
 import { skills } from '@/data/skills'
-import type { ContributionsData } from '@/hooks/useGitHubData'
-import type { ScreenId } from '@/lib/ship'
+import type { ContributionsData, LogData } from '@/hooks/useGitHubData'
+import { destructArmed, type ScreenId } from '@/lib/ship'
 
 /*
  * What MU/TH/UR knows and how it answers: a directory of everything aboard — project and client
@@ -24,6 +24,8 @@ export type Action =
   | { type: 'group'; label: string }
   | { type: 'play' }
   | { type: 'stop' }
+  | { type: 'destruct' }
+  | { type: 'abort' }
 
 export type Line =
   | { kind: 'text'; text: string; tone?: 'dim' | 'head'; indent?: boolean; pause?: number }
@@ -73,6 +75,8 @@ export interface Entry {
 
 export interface Context {
   github: ContributionsData | null
+  /** The ship's log: the latest commits. */
+  log: LogData | null
 }
 
 /** Folds what's typed to a bare key, so "c sharp", "C#" and "csharp" all meet. */
@@ -361,7 +365,23 @@ const otherEntries: Entry[] = [
   })),
   command('hire', 'Email', 'dartbirnie@gmail.com', ['hire', 'hire me', 'contact me', 'mail', 'reach'], (echo) => ({ lines: [echoLine(echo), ...HIRE] })),
   command('help', 'Help', 'what to ask', ['commands', 'instructions'], (echo) => ({ lines: [echoLine(echo), ...HELP] })),
+  command("log", "Ship's log", 'latest commits', ['log', 'ships log', 'ship log', 'commits', 'latest commits', 'what are you working on', 'working on', 'recent work'], (echo, ctx) => shipsLog(echo, ctx)),
 ]
+
+/** The day of a commit, as the ship's log dates it (month.day, Alton time). */
+const logDate = (iso: string) =>
+  new Intl.DateTimeFormat('en-US', { month: '2-digit', day: '2-digit', timeZone: 'America/New_York' }).format(new Date(iso)).replace('/', '.')
+
+/** The latest commits, newest first, each linking to itself on GitHub. */
+function shipsLog(echo: string, ctx: Context): Reply {
+  const lines: Line[] = [echoLine(echo), searching("ship's log"), { kind: 'text', tone: 'head', text: "Ship's log · latest entries" }]
+  if (ctx.log?.entries.length) {
+    for (const e of ctx.log.entries) lines.push({ kind: 'link', text: `${logDate(e.date)} · ${e.repo} · ${e.message}`, href: e.url })
+  } else lines.push({ kind: 'text', tone: 'dim', text: 'Log unavailable. Try again shortly.' })
+  lines.push({ kind: 'gap' }, { kind: 'link', text: `github.com/${ctx.log?.user ?? 'GetBirned'}`, href: `https://github.com/${ctx.log?.user ?? 'GetBirned'}` })
+  lines.push({ kind: 'text', tone: 'dim', text: 'End of log.' })
+  return { lines }
+}
 
 /** Everything aboard, as one searchable list. */
 export const DIRECTORY: Entry[] = [
@@ -377,21 +397,83 @@ export const DIRECTORY: Entry[] = [
 const BY_ID = new Map(DIRECTORY.map((e) => [e.id, e]))
 export const entryById = (id: string) => BY_ID.get(id)
 
-/** Answers only to their exact words, and never show up in a search. */
+/** The emergency command override Ripley uses in the film. Entered once, it holds for the visit. */
+const OVERRIDE = 'emergencycommandoverride'
+const OVERRIDE_CODE = '100375'
+let overridden = false
+
+/** Lines printed slowly, a beat after each, the way MU/TH/UR answers Ripley. */
+const slow = (...texts: string[]): Line[] => texts.map((text) => ({ kind: 'text', text, pause: 24 }))
+
+const EYES_ONLY = () => slow('Science officer eyes only.')
+
+/**
+ * Easter eggs from the film: Ripley's and the crew's questions to MU/TH/UR, answered as it
+ * answers them. They answer only to their exact words, and never show up in a search.
+ */
 const SECRETS: Record<string, () => Line[]> = {
   mother: () => [
     { kind: 'text', tone: 'head', text: 'MU/TH/UR 182 online' },
     { kind: 'text', text: 'All systems nominal.' },
   ],
-  specialorder937: () => [
-    { kind: 'text', tone: 'head', text: 'Special order 937' },
-    { kind: 'text', text: 'Science officer eyes only.' },
-    { kind: 'text', tone: 'dim', text: 'Access denied.' },
-  ],
+  whatsthestorymother: () => slow("Mother has intercepted a repeating transmission from a nearby planetoid, resulting in the crew's investigation."),
+  requestevaluationofcurrentprocedurestoterminatealien: () => slow('Unable to compute.', 'Available data insufficient.'),
+  requestoptionsforpossibleprocedure: () => slow('Unable to compute.', 'Data insufficient.'),
+  whataremychances: () => slow('Does not compute.'),
+  requestclarificationonscienceinabilitytoneutralizealien: () => slow('Unable to clarify.'),
+  requestenhancement: () => slow('No further enhancement.'),
+  specialorder937: EYES_ONLY,
+  whatisspecialorder937: () =>
+    overridden
+      ? [
+          ...slow('Special order 937:'),
+          { kind: 'gap' },
+          ...slow('Priority one', 'Insure return of organism', 'for analysis.', 'All other considerations secondary.', 'Crew expendable.'),
+        ]
+      : EYES_ONLY(),
 }
 SECRETS.muthur = SECRETS.mother
+SECRETS.whatisthestorymother = SECRETS.whatsthestorymother
+SECRETS.whatsthestory = SECRETS.whatsthestorymother
 SECRETS['937'] = SECRETS.specialorder937
 SECRETS.order937 = SECRETS.specialorder937
+SECRETS.whatsspecialorder937 = SECRETS.whatisspecialorder937
+
+/** The film's override, by its code; any other code is turned away. */
+function override(k: string): Line[] | undefined {
+  if (!k.startsWith(OVERRIDE)) return undefined
+  if (k.slice(OVERRIDE.length) !== OVERRIDE_CODE) return slow('Override code not recognized.')
+  overridden = true
+  return slow('Emergency command override accepted.')
+}
+
+/** The emergency destruct system, from the end of the film: hidden commands to start and stop it. */
+const DESTRUCT = ['selfdestruct', 'destruct', 'emergencydestruct', 'emergencydestructsystem', 'initiateselfdestruct', 'selfdestructsequence', 'activateselfdestruct']
+const ABORT = ['abort', 'cancel', 'abortdestruct', 'canceldestruct', 'abortselfdestruct', 'cancelselfdestruct', 'stopdestruct', 'stopselfdestruct']
+
+function destructCommand(k: string): Reply | undefined {
+  if (DESTRUCT.includes(k)) {
+    if (destructArmed()) return { lines: slow('Destruct sequence already in progress.', 'Type abort to cancel.') }
+    return {
+      lines: [
+        { kind: 'text', tone: 'head', text: 'Emergency destruct system' },
+        ...slow('Engaged.', 'T-minus 60 seconds.'),
+        { kind: 'text', tone: 'dim', text: 'Type abort to cancel.' },
+      ],
+      now: { type: 'destruct' },
+    }
+  }
+  if (ABORT.includes(k)) {
+    if (!destructArmed()) return { lines: slow('No destruct sequence in progress.') }
+    return { lines: slow('Destruct sequence aborted.'), now: { type: 'abort' } }
+  }
+}
+
+/** Whether what's typed is one of the film's questions or commands, which go straight to MU/TH/UR. */
+export const isSecret = (raw: string) => {
+  const k = fold(raw)
+  return !!SECRETS[k] || k.startsWith(OVERRIDE) || DESTRUCT.includes(k) || ABORT.includes(k)
+}
 
 // ---- search
 
@@ -446,8 +528,10 @@ function nearest(raw: string) {
 export function respond(raw: string, ctx: Context): Reply {
   const k = fold(raw)
   if (!k) return { lines: [echoLine(raw), ...HELP] }
-  const secret = SECRETS[k]
-  if (secret) return { lines: [echoLine(raw), ...secret()] }
+  const command = destructCommand(k)
+  if (command) return { ...command, lines: [echoLine(raw), ...command.lines] }
+  const secret = SECRETS[k]?.() ?? override(k)
+  if (secret) return { lines: [echoLine(raw), ...secret] }
   const [top] = search(raw, 1)
   if (top) return top.reply(raw, ctx)
   const near = nearest(raw)

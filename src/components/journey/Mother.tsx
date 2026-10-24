@@ -2,21 +2,27 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNod
 import { Ascii } from '@/components/Monitor'
 import { MOTHER_ASCII } from '@/data/motherArt'
 import { skills, type SkillGroup } from '@/data/skills'
-import type { ContributionsData } from '@/hooks/useGitHubData'
+import type { ContributionsData, LogData } from '@/hooks/useGitHubData'
+import { crtBurst } from '@/lib/crt'
 import { useMotionOK } from '@/lib/motion'
 import { terminal } from '@/lib/sound'
-import { entryById, KIND_LABEL, respond, search, type Action, type Entry, type Line, type Reply } from './motherBrain'
+import { entryById, isSecret, KIND_LABEL, respond, search, type Action, type Entry, type Line, type Reply } from './motherBrain'
 
 const BOOT = 'Interface 2037 ready for inquiry'
 /** How fast the computer prints, in characters a second. */
 const CPS = 105
+/** How long the screen floods with data noise as it searches, before the answer prints, in ms. */
+const SEARCH_NOISE = 750
 const TRY = ['DeadLotto', 'Trimble', 'goto contact', 'play alien', 'C#']
 
-/** One question put to the computer: what was typed, and the entry picked for it, if one was. */
+/** One question put to the computer: what was typed, the entry picked for it if one was, and the
+ *  answer as it stood when asked (some answers depend on what's happened since — an override, a
+ *  countdown — and shouldn't change on screen). */
 export interface Asked {
   q: string
   id?: string
   at: number
+  reply?: Reply
 }
 
 /** What a line prints, character for character. */
@@ -33,7 +39,7 @@ function keepInView(el: HTMLElement | null) {
   if (r.bottom > b.bottom - 8) box.scrollTop += r.bottom - b.bottom + 8
 }
 
-const INVERSE = 'bg-[#8dffbf] text-[#03241a] [text-shadow:none]'
+const INVERSE = 'crt-inverse'
 
 const Cursor = ({ at }: { at?: (el: HTMLSpanElement | null) => void }) => <span ref={at} aria-hidden className="crt-cursor" />
 
@@ -63,6 +69,7 @@ export default function Mother({
   onAsk,
   instant,
   github,
+  log,
   onAction,
 }: {
   group: SkillGroup | null
@@ -73,12 +80,13 @@ export default function Mother({
   /** Show everything at once: coming back from a record, nothing needs printing again. */
   instant: boolean
   github: ContributionsData | null
+  log: LogData | null
   onAction: (a: Action) => void
 }) {
   const motionOK = useMotionOK()
   const still = instant || !motionOK
   const time = useAltonTime()
-  const ctx = useMemo(() => ({ github }), [github])
+  const ctx = useMemo(() => ({ github, log }), [github, log])
 
   // Booting: the header prints, then the film's prompt types out. Nothing waits on it.
   const [boot, setBoot] = useState(still ? BOOT.length : 0)
@@ -91,6 +99,7 @@ export default function Mother({
 
   const reply: Reply = useMemo(() => {
     if (!asked) return { lines: [] }
+    if (asked.reply) return asked.reply
     const entry = asked.id ? entryById(asked.id) : undefined
     return entry ? entry.reply(asked.q, ctx) : respond(asked.q, ctx)
   }, [asked, ctx])
@@ -110,14 +119,22 @@ export default function Mother({
       setShown(Infinity)
       return
     }
+    // Searching: the screen floods with the computer's working, then the answer prints.
+    crtBurst(SEARCH_NOISE)
     setShown(0)
-    const t0 = performance.now()
-    let raf = requestAnimationFrame(function step(now) {
-      const n = Math.floor(((now - t0) / 1000) * CPS)
-      setShown(n)
-      if (n < total) raf = requestAnimationFrame(step)
-    })
-    return () => cancelAnimationFrame(raf)
+    let raf = 0
+    const start = window.setTimeout(() => {
+      const t0 = performance.now()
+      raf = requestAnimationFrame(function step(now) {
+        const n = Math.floor(((now - t0) / 1000) * CPS)
+        setShown(n)
+        if (n < total) raf = requestAnimationFrame(step)
+      })
+    }, SEARCH_NOISE - 80)
+    return () => {
+      clearTimeout(start)
+      cancelAnimationFrame(raf)
+    }
     // `asked.at` marks each question, even the same one asked twice.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asked?.at])
@@ -175,14 +192,15 @@ export default function Mother({
     back.current = -1
     setValue('')
     setHi(0)
-    onAsk({ q, id: entry?.id, at: Date.now() })
+    onAsk({ q, id: entry?.id, at: Date.now(), reply: r })
   }
 
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       const q = value.trim()
-      if (q) ask(q, results[hi])
+      // The film's questions go straight to the computer, whatever a search turns up.
+      if (q) ask(q, isSecret(q) ? undefined : results[hi])
       else if (printing) setShown(Infinity)
     } else if (e.key === 'Tab' && results[hi]) {
       e.preventDefault()
@@ -321,6 +339,7 @@ export default function Mother({
           ref={input}
           value={value}
           onChange={(e) => {
+            terminal.key()
             back.current = -1
             setHi(0)
             setValue(e.target.value)

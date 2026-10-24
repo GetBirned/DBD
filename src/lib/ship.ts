@@ -45,6 +45,21 @@ export function closeScreens() {
 /** For a screen: runs `handler` when the screens are told to switch off. */
 export const useCloseScreens = (handler: () => void) => useBus('close', handler)
 
+/** Whether the emergency destruct system is counting down, kept by the sequence itself. */
+let armed = false
+export const destructArmed = () => armed
+export const setDestructArmed = (on: boolean) => {
+  armed = on
+}
+
+/** Starts the emergency destruct sequence, or aborts it. */
+export function destruct(on: boolean) {
+  bus.dispatchEvent(new CustomEvent<boolean>('destruct', { detail: on }))
+}
+
+/** For the sequence: runs `handler` with true to start, false to abort. */
+export const useDestructCalls = (handler: (on: boolean) => void) => useBus('destruct', handler)
+
 /** Brings up MU/TH/UR, with one of the skill files open if `group` names one. */
 export function openMother(group?: string) {
   bus.dispatchEvent(new CustomEvent<string | undefined>('mother', { detail: group }))

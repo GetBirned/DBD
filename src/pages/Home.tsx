@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import CaseViewer from '@/components/CaseViewer'
+import Destruct from '@/components/Destruct'
 import { goToChapter, CHAPTER_LINKS, type ChapterId } from '@/components/chapters'
 import { soundtrack } from '@/components/Soundtrack'
 import Journey from '@/components/journey/Journey'
@@ -8,9 +9,9 @@ import Mother, { type Asked } from '@/components/journey/Mother'
 import type { Action } from '@/components/journey/motherBrain'
 import Popup from '@/components/journey/Popup'
 import { skills, type SkillGroup } from '@/data/skills'
-import { useGitHubData, type ContributionsData } from '@/hooks/useGitHubData'
+import { useGitHubData, type ContributionsData, type LogData } from '@/hooks/useGitHubData'
 import { clientCases, projectCases } from '@/lib/cases'
-import { closeScreens, openScreen, useMotherCalls } from '@/lib/ship'
+import { closeScreens, destruct, openScreen, useMotherCalls } from '@/lib/ship'
 
 type Open = { kind: 'client' | 'project'; index: number } | null
 
@@ -58,6 +59,7 @@ export default function Home() {
   const [asked, setAsked] = useState<Asked | null>(null)
   const [resume, setResume] = useState(false)
   const { data: github } = useGitHubData<ContributionsData>('/api/github/contributions')
+  const { data: log } = useGitHubData<LogData>('/api/github/log')
 
   const callMother = (group?: string) => {
     setMother({ group: skills.find((g) => g.label === group) ?? null })
@@ -121,6 +123,12 @@ export default function Home() {
       case 'stop':
         soundtrack.stop()
         break
+      case 'destruct':
+        destruct(true)
+        break
+      case 'abort':
+        destruct(false)
+        break
     }
   }
 
@@ -151,6 +159,7 @@ export default function Home() {
             }}
             instant={resume}
             github={github}
+            log={log}
             onAction={act}
           />
         )}
@@ -165,6 +174,15 @@ export default function Home() {
       >
         &gt;_
       </button>
+      <Destruct
+        onReset={() => {
+          // The ship starts over: every screen off, back to the opening credits.
+          closeMother()
+          if (open) close()
+          closeScreens()
+          goToChapter('top', true)
+        }}
+      />
     </>
   )
 }

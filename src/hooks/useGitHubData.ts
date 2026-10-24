@@ -44,3 +44,17 @@ export interface ContributionsData {
   total: number
   profileUrl: string
 }
+
+/** One entry in the ship's log: a commit's summary line. */
+export interface LogEntry {
+  repo: string
+  message: string
+  /** ISO time. */
+  date: string
+  url: string
+}
+
+export interface LogData {
+  user: string
+  entries: LogEntry[]
+}

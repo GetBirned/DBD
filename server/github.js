@@ -81,4 +81,62 @@ router.get('/contributions', async (_req, res) => {
   }
 })
 
+// The ship's log, for MU/TH/UR: the latest commits across the most recently pushed public repos.
+// Without a token the REST API allows 60 requests an hour; a refresh costs six (the repo list,
+// then each repo's commits), cached for a quarter of an hour. A GITHUB_TOKEN, if set, raises the
+// limit. If GitHub refuses, the last good log is served instead.
+let logCache = { data: null, expiresAt: 0 }
+const LOG_TTL_MS = 15 * 60 * 1000
+const LOG_REPOS = 5
+const LOG_ENTRIES = 8
+
+const api = (path) =>
+  fetch(`https://api.github.com${path}`, {
+    headers: {
+      'User-Agent': 'dartbirnie.dev portfolio',
+      Accept: 'application/vnd.github+json',
+      ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
+    },
+  })
+
+router.get('/log', async (_req, res) => {
+  try {
+    if (logCache.data && logCache.expiresAt > Date.now()) {
+      return res.json(logCache.data)
+    }
+
+    const { user } = getEnv()
+    const reposRes = await api(`/users/${user}/repos?type=owner&sort=pushed&per_page=${LOG_REPOS}`)
+    if (!reposRes.ok) throw new Error(`GitHub responded ${reposRes.status}`)
+    const repos = (await reposRes.json()).filter((r) => !r.fork && !r.private)
+
+    const perRepo = await Promise.all(
+      repos.map(async (r) => {
+        const commitsRes = await api(`/repos/${r.full_name}/commits?per_page=4`)
+        if (!commitsRes.ok) return []
+        return (await commitsRes.json()).map((c) => ({
+          repo: r.name,
+          // The summary line only.
+          message: c.commit.message.split('\n')[0],
+          date: c.commit.author?.date ?? c.commit.committer?.date ?? null,
+          url: c.html_url,
+        }))
+      }),
+    )
+
+    const entries = perRepo
+      .flat()
+      .filter((e) => e.date)
+      .sort((a, b) => (a.date < b.date ? 1 : -1))
+      .slice(0, LOG_ENTRIES)
+    const payload = { user, entries }
+
+    logCache = { data: payload, expiresAt: Date.now() + LOG_TTL_MS }
+    res.json(payload)
+  } catch (err) {
+    if (logCache.data) return res.json(logCache.data)
+    res.status(502).json({ error: err.message })
+  }
+})
+
 export default router

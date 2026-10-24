@@ -93,7 +93,7 @@ function Reel({ set }: { set: SetName }) {
                 onClick={() => show(i)}
                 aria-label={`${noun} ${i + 1} of ${items.length}`}
                 aria-current={i === active ? 'true' : undefined}
-                className={`h-3 w-3 border border-[#8dffbf]/60 transition-colors ${i === active ? 'bg-[#8dffbf] shadow-[0_0_8px_rgb(90_255_170/0.6)]' : 'hover:bg-[#8dffbf]/40'}`}
+                className={`h-3 w-3 border border-[rgb(var(--crt)/0.6)] transition-colors ${i === active ? 'bg-[rgb(var(--crt))] shadow-[0_0_8px_rgb(var(--crt-glow)/0.6)]' : 'hover:bg-[rgb(var(--crt)/0.4)]'}`}
               />
             ))}
           </div>
