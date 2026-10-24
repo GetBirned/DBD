@@ -14,6 +14,8 @@ export interface ExperienceEntry {
   desc: string
   /** A short callout for a specific honor/award — rendered as a small badge. */
   badge?: string
+  /** Where the badge's honor is described, making the badge a link. */
+  badgeUrl?: string
   /** Accent for the card's gradient border and corner glow. */
   tint: string
   /** Overrides the card's panel fill (default: the standard translucent panel). */
@@ -203,6 +205,7 @@ export const experience: ExperienceEntry[] = [
     dateRange: 'May 2024 – Aug. 2024',
     desc: "Paid student internship through UNH's Peter T. Paul Entrepreneurship Center. Developed software features and debugged PHP/JavaScript issues using Agile methodology, and rebranded the company with a same-day website rebuild for a K–12 student activity fund platform.",
     badge: 'Featured Intern · 2024 Paid Student Internship at Start-Ups Program',
+    badgeUrl: 'https://www.unh.edu/ecenter/students/paid-student-internship-start-ups-program',
     // Their own purple/indigo, matching the badge/border to the card fill.
     tint: 'oklch(0.55 0.16 277)',
     cardBg: 'oklch(0.2 0.09 277 / 0.96)',

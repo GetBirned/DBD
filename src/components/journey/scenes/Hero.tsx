@@ -40,7 +40,14 @@ function RoleDetails({ e }: { e: ExperienceEntry }) {
         </dl>
       </div>
       <div className="crt-box mt-6 p-4 sm:p-5">{e.desc}</div>
-      {e.badge && <p className="mt-5 uppercase">&gt; {e.badge}</p>}
+      {e.badge &&
+        (e.badgeUrl ? (
+          <a href={e.badgeUrl} target="_blank" rel="noreferrer" className="crt-link mt-5 inline-block px-1 uppercase">
+            &gt; {e.badge}
+          </a>
+        ) : (
+          <p className="mt-5 uppercase">&gt; {e.badge}</p>
+        ))}
     </div>
   )
 }
