@@ -13,7 +13,7 @@ import { useGitHubData, type ContributionsData, type LogData } from '@/hooks/use
 import { clientCases, projectCases } from '@/lib/cases'
 import { closeScreens, destruct, openScreen, useMotherCalls } from '@/lib/ship'
 
-type Open = { kind: 'client' | 'project'; index: number } | null
+type Open = { kind: 'client' | 'project'; index: number; view?: 'schematic' } | null
 
 /** Whether a key press belongs to something being typed into, rather than the page. */
 const typing = (t: EventTarget | null) => !!(t as HTMLElement | null)?.closest?.('input, textarea, select, [contenteditable="true"]')
@@ -103,7 +103,7 @@ export default function Home() {
       case 'record':
         // The record takes over the screen; closing it brings the computer back.
         setResume(true)
-        setOpen({ kind: a.kind, index: a.index })
+        setOpen({ kind: a.kind, index: a.index, view: a.view })
         break
       case 'screen':
         closeMother()
@@ -138,7 +138,8 @@ export default function Home() {
       <CaseViewer
         items={open?.kind === 'client' ? clientCases : projectCases}
         index={open?.index ?? null}
-        onIndex={(index) => setOpen((o) => (o ? { ...o, index } : o))}
+        view={open?.view}
+        onIndex={(index) => setOpen((o) => (o ? { ...o, index, view: undefined } : o))}
         onClose={close}
       />
       <Popup

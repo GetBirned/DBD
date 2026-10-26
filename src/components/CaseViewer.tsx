@@ -30,6 +30,34 @@ function Media({ src, whole, onEnlarge }: { src: string; whole: boolean; onEnlar
 }
 
 /**
+ * How a project is built, as an ASCII schematic filling the media frame, sized to fit it either
+ * way and printing in a row at a time (all at once with reduced motion).
+ */
+function Schematic({ art, name }: { art: string; name: string }) {
+  const lines = art.split('\n')
+  const cols = Math.max(...lines.map((l) => l.length))
+  const leading = 1.12
+  return (
+    <div className="aspect-[16/10] w-full overflow-hidden bg-black [container-type:size]">
+      <div className="flex h-full items-center justify-center">
+        <pre
+          role="img"
+          aria-label={`Architecture schematic of ${name}`}
+          className="schematic-print tracking-normal whitespace-pre [font-family:'VT323',monospace]"
+          style={{
+            fontSize: `min(calc(94cqw / ${0.41 * cols}), calc(90cqh / ${lines.length * leading}))`,
+            lineHeight: leading,
+            animationTimingFunction: `steps(${lines.length}, end)`,
+          }}
+        >
+          {art}
+        </pre>
+      </div>
+    </div>
+  )
+}
+
+/**
  * Full-screen case study for a client site or a project, on one of the ship's monitors: the
  * walkthrough video and screenshots on one side, and on the other the name, what it is, the
  * client's word on it, and the ways in. The title bar carries the record number and the keys to
@@ -40,11 +68,14 @@ function Media({ src, whole, onEnlarge }: { src: string; whole: boolean; onEnlar
 export default function CaseViewer({
   items,
   index,
+  view,
   onIndex,
   onClose,
 }: {
   items: CaseItem[]
   index: number | null
+  /** Open on the item's schematic rather than its first piece of media. */
+  view?: 'schematic'
   onIndex: (i: number) => void
   onClose: () => void
 }) {
@@ -69,10 +100,12 @@ export default function CaseViewer({
     wasOpen.current = open
   }, [open])
 
-  // New item → back to its first piece of media.
+  // New item → back to its first piece of media (or straight to its schematic, if asked for).
   useEffect(() => {
-    setMediaIdx(0)
-  }, [index])
+    const it = index === null ? null : items[index]
+    setMediaIdx(view === 'schematic' && it?.schematic ? it.media.length : 0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, view])
 
   // Lock page scroll and move focus into the dialog while open; give both back on close.
   useEffect(() => {
@@ -178,12 +211,18 @@ export default function CaseViewer({
                         onTouchEnd={onTouchEnd}
                         className="mx-auto w-full min-w-0 lg:w-[min(calc(100cqw-22rem-3vw-4px),calc((min(96svh,1100px)-300px)*1.6))]"
                       >
-                        {item.media.length > 0 && (
+                        {item.schematic && mediaIdx === item.media.length ? (
                           <div className="crt-box">
-                            <Media src={item.media[mediaIdx]} whole={item.kind === 'project'} onEnlarge={() => setLightbox(item.media[mediaIdx])} />
+                            <Schematic key={item.key} art={item.schematic} name={item.name} />
                           </div>
+                        ) : (
+                          item.media.length > 0 && (
+                            <div className="crt-box">
+                              <Media src={item.media[mediaIdx]} whole={item.kind === 'project'} onEnlarge={() => setLightbox(item.media[mediaIdx])} />
+                            </div>
+                          )
                         )}
-                        {item.media.length > 1 && (
+                        {(item.media.length > 1 || item.schematic) && (
                           <div className="mt-3 flex gap-2 overflow-x-auto p-0.5 [scrollbar-width:none]">
                             {item.media.map((m, i) => (
                               <button
@@ -208,6 +247,19 @@ export default function CaseViewer({
                                 )}
                               </button>
                             ))}
+                            {item.schematic && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  terminal.page()
+                                  setMediaIdx(item.media.length)
+                                }}
+                                aria-label="Show how it's built"
+                                className={`crt-box flex h-[clamp(36px,6vh,56px)] shrink-0 items-center bg-black px-3 text-[clamp(10px,0.8vw,12px)] uppercase transition-opacity ${mediaIdx === item.media.length ? '' : 'opacity-45 hover:opacity-90'}`}
+                              >
+                                schematic
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>

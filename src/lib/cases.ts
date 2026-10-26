@@ -1,5 +1,6 @@
 import { clients } from '@/data/clients'
 import { projects } from '@/data/projects'
+import { SCHEMATICS } from '@/data/schematics'
 import { projectSlug } from './slug'
 
 /** A client site or a project, in the one shape the case-study viewer renders. */
@@ -19,6 +20,8 @@ export interface CaseItem {
   repo?: string
   /** Walkthrough video first (when there is one), then screenshots. */
   media: string[]
+  /** How it's built, as an ASCII schematic, for a project that has one. */
+  schematic?: string
   /** Shown in the browser-chrome URL bar around a client site. */
   domain?: string
 }
@@ -50,6 +53,7 @@ export const projectCases: CaseItem[] = projects.map((p) => {
     url: p.url,
     repo: p.repo,
     media: present([p.video, ...(p.screenshots ?? [])]),
+    schematic: SCHEMATICS[p.name],
     domain: domainOf(p.url),
   }
 })

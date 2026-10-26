@@ -594,3 +594,14 @@ html[data-alert="destruct"] {
   animation: none;
   opacity: 1;
 }
+
+/* A project's schematic printing onto the screen a row at a time (steps set per diagram). */
+.schematic-print {
+  animation: mother-print 1.1s 0.25s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schematic-print {
+    animation: none;
+  }
+}

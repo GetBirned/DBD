@@ -2,6 +2,7 @@ import { CHAPTER_LINKS, type ChapterId } from '@/components/chapters'
 import { clients } from '@/data/clients'
 import { experience } from '@/data/experience'
 import { DOSSIERS, SITE } from '@/data/inquiry'
+import { SCHEMATICS } from '@/data/schematics'
 import { projects } from '@/data/projects'
 import { skills } from '@/data/skills'
 import type { ContributionsData, LogData } from '@/hooks/useGitHubData'
@@ -18,7 +19,7 @@ export type RecordKind = 'client' | 'project'
 
 /** Something the computer does once it has answered. */
 export type Action =
-  | { type: 'record'; kind: RecordKind; index: number }
+  | { type: 'record'; kind: RecordKind; index: number; view?: 'schematic' }
   | { type: 'screen'; id: ScreenId }
   | { type: 'goto'; id: ChapterId }
   | { type: 'group'; label: string }
@@ -138,6 +139,31 @@ const projectEntries: Entry[] = projects.map((p, index) => ({
     then: { type: 'record', kind: 'project', index },
   }),
 }))
+
+/** Each project's schematic, opening its record straight to how it's built. */
+const schematicEntries: Entry[] = projects.flatMap((p, index) =>
+  SCHEMATICS[p.name]
+    ? [
+        {
+          id: `schematic:${p.name}`,
+          kind: 'record' as const,
+          label: `${p.name} · schematic`,
+          sub: "how it's built",
+          keys: ['architecture', 'schematic', 'schematics', 'diagram', ...['schematic', 'architecture', 'diagram'].map((w) => `${p.name} ${w}`)].map(fold),
+          words: wordsOf(`${p.name} schematic architecture`),
+          reply: (echo: string): Reply => ({
+            lines: [
+              echoLine(echo),
+              searching('ship records'),
+              { kind: 'text', tone: 'head', text: `Schematic · ${p.name}` },
+              { kind: 'text', tone: 'dim', text: 'Opening record . . .' },
+            ],
+            then: { type: 'record', kind: 'project', index, view: 'schematic' },
+          }),
+        },
+      ]
+    : [],
+)
 
 const host = (url?: string) => (url ? new URL(url).hostname.replace(/^www\./, '').split('.')[0] : '')
 
@@ -386,6 +412,7 @@ function shipsLog(echo: string, ctx: Context): Reply {
 /** Everything aboard, as one searchable list. */
 export const DIRECTORY: Entry[] = [
   ...projectEntries,
+  ...schematicEntries,
   ...clientEntries,
   ...crewEntries,
   ...screenEntries,
