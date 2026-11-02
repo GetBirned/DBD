@@ -117,7 +117,7 @@ export const experience: ExperienceEntry[] = [
     location: 'Portsmouth, NH · Hybrid',
     dateRange: 'May 2026 – Present',
     desc: "Leading end-to-end B2W Estimate implementations, from discovery through deployment, database population, training, and customer adoption, with integrations for telematics providers (John Deere, Komatsu, Samsara) on the AEMP2 standard. Also lead the licensing department as the primary escalation point for B2W activation and provisioning across the product suite.",
-    badge: '2026 Q3 Best In Class Impact Reward',
+    badge: '2026 Q3 Best In Class Impact Award',
     tint: TRIMBLE_BLUE,
     cardBg: TRIMBLE_CARD,
     cardDark: true,
